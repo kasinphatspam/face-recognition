@@ -6,8 +6,8 @@ export class AuthLoginDto {
 export class AuthRegisterDto {
     public email: string
     public password: string
-    public fname: string
-    public lname: string
+    public firstname: string
+    public lastname: string
     public gender: string
     public dob: Date
     public profile_image: string

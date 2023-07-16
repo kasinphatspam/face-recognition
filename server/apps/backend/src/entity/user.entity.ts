@@ -18,16 +18,15 @@ export class User {
     password: string
 
     @Column({ 
-        name: "fname",
         nullable: false 
     })
-    firstName: string
+    firstname: string
 
     @Column({ 
         name: "lname",
         nullable: false 
     })
-    lastName: string
+    lastname: string
 
     @Column({
         nullable: false

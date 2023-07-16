@@ -22,7 +22,6 @@ export class AuthController {
   @Put('forgot-password')
   public async forgotPassword(@Body() body: AuthForgotPasswordDto, @Res() res: Response) {
     await this.authService.forgotPassword(body)
-    return 
+    return
   }
-
 }

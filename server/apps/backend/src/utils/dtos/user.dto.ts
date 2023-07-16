@@ -1,9 +1,9 @@
 export class UpdateUserDto {
-    public id: string
+    public id: number
     public email: string
     public password: string
-    public fname: string
-    public lname: string
+    public firstname: string
+    public lastname: string
     public gender: string
     public dob: Date
     public profile_image: string 
@@ -12,7 +12,11 @@ export class UpdateUserDto {
     public role_id: Number
 }
 
+export class GetUserByIdDto {
+    public id: number
+}
+
 export class UpdateUserProfileDto {
-    public id: string
+    public id: number
     public profile_image: string
 }

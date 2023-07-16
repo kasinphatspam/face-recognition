@@ -1,4 +1,4 @@
-server/volumes/db/#ib_16384_0.dblwr
+server/volumes/
 server/volumes/db/#ib_16384_1.dblwr
 server/volumes/db/binlog.000002
 server/volumes/db/binlog.index
@@ -52,3 +52,5 @@ server/volumes/db/#innodb_temp/temp_8.ibt
 server/volumes/db/#innodb_temp/temp_9.ibt
 server/volumes/db/#innodb_temp/temp_10.ibt
 server/volumes/db/localhost/users.ibd
+server/apps/backend/src/service/auth.service.ts
+server/volumes/db/#ib_16384_0.dblwr

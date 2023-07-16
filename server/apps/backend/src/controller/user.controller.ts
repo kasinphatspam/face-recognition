@@ -1,14 +1,15 @@
 import { Controller, Get, Post, Put, Delete, Body , Res } from '@nestjs/common';
 import { UserService } from '../service/user.service';
+import { GetUserByIdDto, UpdateUserDto } from 'src/utils/dtos/user.dto';
 
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly service: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  public getCurrentUser(): string {
-    return
+  public async getCurrentUser() {
+    return this.userService.getCurrentUser()
   }
 
   @Get('all')
@@ -17,12 +18,12 @@ export class UserController {
   }
 
   @Get()
-  public get(): string {
+  public getUserById(@Body() body: GetUserByIdDto): string {
     return
   }
 
   @Put()
-  public update(): string {
+  public update(@Body() body: UpdateUserDto): string {
     return
   }
 

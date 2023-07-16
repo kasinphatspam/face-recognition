@@ -29,8 +29,8 @@ export class AuthService {
       {
         email: body.email,
         password: body.password,
-        firstName: body.fname,
-        lastName: body.lname,
+        firstname: body.firstname,
+        lastname: body.lastname,
         gender: body.gender,
         dob: body.dob,
         image: body.profile_image
