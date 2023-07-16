@@ -75,4 +75,4 @@ class OrganizationRole {
     role_id: number
 }
 
-export { Organization, OrganizationDepartment, OrganizationContact, OrganizationRole}
+export { Organization, OrganizationDepartment}

@@ -4,9 +4,10 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
 
     @PrimaryGeneratedColumn("increment")
-    id: string
+    id: number
 
     @Column({
+        unique: true,
         nullable: false
     })
     email: string
