@@ -79,3 +79,5 @@ ML | Check server status | http://localhost:3002/status | POST
 * https://github.com/kasinphatspam/
 ### Panumeth Khongsawatkait
 * https://github.com/Kobayashi-UwU/
+### Phutsakorn Thunwattanakul
+* https://github.com/https://github.com/cinnamonjs
