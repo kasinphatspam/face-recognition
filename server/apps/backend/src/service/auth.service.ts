@@ -8,7 +8,7 @@ import { User } from 'src/entity';
 export class AuthService {
 
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>
   ) {}
 
   public async login(body: AuthLoginDto): Promise<User> {
@@ -33,7 +33,7 @@ export class AuthService {
         lastname: body.lastname,
         gender: body.gender,
         dob: body.dob,
-        image: body.profile_image
+        image: body.profileImage
       }
     ])
     .execute()

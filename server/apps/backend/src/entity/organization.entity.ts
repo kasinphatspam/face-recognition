@@ -4,75 +4,73 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 class Organization {
 
     @PrimaryGeneratedColumn('increment')
-    id: number
+    organizationId: number
 
     @Column({
-        name: "organization_name",
         nullable: false
     })
-    name: string
+    organizationName: string
 
     @Column({
-        name: "organization_code",
+        name: "organizationCode",
+        unique: true,
         nullable: false
     })
     code: string
 
     @Column({
-        name: "code_expired_time",
         nullable: false
     })
-    expired_time: Date
+    codeExpiredTime: Date
 
     @Column({
-        name: "code_created_time",
         nullable: false
     })
-    created_time: Date
+    codeCreatedTime: Date
 
 
     @Column({
         nullable: true,
         default: ""
     })
-    vtiger_token: string
+    vtigerToken: string
 
     @Column({
         nullable: true,
         default: ""
     })
-    vtiger_access_key: string
+    vtigerAccessKey: string
 
     @Column({
         nullable: true,
         default: ""
     })
-    vtiger_link: string
+    vtigerLink: string
 }
 
 @Entity('organization_department')
 class OrganizationDepartment {
 
     @PrimaryColumn()
-    organization_id: number
+    organizationId: number
     @PrimaryColumn()
-    department_id: number
+    departmentId: number
 }
 
 @Entity('organization_contact')
 class OrganizationContact {
     @PrimaryColumn()
-    organization_id: number
+    organizationId: number
     @PrimaryColumn()
-    contact_id: number
+    contactId: number
 }
 
 @Entity('organization_role')
 class OrganizationRole {
     @PrimaryColumn()
-    organization_id: number
+    organizationId: number
     @PrimaryColumn()
-    role_id: number
+    roleId: number
 }
 
-export { Organization, OrganizationDepartment}
+export { Organization, OrganizationDepartment, OrganizationContact, OrganizationRole}

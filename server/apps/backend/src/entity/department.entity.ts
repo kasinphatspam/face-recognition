@@ -4,12 +4,11 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 export class Department {
     
     @PrimaryGeneratedColumn("increment")
-    id: number
+    departmentId: number
     
     @Column({
-        name: "department_name",
         nullable: false
     })
-    name: string
+    departmentName: string
 
 }

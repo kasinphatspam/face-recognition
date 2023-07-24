@@ -62,7 +62,7 @@ class FaceRecognition:
         img = Image.open(f"./api/{ts}.png")
         if camera_side == 'DEFAULT_FRONT_CAMERA':
             img = img.rotate(90)
-        else:
+        elif camera_side == 'DEFAULT_BACK_CAMERA':
             img = img.rotate(270)
         img.save(f"./api/{ts}.png")
         

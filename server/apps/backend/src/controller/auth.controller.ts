@@ -16,7 +16,7 @@ export class AuthController {
   @Post('register')
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
     const user = await this.authService.register(body)
-    return res.status(HttpStatus.OK).json({ msg: `Created user account id: ${user.id} successfully`})
+    return res.status(HttpStatus.OK).json({ msg: `Created user account id: ${user.userId} successfully`})
   }
 
   @Put('forgot-password')

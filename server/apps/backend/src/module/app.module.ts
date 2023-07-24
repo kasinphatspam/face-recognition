@@ -6,6 +6,7 @@ import { AuthModule } from './auth.moudle';
 import { UserModule } from './user.module';
 import * as dotenv from 'dotenv';
 import entities from 'src/entity';
+import { OrganizationModule } from './organization.module';
 
 dotenv.config();
 @Module({
@@ -23,7 +24,8 @@ dotenv.config();
       })
     }),
     AuthModule,
-    UserModule
+    UserModule,
+    OrganizationModule
   ],
   controllers: [AppController],
   providers: [AppService],

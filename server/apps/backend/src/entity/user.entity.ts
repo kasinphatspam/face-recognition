@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
 
     @PrimaryGeneratedColumn("increment")
-    id: number
+    userId: number
 
     @Column({
         unique: true,
@@ -23,7 +23,6 @@ export class User {
     firstname: string
 
     @Column({ 
-        name: "lname",
         nullable: false 
     })
     lastname: string
@@ -39,7 +38,7 @@ export class User {
     dob: Date
     
     @Column({
-        name: "profile_image",
+        name: "profileImage",
         nullable: true,
         default: ""
     })
@@ -48,16 +47,20 @@ export class User {
     @Column({
         nullable: true
     })
-    organization_id: number
+    organizationId: number
 
     @Column({
         nullable: true
     })
-    department_id: number
+    departmentId: number
     
     @Column({
         nullable: true
     })
-    role_id: number
+    roleId: number
+
+    public getFullName(): string {
+        return `${this.firstname} ${this.lastname}`
+    }
 
 }

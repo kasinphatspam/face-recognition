@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body , Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, HttpStatus, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { UserService } from '../service/user.service';
-import { GetUserByIdDto, UpdateUserDto } from 'src/utils/dtos/user.dto';
+import { DeleteUserDto, GetUserByIdDto, UpdateUserDto, UpdateUserImageDto } from 'src/utils/dtos/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -13,28 +14,31 @@ export class UserController {
   }
 
   @Get('all')
-  public getAllUser(): string {
-    return
+  public getAllUser() {
+    return this.userService.getAllUser()
   }
 
   @Get()
-  public getUserById(@Body() body: GetUserByIdDto): string {
-    return
+  public getUserById(@Body() body: GetUserByIdDto) {
+    return this.userService.getUserById(body)
   }
 
   @Put()
-  public update(@Body() body: UpdateUserDto): string {
-    return
+  public async update(@Body() body: UpdateUserDto, @Res() res: Response) {
+    await this.userService.update(body)
+    return res.status(HttpStatus.OK).json({msg: "Update user information successfully"})
+  }
+
+  @Put('image')
+  public async updateUserImage(@Body() body: UpdateUserImageDto, @Res() res: Response) {
+    await this.userService.updateImage(body)
+    return res.status(HttpStatus.OK).json({msg: "Update user image successfully"})
   }
 
   @Delete()
-  public delete(): string {
-    return
-  }
-
-  @Put('profile')
-  public updateUserProfile(): string {
-    return
+  public async delete(@Body() body: DeleteUserDto, @Res() res: Response) {
+    await this.userService.delete(body)
+    return res.status(HttpStatus.OK).json({msg: "Delete user account successfully"})
   }
 
 }

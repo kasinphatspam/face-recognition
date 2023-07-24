@@ -1,22 +1,26 @@
-export class UpdateUserDto {
-    public id: number
-    public email: string
-    public password: string
+class GetUserByIdDto {
+    public userId: number
+}
+
+class UpdateUserDto {
+    public userId: number
     public firstname: string
     public lastname: string
     public gender: string
     public dob: Date
-    public profile_image: string 
-    public organization_id: Number
-    public department_id: Number
-    public role_id: Number
+    public profileImage: string 
+    public organizationId: Number
+    public departmentId: Number
+    public roleId: Number
 }
 
-export class GetUserByIdDto {
-    public id: number
+class UpdateUserImageDto {
+    public userId: number
+    public image: string
 }
 
-export class UpdateUserProfileDto {
-    public id: number
-    public profile_image: string
+class DeleteUserDto {
+    public userId: number
 }
+
+export { GetUserByIdDto, UpdateUserDto, UpdateUserImageDto, DeleteUserDto }

@@ -54,3 +54,5 @@ server/volumes/db/#innodb_temp/temp_10.ibt
 server/volumes/db/localhost/users.ibd
 server/apps/backend/src/service/auth.service.ts
 server/volumes/db/#ib_16384_0.dblwr
+server/apps/backend/.env
+.DS_Store

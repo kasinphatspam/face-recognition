@@ -1,18 +1,20 @@
-export class AuthLoginDto {
+class AuthLoginDto {
     public email: string
     public password: string
 }
 
-export class AuthRegisterDto {
+class AuthRegisterDto {
     public email: string
     public password: string
     public firstname: string
     public lastname: string
     public gender: string
     public dob: Date
-    public profile_image: string
+    public profileImage: string
 }
 
-export class AuthForgotPasswordDto {
+class AuthForgotPasswordDto {
     public email: string
 }
+
+export { AuthLoginDto, AuthRegisterDto, AuthForgotPasswordDto }

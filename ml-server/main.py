@@ -49,7 +49,7 @@ def face_recognition_service():
     return 'HTTP_METHOD_NOT_SUPPORTED'
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', port=3000)
+  app.run(host='0.0.0.0', port=3002)
 
 
 

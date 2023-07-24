@@ -2,32 +2,27 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('contact')
 export class Contact {
-    @PrimaryGeneratedColumn("increment",
-    {
-        name: "contact_id"
-    })
-    id: number
+    @PrimaryGeneratedColumn("increment")
+    contactId: number
 
     @Column({
-        name: "fname",
         nullable: false
     })
-    firstName: string
+    firstname: string
     
     @Column({
-        name: "lname",
         nullable: false
     })
-    lastName: string
+    lastname: string
 
     @Column()
-    organization_name: string
+    organizationName: string
 
     @Column()
     titile: string
 
     @Column()
-    office_phone: string
+    officePhone: string
 
     @Column()
     mobile: string
@@ -36,22 +31,22 @@ export class Contact {
     email: string
 
     @Column()
-    alternate_email: string
+    alternateEmail: string
 
     @Column()
     dob: Date
 
     @Column()
-    contact_owner: string
+    contactOwner: string
 
     @Column()
-    created_time: Date
+    createdTime: Date
 
     @Column()
-    modified_time: Date
+    modifiedTime: Date
 
     @Column()
-    line_id: string
+    lineId: string
 
     @Column()
     facebook: string
@@ -60,6 +55,6 @@ export class Contact {
     linkedin: string
 
     @Column()
-    encoded_data: string
+    encodedData: string
     
 }
