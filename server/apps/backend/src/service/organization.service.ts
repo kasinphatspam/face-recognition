@@ -34,7 +34,6 @@ export class OrganizationService {
         let passcode = Math.random().toString(36).slice(-8).toUpperCase()
         // Check if this passcode is not exist
         while(await this.organizationRepository.findOneBy({code: passcode}) != null){
-            passcode = Math.floor(Math.random() * (5 - 1 + 1) + 1).toString()
             passcode = Math.random().toString(36).slice(-8).toUpperCase()
         }
         // Get current datetime
