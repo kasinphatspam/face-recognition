@@ -38,26 +38,26 @@ http://localhost:3001/group/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Get current organization | http://localhost:3001/group/me | GET
-Backend | Get organization by id | http://localhost:3001/group/ | GET
-Backend | Create organization | http://localhost:3001/group | POST
-Backend | Edit organization | http://localhost:3001/group | PUT
-Backend | Delete organization | http://localhost:3001/group | DELETE
-Backend | Join organization | http://localhost:3001/group/join/:id | POST
-Backend | Get passcode | http://localhost:3001/group/passcode | GET
-Backend | Re-generate passcode | http://localhost:3001/group/passcode | PUT
-Backend | Get organization member | http://localhost:3001/group/member | GET
-Backend | Delete organization member | http://localhost:3001/group/member | DELETE
-Backend | Link organization with vtiger | http://localhost:3001/group/vtiger | PUT
-Backend | Sync data between vtiger and database | http://localhost:3001/group/vtiger | POST
-Backend | Get contact by id | http://localhost:3001/group/contact | GET
-Backend | Get all contact | http://localhost:3001/group/contact/all | GET
-Backend | Change role of member in organization | http://localhost:3001/group/member/role | PUT
-Backend | Get list of role in organization | http://localhost:3001/group/role | GET
-Backend | Add role | http://localhost:3001/group/role | POST
-Backend | Edit role | http://localhost:3001/group/role | PUT
-Backend | Manager permission in each role | http://localhost:3001/group/role/permission | PUT
-Backend | Delete role | http://localhost:3001/group/role | DELETE
+Backend | Get current organization | http://localhost:3001/organization/me | GET
+Backend | Get organization by id | http://localhost:3001/organization/ | GET
+Backend | Create organization | http://localhost:3001/organization | POST
+Backend | Edit organization | http://localhost:3001/organization | PUT
+Backend | Delete organization | http://localhost:3001/organization | DELETE
+Backend | Join organization | http://localhost:3001/organization/join/:id | POST
+Backend | Get passcode | http://localhost:3001/organization/passcode | GET
+Backend | Re-generate passcode | http://localhost:3001/organization/passcode | PUT
+Backend | Get organization member | http://localhost:3001/organization/member | GET
+Backend | Delete organization member | http://localhost:3001/organization/member | DELETE
+Backend | Link organization with vtiger | http://localhost:3001/organization/vtiger | PUT
+Backend | Sync data between vtiger and database | http://localhost:3001/organization/vtiger | POST
+Backend | Get contact by id | http://localhost:3001/organization/contact | GET
+Backend | Get all contact | http://localhost:3001/organization/contact/all | GET
+Backend | Change role of member in organization | http://localhost:3001/organization/member/role | PUT
+Backend | Get list of role in organization | http://localhost:3001/organization/role | GET
+Backend | Add role | http://localhost:3001/organization/role | POST
+Backend | Edit role | http://localhost:3001/organization/role | PUT
+Backend | Manager permission in each role | http://localhost:3001/organization/role/permission | PUT
+Backend | Delete role | http://localhost:3001/organization/role | DELETE
 
 Face recognition\
 http://localhost:3002/ml/
@@ -79,3 +79,5 @@ ML | Check server status | http://localhost:3002/status | POST
 * https://github.com/kasinphatspam/
 ### Panumeth Khongsawatkait
 * https://github.com/Kobayashi-UwU/
+### Phutsakorn Thunwattanakul
+* https://github.com/cinnamonjs
