@@ -32,4 +32,8 @@ export class RoleService {
             .execute()
         return role.raw.insertId
     }
+
+    public async editRole(roleName: string, organizationId: number){
+
+    }
 }

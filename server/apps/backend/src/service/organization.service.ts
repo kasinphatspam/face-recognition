@@ -88,10 +88,12 @@ export class OrganizationService {
         if (!organization) {
             throw new BadRequestException("Wrong passcode")
         }
-        await this.userRepository.save({
-            userId: userId,
-            organizationId: organization.organizationId
-        })
+        await this.userRepository
+            .createQueryBuilder()
+            .update(User)
+            .set({ organizationId: organization.organizationId })
+            .where('userId = :userId', { userId })
+            .execute()
         return organization
     }
 

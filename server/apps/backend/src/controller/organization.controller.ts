@@ -4,7 +4,7 @@ import { EmployeeService } from "src/service/employee.service";
 import { OrganizationService } from "src/service/organization.service";
 import { RoleService } from "src/service/role.service";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
-import { CreateNewRoleDto } from "src/utils/dtos/role.dto";
+import { CreateNewRoleDto, EditRoleDto } from "src/utils/dtos/role.dto";
 
 @Controller('organization')
 export class OrganizationController {
@@ -19,8 +19,10 @@ export class OrganizationController {
     public async getOrganizationById(
         @Param('organizationId') organizationId: number,
         @Res() res: Response) {
-        const organization = await this.organizationService.getOrganizationById(organizationId)
-        return res.status(HttpStatus.OK).json({ organization })
+        const organization = await this.organizationService
+            .getOrganizationById(organizationId)
+        return res.status(HttpStatus.OK)
+            .json({ organization })
     }
 
     @Post(':userId')
@@ -28,10 +30,12 @@ export class OrganizationController {
         @Param('userId') userId: number,
         @Body() body: CreateOrganizationDto,
         @Res() res: Response) {
-        await this.organizationService.createNewOraganization(userId, body)
-        return res.status(HttpStatus.OK).json({
-            message: `Created organization successfully`
-        })
+        await this.organizationService
+            .createNewOraganization(userId, body)
+        return res.status(HttpStatus.OK)
+            .json({
+                message: `Created organization successfully`
+            })
     }
 
     @Put(':organizationId')
@@ -39,20 +43,24 @@ export class OrganizationController {
         @Param('organizationId') organizationId: number,
         @Body() body: UpdateOrganizationDto,
         @Res() res: Response) {
-        await this.organizationService.updateOrganizationInfo(organizationId, body)
-        return res.status(HttpStatus.OK).json({
-            message: `Updated organization successfully`
-        })
+        await this.organizationService
+            .updateOrganizationInfo(organizationId, body)
+        return res.status(HttpStatus.OK)
+            .json({
+                message: `Updated organization successfully`
+            })
     }
 
     @Delete(':organizationId')
     public async delete(
         @Param('organizationId') organizationId: number,
         @Res() res: Response) {
-        await this.organizationService.deleteOrganization(organizationId)
-        return res.status(HttpStatus.OK).json({
-            message: `Deleted organization successfully`
-        })
+        await this.organizationService
+            .deleteOrganization(organizationId)
+        return res.status(HttpStatus.OK)
+            .json({
+                message: `Deleted organization successfully`
+            })
     }
 
     @Post('user/:userId/join/:passcode')
@@ -60,10 +68,14 @@ export class OrganizationController {
         @Param('userId') userId: number,
         @Param('passcode') passcode: string,
         @Res() res: Response) {
-        const organization = await this.organizationService.joinOrganizationWithPasscode(userId, passcode)
-        return res.status(HttpStatus.OK).json({
-            message: `User id: ${userId} joined Organiztion id: ${organization.organizationId} successfully`
-        })
+        const organization = await this.organizationService
+            .joinOrganizationWithPasscode(userId, passcode)
+        return res
+            .status(HttpStatus.OK)
+            .json({
+                message: `User id: ${userId} joined Organiztion id: ${organization.organizationId} successfully`,
+                organization
+            })
     }
 
     @Put(':organizationId/passcode')
@@ -72,7 +84,8 @@ export class OrganizationController {
         @Res() res: Response) {
         return res.status(HttpStatus.OK).json({
             message: `Successfully generated a new passcode`,
-            passcode: await this.organizationService.generateNewPasscode(organizationId)
+            passcode: await this.organizationService
+                .generateNewPasscode(organizationId)
         })
     }
 
@@ -80,7 +93,8 @@ export class OrganizationController {
     public async getAllEmployee(
         @Param('organiztionId') organizationId: number
     ) {
-        return await this.employeeService.getAllEmployee(organizationId)
+        return await this.employeeService
+            .getAllEmployee(organizationId)
     }
 
     @Delete(':organizationId/employee/:userId')
@@ -89,10 +103,12 @@ export class OrganizationController {
         @Param('userId') userId: number,
         @Res() res: Response
     ) {
-        await this.employeeService.deleteEmployee(organizationId, userId)
-        return res.status(HttpStatus.OK).json({
-            message: `Successfully deleted employee id ${userId} from organization id: ${organizationId}`
-        })
+        await this.employeeService
+            .deleteEmployee(organizationId, userId)
+        return res.status(HttpStatus.OK)
+            .json({
+                message: `Successfully deleted employee id ${userId} from organization id: ${organizationId}`
+            })
     }
 
     @Put(':organizationId/vtiger')
@@ -109,19 +125,19 @@ export class OrganizationController {
         return
     }
 
-    @Get('contact/:contactId')
+    @Get(':organizationId/contact/:contactId')
     public async getContactById(
         @Param('contactId') contactId: number
     ) {
         return
     }
 
-    @Get('contact/all')
+    @Get(':organizationId/contact/all')
     public async getAllContact() {
         return
     }
 
-    @Get('role')
+    @Get(':organizationId/role/:roleId')
     public async getListOfRoleById() {
         return
     }
@@ -130,12 +146,17 @@ export class OrganizationController {
     public async createNewRole(
         @Param('organizationId') organizationId: number,
         @Body() body: CreateNewRoleDto) {
-        return await this.roleService.createNewRole(body.roleName, organizationId)
+        return await this.roleService
+            .createNewRole(body.roleName, organizationId)
     }
 
-    @Put('role')
-    public async editRole() {
-        return
+    @Put(':organizationId/role')
+    public async editRole(
+        @Param('organizationId') organizationId: number,
+        @Body() body: EditRoleDto
+    ) {
+        return await this.roleService
+            .editRole(body.roleName, organizationId)
     }
 
     @Put('role/permission')
