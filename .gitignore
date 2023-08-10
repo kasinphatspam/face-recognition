@@ -3,6 +3,5 @@ ml-server/__pycache__/
 server/apps/backend/.env
 server/apps/backend/dist/
 server/apps/backend/node_modules/
-server/apps/backend/.env
 server/.env
 .DS_Store
