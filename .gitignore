@@ -1,0 +1,7 @@
+server/volumes/
+ml-server/__pycache__/
+server/apps/backend/.env
+server/apps/backend/dist/
+server/apps/backend/node_modules/
+.DS_Store
+server/apps/backend/.env
