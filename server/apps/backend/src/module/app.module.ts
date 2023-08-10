@@ -10,9 +10,9 @@ import { OrganizationModule } from './organization.module';
 
 dotenv.config();
 @Module({
-  imports: [
+imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
+    useFactory: () => ({
         type: 'mysql',
         host: process.env.DB_HOST,
         port: parseInt(process.env.DB_PORT) || 3306,
@@ -21,13 +21,13 @@ dotenv.config();
         database: process.env.DB_NAME,
         entities: entities,
         synchronize: true
-      })
+    })
     }),
     AuthModule,
     UserModule,
     OrganizationModule
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+],
+controllers: [AppController],
+providers: [AppService],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ class AuthRegisterDto {
     public firstname: string
     public lastname: string
     public gender: string
+    public personalId: string
     public dob: Date
     public profileImage: string
 }

@@ -1,12 +1,8 @@
-class GetUserByIdDto {
-    public userId: number
-}
-
 class UpdateUserDto {
-    public userId: number
     public firstname: string
     public lastname: string
     public gender: string
+    public personalId: string
     public dob: Date
     public profileImage: string 
     public organizationId: Number
@@ -15,12 +11,7 @@ class UpdateUserDto {
 }
 
 class UpdateUserImageDto {
-    public userId: number
     public image: string
 }
 
-class DeleteUserDto {
-    public userId: number
-}
-
-export { GetUserByIdDto, UpdateUserDto, UpdateUserImageDto, DeleteUserDto }
+export { UpdateUserDto, UpdateUserImageDto }
