@@ -48,7 +48,7 @@ export default function Loginpage() {
                 <p className="text-inherit font-bold text-[30px] text-blue-600"> Login </p>
                 <p className="text-inherit font-light text-[12px] text-gray-500"> Please login or sign up before using our website. </p>
               </div>
-              <img src="/public/Login.svg" className="px-8 -mt-16 w-[360px] h-[360px] pointer-events-none" />
+              <img src="/Login.svg" className="px-8 -mt-16 w-[360px] h-[360px] pointer-events-none" />
 
               {/* input Email & Password*/}
               <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 -mt-8">
@@ -85,7 +85,7 @@ export default function Loginpage() {
               {/* sign up */}
               <div className="flex flex-row justify-start w-[420px] mb-8">
                 <p className="text-sm font-medium"> Don't have an account?</p>
-                <Nextlink className="text-sm ml-1 font-medium"> sign up</Nextlink>
+                <Nextlink className="text-sm ml-1 font-medium" href="/signup"> sign up </Nextlink>
               </div>
           </div>
         </div>

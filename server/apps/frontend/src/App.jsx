@@ -4,6 +4,8 @@ import HomePage from '@/pages/HomePage';
 import Analytics from '@/pages/Analytics';
 import Loginpage from './pages/LoginPage';
 import Signuppage from '@/pages/SignUpPage';
+import Profile from '@/pages/ProfilePage';
+
 export const App = () => {
   
   return (
@@ -14,6 +16,7 @@ export const App = () => {
           <Route path='/analytics' element={<Analytics />} />
           <Route path='/login' element={<Loginpage />} />
           <Route path='/signup' element={<Signuppage />} />
+          <Route path='/profile' element={<Profile />} />
         </Routes>
       </BrowserRouter>
     </NextUIProvider>
