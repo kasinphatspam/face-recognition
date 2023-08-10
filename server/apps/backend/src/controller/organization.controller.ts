@@ -1,86 +1,118 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from "@nestjs/common";
 import { Response } from "express";
+import { EmployeeService } from "src/service/employee.service";
 import { OrganizationService } from "src/service/organization.service";
 import { RoleService } from "src/service/role.service";
-import { CreateOrganizationDto, DeleteOrganizationDto, GenerateNewPasscodeDto, GetCurrentOrganizationDto, GetOrganizationByIdDto, JoinOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
+import { CreateOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
 import { CreateNewRoleDto } from "src/utils/dtos/role.dto";
 
 @Controller('organization')
 export class OrganizationController {
 
-    constructor(private readonly organizationService: OrganizationService, private readonly roleService: RoleService) { }
+    constructor(
+        private readonly organizationService: OrganizationService,
+        private readonly roleService: RoleService,
+        private readonly employeeService: EmployeeService
+    ) { }
 
-    @Get()
-    public async getOrganizationById(@Body() body: GetOrganizationByIdDto, @Res() res: Response) {
-        const organization = await this.organizationService.getOrganizationById(body)
+    @Get(':organizationId')
+    public async getOrganizationById(
+        @Param('organizationId') organizationId: number,
+        @Res() res: Response) {
+        const organization = await this.organizationService.getOrganizationById(organizationId)
         return res.status(HttpStatus.OK).json({ organization })
     }
 
-    @Get('me')
-    public async getCurrentOrganization(@Body() body: GetCurrentOrganizationDto, @Res() res: Response) {
-        const organization = await this.organizationService.getCurrentOrganization(body)
-        return res.status(HttpStatus.OK).json({ organization })
+    @Post(':userId')
+    public async create(
+        @Param('userId') userId: number,
+        @Body() body: CreateOrganizationDto,
+        @Res() res: Response) {
+        await this.organizationService.createNewOraganization(userId, body)
+        return res.status(HttpStatus.OK).json({
+            message: `Created organization successfully`
+        })
     }
 
-    @Post()
-    public async create(@Body() body: CreateOrganizationDto, @Res() res: Response) {
-        await this.organizationService.create(body)
-        return res.status(HttpStatus.OK).json({ msg: `Created organization successfully` })
+    @Put(':organizationId')
+    public async update(
+        @Param('organizationId') organizationId: number,
+        @Body() body: UpdateOrganizationDto,
+        @Res() res: Response) {
+        await this.organizationService.updateOrganizationInfo(organizationId, body)
+        return res.status(HttpStatus.OK).json({
+            message: `Updated organization successfully`
+        })
     }
 
-    @Put()
-    public async update(@Body() body: UpdateOrganizationDto, @Res() res: Response) {
-        await this.organizationService.update(body)
-        return res.status(HttpStatus.OK).json({ msg: `Updated organization successfully` })
+    @Delete(':organizationId')
+    public async delete(
+        @Param('organizationId') organizationId: number,
+        @Res() res: Response) {
+        await this.organizationService.deleteOrganization(organizationId)
+        return res.status(HttpStatus.OK).json({
+            message: `Deleted organization successfully`
+        })
     }
 
-    @Delete()
-    public async delete(@Body() body: DeleteOrganizationDto, @Res() res: Response) {
-        await this.organizationService.delete(body)
-        return res.status(HttpStatus.OK).json({ msg: `Deleted organization successfully` })
-    }
-
-    @Post('join/:passcode')
+    @Post('user/:userId/join/:passcode')
     public async join(
-        @Body() body: JoinOrganizationDto,
+        @Param('userId') userId: number,
         @Param('passcode') passcode: string,
         @Res() res: Response) {
-        const organization = await this.organizationService.join(body, passcode)
-        return res.status(HttpStatus.OK).json({ 
-            msg: `User id: ${body.userId} joined Organiztion id: ${organization.organizationId} successfully` 
-        })
-    }
-
-    @Put('passcode')
-    public async generateNewPasscode(@Body() body: GenerateNewPasscodeDto, @Res() res: Response) {
+        const organization = await this.organizationService.joinOrganizationWithPasscode(userId, passcode)
         return res.status(HttpStatus.OK).json({
-            msg: `Successfully generated a new passcode`, 
-            passcode: await this.organizationService.generateNewPasscode(body)
+            message: `User id: ${userId} joined Organiztion id: ${organization.organizationId} successfully`
         })
     }
 
-    @Get('employee')
-    public async getAllEmployee() {
-        return 
+    @Put(':organizationId/passcode')
+    public async generateNewPasscode(
+        @Param('organizationId') organizationId: number,
+        @Res() res: Response) {
+        return res.status(HttpStatus.OK).json({
+            message: `Successfully generated a new passcode`,
+            passcode: await this.organizationService.generateNewPasscode(organizationId)
+        })
     }
 
-    @Delete('employee')
-    public async deleteEmployee() {
+    @Get(':organizationId/employee')
+    public async getAllEmployee(
+        @Param('organiztionId') organizationId: number
+    ) {
+        return await this.employeeService.getAllEmployee(organizationId)
+    }
+
+    @Delete(':organizationId/employee/:userId')
+    public async deleteEmployee(
+        @Param('organizationId') organizationId: number,
+        @Param('userId') userId: number,
+        @Res() res: Response
+    ) {
+        await this.employeeService.deleteEmployee(organizationId, userId)
+        return res.status(HttpStatus.OK).json({
+            message: `Successfully deleted employee id ${userId} from organization id: ${organizationId}`
+        })
+    }
+
+    @Put(':organizationId/vtiger')
+    public async linkWithVtiger(
+        @Param('organizationId') organizationId: number
+    ) {
         return
     }
 
-    @Put('vtiger')
-    public async linkWithVtiger() {
+    @Post(':organizationId/vtiger')
+    public async importDataFromVtiger(
+        @Param('organizationId') organizationId: number
+    ) {
         return
     }
 
-    @Post('vtiger')
-    public async importDataFromVtiger() {
-        return
-    }
-
-    @Get('contact')
-    public async getContactById() {
+    @Get('contact/:contactId')
+    public async getContactById(
+        @Param('contactId') contactId: number
+    ) {
         return
     }
 
@@ -94,9 +126,11 @@ export class OrganizationController {
         return
     }
 
-    @Post('role')
-    public async createNewRole(@Body() body: CreateNewRoleDto) {
-        return await this.roleService.createNewRole(body.roleName, body.organizationId)
+    @Post(':organizationId/role')
+    public async createNewRole(
+        @Param('organizationId') organizationId: number,
+        @Body() body: CreateNewRoleDto) {
+        return await this.roleService.createNewRole(body.roleName, organizationId)
     }
 
     @Put('role')

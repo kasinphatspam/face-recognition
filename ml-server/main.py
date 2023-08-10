@@ -15,7 +15,7 @@ def hello():
 @app.route("/status")
 def status():
     # Test server response
-    dict = { "status": "connected"}
+    dict = { "message": "Server connected"}
     return dict
 
 @app.route("/contact", methods=['GET','POST','DELETE'])
@@ -43,8 +43,7 @@ def face_recognition_service():
     if request.method == 'POST':
         request_data = request.get_json()
         image = request_data['imageBase64']
-        camera_side = request_data['cameraSide']
-        return recognition.run(image,camera_side)
+        return recognition.run(image)
     
     return 'HTTP_METHOD_NOT_SUPPORTED'
 

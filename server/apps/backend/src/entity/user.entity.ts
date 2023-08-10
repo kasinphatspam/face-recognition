@@ -35,6 +35,11 @@ export class User {
     @Column({
         nullable: false
     })
+    personalId: string
+
+    @Column({
+        nullable: false
+    })
     dob: Date
     
     @Column({

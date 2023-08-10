@@ -9,9 +9,9 @@ import base64
 from PIL import Image
 
 # Running
-def run(image,camera_side):
+def run(image):
     fr = FaceRecognition()
-    return fr.recognition(image,camera_side)
+    return fr.recognition(image)
 
 # Helper
 def face_confidence(face_distance, face_match_threshold=0.6):
@@ -45,7 +45,7 @@ class FaceRecognition:
         known_face_names = np.load(file_path_name)
         known_face_names = np.array(known_face_names)
 
-    def recognition(self, encoded_data, camera_side):
+    def recognition(self, encoded_data):
 
         # Decode base64 string data
         decoded_data = base64.b64decode((encoded_data))
@@ -58,28 +58,37 @@ class FaceRecognition:
         img_file.write(decoded_data)
         img_file.close()
 
-        # Rotate the image to process
+        # First analayze
         img = Image.open(f"./api/{ts}.png")
-        if camera_side == 'DEFAULT_FRONT_CAMERA':
-            img = img.rotate(90)
-        elif camera_side == 'DEFAULT_BACK_CAMERA':
-            img = img.rotate(270)
+        img = img.rotate(270)
         img.save(f"./api/{ts}.png")
-        
-        # Check if the file is empty
-        if len(os.listdir("./api")) == 0:
-            return { "name": "MISSING_FILE_IN DATASET_FOLDER", "accuracy": "0", "timestamp": "0"}
-        
-        # Initialize variables for scaling and recognition
-        buffer = []
-        face_image = face_recognition.load_image_file(f"api/{ts}.png")
-        frame = face_image
 
-        # Encrypt the image to check if there is a face in the image
-        if len(face_recognition.face_encodings(face_image)) <= 0:
-            # Delete image file
-            os.unlink(f"./api/{ts}.png")
-            return { "name": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+        face_image = face_recognition.load_image_file(f"api/{ts}.png")
+
+        if len(face_recognition.face_encodings(face_image)) > 0:
+            frame = face_image
+        else:
+            # Rotate the image to process
+            img = Image.open(f"./api/{ts}.png")
+
+            # Analyze the image on each axis in case that the image is rotated
+            for i in range(3):
+                img = img.rotate(90)
+                img.save(f"./api/{ts}.png")
+
+                # Initialize variables for scaling and recognition
+                face_image = face_recognition.load_image_file(f"api/{ts}.png")
+                if len(face_recognition.face_encodings(face_image)) <= 0:
+                    # Returns this function when there are no faces in the image.
+                    if(i == 2):
+                        # Delete image file
+                        os.unlink(f"./api/{ts}.png")
+                        print({ "name": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
+                        return { "name": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+                    continue
+                else:
+                    frame = face_image
+                    break
         
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(
@@ -114,7 +123,7 @@ class FaceRecognition:
                 percentage = float(confidence.replace("%",""))
                 # Check the condition, the displayed percentage must be greater than 90 percent, 
                 # the program will return the customer's id.
-                if(percentage > 90):
+                if(percentage > 80):
                     timestamp = datetime.datetime.now()
                     # Remove the suffix in the file name
                     name = str(name.replace(".jpg",""))
@@ -122,4 +131,5 @@ class FaceRecognition:
                     return { "name": name, "accuracy": percentage, "timestamp": str(timestamp)}
 
         # This result will return when not all datasets match the given image
+        print( { "name": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"})
         return { "name": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"}

@@ -1,44 +1,65 @@
-import { Controller, Get, Post, Put, Delete, Body, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, HttpStatus, Res, Param } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '../service/user.service';
-import { DeleteUserDto, GetUserByIdDto, UpdateUserDto, UpdateUserImageDto } from 'src/utils/dtos/user.dto';
+import { UpdateUserImageDto, UpdateUserDto } from 'src/utils/dtos/user.dto';
+import { OrganizationService } from 'src/service/organization.service';
 
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly userService: UserService) {}
+    constructor(
+        private readonly userService: UserService,
+        private readonly organizationService: OrganizationService
+    ) { }
 
-  @Get('me')
-  public async getCurrentUser() {
-    return this.userService.getCurrentUser()
-  }
+    @Get('all')
+    public getAllUser() {
+        return this.userService.getAllUser()
+    }
 
-  @Get('all')
-  public getAllUser() {
-    return this.userService.getAllUser()
-  }
+    @Get(':userId')
+    public getUserById(@Param('userId') userId: number) {
+        return this.userService.getUserById(userId)
+    }
 
-  @Get()
-  public getUserById(@Body() body: GetUserByIdDto) {
-    return this.userService.getUserById(body)
-  }
+    @Put(':userId')
+    public async update(
+        @Param('userId') userId: number,
+        @Body() body: UpdateUserDto,
+        @Res() res: Response) {
+        await this.userService.updateUserInfo(userId, body)
+        return res.status(HttpStatus.OK).json({
+        message: "Update user information successfully"
+        })
+    }
 
-  @Put()
-  public async update(@Body() body: UpdateUserDto, @Res() res: Response) {
-    await this.userService.update(body)
-    return res.status(HttpStatus.OK).json({msg: "Update user information successfully"})
-  }
+    @Put(':userId/image')
+    public async updateUserImage(
+        @Param('userId') userId: number,
+        @Body() body: UpdateUserImageDto,
+        @Res() res: Response) {
+        await this.userService.updateImage(userId, body)
+        return res.status(HttpStatus.OK).json({
+        message: "Update user image successfully"
+        })
+    }
 
-  @Put('image')
-  public async updateUserImage(@Body() body: UpdateUserImageDto, @Res() res: Response) {
-    await this.userService.updateImage(body)
-    return res.status(HttpStatus.OK).json({msg: "Update user image successfully"})
-  }
+    @Delete(':userId')
+    public async delete(
+        @Param('userId') userId: number,
+        @Res() res: Response) {
+        await this.userService.deleteUserAccount(userId)
+        return res.status(HttpStatus.OK).json({
+        message: "Delete user account successfully"
+        })
+    }
 
-  @Delete()
-  public async delete(@Body() body: DeleteUserDto, @Res() res: Response) {
-    await this.userService.delete(body)
-    return res.status(HttpStatus.OK).json({msg: "Delete user account successfully"})
-  }
+    @Get(':userId/organization')
+    public async getCurrentOrganization(
+        @Param('userId') userId: number, 
+        @Res() res: Response) {
+        const organization = await this.organizationService.getCurrentOrganization(userId)
+        return res.status(HttpStatus.OK).json({ organization })
+    }
 
 }
