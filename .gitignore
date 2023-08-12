@@ -2,8 +2,8 @@ server/volumes/
 ml-server/__pycache__/
 ml-server/api
 ml-server/data
-ml-server/encodedid.npy
 ml-server/encodedimage.npy
+ml-server/encodedid.npy
 server/apps/backend/.env
 server/apps/backend/dist/
 server/apps/backend/node_modules/
