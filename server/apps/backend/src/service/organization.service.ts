@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Organization, OrganizationRole, Role, User } from "src/entity";
+import { Organization, Role, User } from "src/entity";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
 import { Repository } from "typeorm";
 import { RoleService } from "./role.service";

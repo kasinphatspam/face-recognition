@@ -13,6 +13,10 @@ def run(image):
     fr = FaceRecognition()
     return fr.recognition(image)
 
+def encode(image):
+    fr = FaceRecognition()
+    return fr.encode(image)
+
 # Helper
 def face_confidence(face_distance, face_match_threshold=0.6):
     range = 1.0 - face_match_threshold
@@ -29,23 +33,58 @@ def face_confidence(face_distance, face_match_threshold=0.6):
 class FaceRecognition:
     # Initialize variable for encoding image
     file_path_image = "encodedimage.npy"
-    file_path_name = "encodedname.npy"
+    file_path_id = "encodedid.npy"
     face_locations = []
     face_encodings = []
-    face_names = []
+    face_ids = []
 
-    # Check if the file is empty
-    file_size_name = os.path.getsize(file_path_name)
-    if file_size_name == 0:
-        print("ERROR in face-recognition system: dataset is empty.")
-    else:
-        # Import encoded image from encoded.npy
-        known_face_encodings = np.load(file_path_image)
-        known_face_encodings = np.array(known_face_encodings, dtype=np.float64)
-        known_face_names = np.load(file_path_name)
-        known_face_names = np.array(known_face_names)
+    def encode(self, encoded_data):
+        # Decode base64 string data
+        decoded_data = base64.b64decode((encoded_data))
+
+         # Getting the timestamp
+        ts = time.time()
+
+        # Write the decoded data back to original format in  file
+        img_file = open(f"./data/{ts}.jpg", "wb")
+        img_file.write(decoded_data)
+        img_file.close()
+
+        face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
+
+        if len(face_recognition.face_encodings(face_image)) <= 0:
+            print({ "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
+            return { "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+        
+        face_encodings = face_recognition.face_encodings(face_image)
+
+        # check that is it first time for encoding ?
+        if os.path.getsize(self.file_path_image) == 0:
+            known_face_encodings = np.empty((0, 128))
+            face_ids = []
+        else:
+            known_face_encodings = np.load(self.file_path_image)
+            face_ids = np.load(self.file_path_id)
+
+        known_face_encodings = np.concatenate((known_face_encodings, [face_encodings[0]]), axis=0)
+        face_ids = np.concatenate((face_ids, [ts]),axis=0)
+
+        np.save(self.file_path_image, known_face_encodings)
+        np.save(self.file_path_id, face_ids)
+        
+        return
 
     def recognition(self, encoded_data):
+        # Check if the file is empty
+        file_size_id = os.path.getsize(self.file_path_id)
+        if file_size_id == 0:
+            print("ERROR in face-recognition system: dataset is empty.")
+        else:
+            # Import encoded image from encoded.npy
+            known_face_encodings = np.load(self.file_path_image)
+            known_face_encodings = np.array(known_face_encodings, dtype=np.float64)
+            known_face_id = np.load(self.file_path_id)
+            known_face_id = np.array(known_face_id)
 
         # Decode base64 string data
         decoded_data = base64.b64decode((encoded_data))
@@ -54,37 +93,32 @@ class FaceRecognition:
         ts = time.time()
 
         # Write the decoded data back to original format in  file
-        img_file = open(f"./api/{ts}.png", "wb")
+        img_file = open(f"./api/{ts}.jpg", "wb")
         img_file.write(decoded_data)
         img_file.close()
 
-        # First analayze
-        img = Image.open(f"./api/{ts}.png")
-        img = img.rotate(270)
-        img.save(f"./api/{ts}.png")
-
-        face_image = face_recognition.load_image_file(f"api/{ts}.png")
+        face_image = face_recognition.load_image_file(f"api/{ts}.jpg")
 
         if len(face_recognition.face_encodings(face_image)) > 0:
             frame = face_image
         else:
             # Rotate the image to process
-            img = Image.open(f"./api/{ts}.png")
+            img = Image.open(f"./api/{ts}.jpg")
 
             # Analyze the image on each axis in case that the image is rotated
             for i in range(3):
                 img = img.rotate(90)
-                img.save(f"./api/{ts}.png")
+                img.save(f"./api/{ts}.jpg")
 
                 # Initialize variables for scaling and recognition
-                face_image = face_recognition.load_image_file(f"api/{ts}.png")
+                face_image = face_recognition.load_image_file(f"api/{ts}.jpg")
                 if len(face_recognition.face_encodings(face_image)) <= 0:
                     # Returns this function when there are no faces in the image.
                     if(i == 2):
                         # Delete image file
-                        os.unlink(f"./api/{ts}.png")
-                        print({ "name": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
-                        return { "name": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+                        os.unlink(f"./api/{ts}.jpg")
+                        print({ "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
+                        return { "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
                     continue
                 else:
                     frame = face_image
@@ -105,19 +139,19 @@ class FaceRecognition:
         )
 
         # Delete image file
-        os.unlink(f"./api/{ts}.png")
+        os.unlink(f"./api/{ts}.jpg")
 
         # Finds all faces whose index best matches the given image
-        self.face_names = []
+        self.face_ids = []
         for face_encoding in self.face_encodings:
             
             # Compare distance between the given image and dataset image
             face_distances = face_recognition.face_distance(
-                self.known_face_encodings, face_encoding
+                known_face_encodings, face_encoding
             )
             best_match_index = np.argmin(face_distances)
             if face_distances[best_match_index] <= 0.9:
-                name = self.known_face_names[best_match_index]
+                id = known_face_id[best_match_index]
                 # Convert face confidence value to percentage
                 confidence = face_confidence(face_distances[best_match_index])
                 percentage = float(confidence.replace("%",""))
@@ -125,11 +159,9 @@ class FaceRecognition:
                 # the program will return the customer's id.
                 if(percentage > 80):
                     timestamp = datetime.datetime.now()
-                    # Remove the suffix in the file name
-                    name = str(name.replace(".jpg",""))
-                    print({ "name": name, "accuracy": percentage, "timestamp": timestamp})
-                    return { "name": name, "accuracy": percentage, "timestamp": str(timestamp)}
+                    print({ "name": str(id), "accuracy": percentage, "timestamp": timestamp})
+                    return { "name": str(id), "accuracy": percentage, "timestamp": str(timestamp)}
 
         # This result will return when not all datasets match the given image
-        print( { "name": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"})
-        return { "name": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"}
+        print( { "id": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"})
+        return { "id": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"}

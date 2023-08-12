@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 import entities from 'src/entity';
 import { OrganizationModule } from './organization.module';
 
-dotenv.config();
+dotenv.config()
 @Module({
 imports: [
     TypeOrmModule.forRootAsync({

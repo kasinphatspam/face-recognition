@@ -12,7 +12,7 @@ export class UserController {
         private readonly organizationService: OrganizationService
     ) { }
 
-    @Get('all')
+    @Get('list/all')
     public getAllUser() {
         return this.userService.getAllUser()
     }

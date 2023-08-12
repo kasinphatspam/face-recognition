@@ -1,13 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { OrganizationRole, Role } from "src/entity";
+import { Role } from "src/entity";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class RoleService {
     constructor(
-        @InjectRepository(OrganizationRole) private organizationRoleRepository: Repository<OrganizationRole>,
-        @InjectRepository(Role) private roleRepository: Repository<Role>,
+        @InjectRepository(Role) private roleRepository: Repository<Role>
     ) { }
 
     public async createNewRole(roleName: string, organizationId: number): Promise<number> {
@@ -17,23 +16,20 @@ export class RoleService {
             .insert()
             .into(Role)
             .values([{
-                roleName: roleName
+                roleName: roleName,
+                organizationId: organizationId
             }])
             .execute()
-        // Insert data into table: OrganizationRole
-        await this.organizationRoleRepository
-            .createQueryBuilder()
-            .insert()
-            .into(OrganizationRole)
-            .values([{
-                organizationId: organizationId,
-                roleId: role.raw.insertId
-            }])
-            .execute()
+
         return role.raw.insertId
     }
 
-    public async editRole(roleName: string, organizationId: number){
-
+    public async editRole(roleId: number, roleName: string, organizationId: number){
+        await this.roleRepository
+            .createQueryBuilder()
+            .update(Role)
+            .set({ roleName: roleName })
+            .where('roleId = :id', { id: roleId })
+            .execute()
     }
 }

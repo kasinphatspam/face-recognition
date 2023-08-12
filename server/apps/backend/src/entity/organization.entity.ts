@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('organization')
 class Organization {
@@ -48,29 +49,4 @@ class Organization {
     vtigerLink: string
 }
 
-@Entity('organization_department')
-class OrganizationDepartment {
-
-    @PrimaryColumn()
-    organizationId: number
-    @PrimaryColumn()
-    departmentId: number
-}
-
-@Entity('organization_contact')
-class OrganizationContact {
-    @PrimaryColumn()
-    organizationId: number
-    @PrimaryColumn()
-    contactId: number
-}
-
-@Entity('organization_role')
-class OrganizationRole {
-    @PrimaryColumn()
-    organizationId: number
-    @PrimaryColumn()
-    roleId: number
-}
-
-export { Organization, OrganizationDepartment, OrganizationContact, OrganizationRole}
+export { Organization }

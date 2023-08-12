@@ -1,16 +1,22 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entity";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 
+@Injectable()
 export class EmployeeService {
 
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>
     ) { }
 
-    public async getAllEmployee(organizationId: number) {
-        return await this.userRepository.findBy({ organizationId: organizationId })
+    public async getAllEmployee(id: number) {
+        return await this.userRepository.find(
+            { where: [
+                { organizationId: id },
+            ] }
+        )
+    
     }
 
     public async deleteEmployee(organizationId: number, userId: number) {

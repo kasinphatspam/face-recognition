@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from "@nestjs/common";
 import { Response } from "express";
+import { ContactService } from "src/service/contact.service";
 import { EmployeeService } from "src/service/employee.service";
 import { OrganizationService } from "src/service/organization.service";
 import { RoleService } from "src/service/role.service";
+import { CreateNewContactDto, EncodeContactImageDto } from "src/utils/dtos/contact.dto";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
 import { CreateNewRoleDto, EditRoleDto } from "src/utils/dtos/role.dto";
 
@@ -12,7 +14,8 @@ export class OrganizationController {
     constructor(
         private readonly organizationService: OrganizationService,
         private readonly roleService: RoleService,
-        private readonly employeeService: EmployeeService
+        private readonly employeeService: EmployeeService,
+        private readonly contactService: ContactService
     ) { }
 
     @Get(':organizationId')
@@ -89,9 +92,9 @@ export class OrganizationController {
         })
     }
 
-    @Get(':organizationId/employee')
+    @Get(':organizationId/employee/list/all')
     public async getAllEmployee(
-        @Param('organiztionId') organizationId: number
+        @Param('organizationId') organizationId: number
     ) {
         return await this.employeeService
             .getAllEmployee(organizationId)
@@ -127,14 +130,36 @@ export class OrganizationController {
 
     @Get(':organizationId/contact/:contactId')
     public async getContactById(
+        @Param('organizationId') organizationId: number,
         @Param('contactId') contactId: number
     ) {
-        return
+        return await this.contactService.getContactById(organizationId, contactId)
     }
 
-    @Get(':organizationId/contact/all')
-    public async getAllContact() {
-        return
+    @Post(':organizationId/contact')
+    public async createNewContact(
+        @Param('organizationId') organizationId: number,
+        @Body() body: CreateNewContactDto
+    ) {
+        return await this.contactService.createNewContact(organizationId, body)
+    }
+
+    @Put(':organizationId/contact/:contactId/encode')
+    public async encodeContactImage(
+        @Param('organizationId') organizationId: number,
+        @Param('contactId') contactId: number,
+        @Body() body: EncodeContactImageDto,
+        @Res() res: Response
+    ) {
+        await this.contactService.encodeImage(organizationId, contactId, body.imageBase64)
+        return res.status(HttpStatus.OK).json({ message: "encode image successfully" })
+    }
+
+    @Get(':organizationId/contact/list/all')
+    public async getAllContact(
+        @Param('organizationId') organizationId: number
+    ) {
+        return await this.contactService.getAllContact(organizationId)
     }
 
     @Get(':organizationId/role/:roleId')
@@ -150,13 +175,14 @@ export class OrganizationController {
             .createNewRole(body.roleName, organizationId)
     }
 
-    @Put(':organizationId/role')
+    @Put(':organizationId/role/:roleId')
     public async editRole(
         @Param('organizationId') organizationId: number,
+        @Param('roleId') roleId: number,
         @Body() body: EditRoleDto
     ) {
         return await this.roleService
-            .editRole(body.roleName, organizationId)
+            .editRole(roleId, body.roleName, organizationId)
     }
 
     @Put('role/permission')

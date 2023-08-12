@@ -8,6 +8,11 @@ export class Contact {
     @Column({
         nullable: false
     })
+    organizationId: number
+
+    @Column({
+        nullable: false
+    })
     firstname: string
     
     @Column({
@@ -54,7 +59,9 @@ export class Contact {
     @Column()
     linkedin: string
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     encodedData: string
     
 }

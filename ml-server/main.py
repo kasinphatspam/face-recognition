@@ -38,12 +38,17 @@ def contact():
     
     return 'HTTP_METHOD_NOT_SUPPORTED'
 
-@app.route("/face-recognition", methods=['GET','POST','DELETE'])
+@app.route("/face-recognition", methods=['GET','POST', 'PUT','DELETE'])
 def face_recognition_service(): 
+    request_data = request.get_json()
     if request.method == 'POST':
-        request_data = request.get_json()
         image = request_data['imageBase64']
         return recognition.run(image)
+    
+    if request.method == 'PUT':
+        image = request_data['imageBase64']
+        dict = { "encodedData":  recognition.encode(image) }
+        return dict
     
     return 'HTTP_METHOD_NOT_SUPPORTED'
 
