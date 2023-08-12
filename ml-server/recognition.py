@@ -74,11 +74,12 @@ class FaceRecognition:
         
         return
 
-    def recognition(self, encoded_data):
+    def recognition(self, encoded_data): 
         # Check if the file is empty
         file_size_id = os.path.getsize(self.file_path_id)
         if file_size_id == 0:
             print("ERROR in face-recognition system: dataset is empty.")
+            return { "id": "ERROR", "accuracy": "0", "timestamp": "0"}
         else:
             # Import encoded image from encoded.npy
             known_face_encodings = np.load(self.file_path_image)
@@ -159,8 +160,8 @@ class FaceRecognition:
                 # the program will return the customer's id.
                 if(percentage > 80):
                     timestamp = datetime.datetime.now()
-                    print({ "name": str(id), "accuracy": percentage, "timestamp": timestamp})
-                    return { "name": str(id), "accuracy": percentage, "timestamp": str(timestamp)}
+                    print({ "id": str(id), "accuracy": percentage, "timestamp": timestamp})
+                    return { "id": str(id), "accuracy": percentage, "timestamp": str(timestamp)}
 
         # This result will return when not all datasets match the given image
         print( { "id": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"})
