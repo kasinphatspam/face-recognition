@@ -151,8 +151,16 @@ export class OrganizationController {
         @Body() body: EncodeContactImageDto,
         @Res() res: Response
     ) {
-        await this.contactService.encodeImage(organizationId, contactId, body.imageBase64)
-        return res.status(HttpStatus.OK).json({ message: "encode image successfully" })
+        const encodedId = await this.contactService.encodeImage(organizationId, contactId, body.imageBase64)
+        return res.status(HttpStatus.OK).json({ message: "encode image successfully", encodedId: encodedId })
+    }
+
+    @Post(':organizationId/contact/encode/recognition')
+    public async recognitionContactImage(
+        @Param('organizationId') organizationId: number,
+        @Body() body: EncodeContactImageDto
+    ) {
+        return await this.contactService.recognitionImage(organizationId, body.imageBase64)
     }
 
     @Get(':organizationId/contact/list/all')
@@ -162,9 +170,11 @@ export class OrganizationController {
         return await this.contactService.getAllContact(organizationId)
     }
 
-    @Get(':organizationId/role/:roleId')
-    public async getListOfRoleById() {
-        return
+    @Get(':organizationId/role/list/all')
+    public async getAllRole(
+        @Param('organizationId') organizationId: number
+    ) {
+        return await this.roleService.getAllRole(organizationId)
     }
 
     @Post(':organizationId/role')
@@ -185,12 +195,12 @@ export class OrganizationController {
             .editRole(roleId, body.roleName, organizationId)
     }
 
-    @Put('role/permission')
+    @Put(':organizationId/role/permission')
     public async editRolePermission() {
         return
     }
 
-    @Delete('role')
+    @Delete(':organizationId/role')
     public async deleteRole() {
         return
     }

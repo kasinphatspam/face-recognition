@@ -53,8 +53,7 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
 
         if len(face_recognition.face_encodings(face_image)) <= 0:
-            print({ "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
-            return { "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+            return None
         
         face_encodings = face_recognition.face_encodings(face_image)
 
@@ -72,7 +71,7 @@ class FaceRecognition:
         np.save(self.file_path_image, known_face_encodings)
         np.save(self.file_path_id, face_ids)
         
-        return
+        return str(ts)
 
     def recognition(self, encoded_data): 
         # Check if the file is empty

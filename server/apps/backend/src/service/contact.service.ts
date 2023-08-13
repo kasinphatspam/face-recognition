@@ -54,14 +54,25 @@ export class ContactService {
     }
 
     public async encodeImage(organizationId: number, contactId: number, base64: string) {
-        const encodeData = await this.restApiService.encodeImage(organizationId, contactId, base64)
+        const encodeId = await this.restApiService.encodeImage(base64)
         await this.contactRepository
             .createQueryBuilder()
             .update(Contact)
-            .set({ encodedData: encodeData })
+            .set({ encodedData: encodeId })
             .where(
                 'organizationId = :organizationId AND contactId = :contactId',
                 { organizationId: organizationId, contactId: contactId })
             .execute()
+        return encodeId
+    }
+
+    public async recognitionImage(organizationId: number, base64: string){
+        const encodeId =  await this.restApiService.recognitionImage(base64)
+        if(encodeId == "UNKNOWN_CUSTOMER")
+            return "unknown"
+        else if(encodeId == "FACE_NOT_FOUND")
+            return "face not found"
+        else
+            return await this.contactRepository.findOneBy({ encodedData: encodeId, organizationId: organizationId })
     }
 }

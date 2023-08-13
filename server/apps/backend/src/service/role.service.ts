@@ -24,12 +24,17 @@ export class RoleService {
         return role.raw.insertId
     }
 
-    public async editRole(roleId: number, roleName: string, organizationId: number){
+    public async editRole(roleId: number, roleName: string, organizationId: number) {
         await this.roleRepository
             .createQueryBuilder()
             .update(Role)
             .set({ roleName: roleName })
             .where('roleId = :id', { id: roleId })
             .execute()
+    }
+
+    public async getAllRole(organizationId: number) {
+        await this.roleRepository
+            .find({ where: { organizationId: organizationId } })
     }
 }

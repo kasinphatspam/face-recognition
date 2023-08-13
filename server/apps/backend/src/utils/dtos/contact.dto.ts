@@ -21,7 +21,12 @@ class EncodeContactImageDto {
 }
 
 class EncodeImageResponseDto {
-    public encodedData: string
+    public encodedId: string
 }
 
-export { CreateNewContactDto, EncodeContactImageDto, EncodeImageResponseDto }
+class RecognitionImageResponseDto {
+    public id: string
+    public accuracy: string
+}
+
+export { CreateNewContactDto, EncodeContactImageDto, EncodeImageResponseDto, RecognitionImageResponseDto }

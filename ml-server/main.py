@@ -18,26 +18,6 @@ def status():
     dict = { "message": "Server connected"}
     return dict
 
-@app.route("/contact", methods=['GET','POST','DELETE'])
-def contact():
-
-    # Add new contact dataset
-    if request.method == 'POST':
-        request_data = request.get_json()
-        name = request_data['name']
-        image = request_data['imageBase64']
-        # return data_task.api_add(image,name)
-    
-    # Delete contact dataset
-    if request.method == 'DELETE':
-        request_data = request.get_json()
-        name = request_data['name']
-        if name is None:
-            return 'None'
-        # return data_task.api_remove(name)
-    
-    return 'HTTP_METHOD_NOT_SUPPORTED'
-
 @app.route("/face-recognition", methods=['GET','POST', 'PUT','DELETE'])
 def face_recognition_service(): 
     request_data = request.get_json()
@@ -47,7 +27,7 @@ def face_recognition_service():
     
     if request.method == 'PUT':
         image = request_data['imageBase64']
-        dict = { "encodedData":  recognition.encode(image) }
+        dict = { "encodedId":  recognition.encode(image) }
         return dict
     
     return 'HTTP_METHOD_NOT_SUPPORTED'
