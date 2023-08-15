@@ -2,7 +2,7 @@ class CreateNewContactDto {
     public firstname: string
     public lastname: string
     public organizationName: string
-    public titile: string
+    public title: string
     public officePhone: string
     public mobile: string
     public email: string
@@ -26,7 +26,9 @@ class EncodeImageResponseDto {
 
 class RecognitionImageResponseDto {
     public id: string
-    public accuracy: string
+    public statusCode: number
+    public accuracy: Float32Array
+    public checkedTime: Date
 }
 
 export { CreateNewContactDto, EncodeContactImageDto, EncodeImageResponseDto, RecognitionImageResponseDto }

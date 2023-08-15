@@ -3,12 +3,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Contact } from "src/entity";
 import { CreateNewContactDto } from "src/utils/dtos/contact.dto";
 import { Repository } from "typeorm";
-import { RestApiService } from "./restapi.service";
+import { RecognitionApiService } from "./recognition.api.service";
 
 @Injectable()
 export class ContactService {
     constructor(
-        private readonly restApiService: RestApiService,
+        private readonly restApiService: RecognitionApiService,
         @InjectRepository(Contact) private contactRepository: Repository<Contact>
     ) { }
 
@@ -26,7 +26,7 @@ export class ContactService {
                     firstname: body.firstname,
                     lastname: body.lastname,
                     organizationName: body.organizationName,
-                    titile: body.titile,
+                    title: body.title,
                     officePhone: body.officePhone,
                     mobile: body.mobile,
                     email: body.email,
@@ -44,7 +44,9 @@ export class ContactService {
     }
 
     public async getContactById(organizationId: number, contactId: number) {
-        return await this.contactRepository.findOneBy({ contactId: contactId, organizationId: organizationId })
+        return await this.contactRepository.findOneBy({
+            contactId: contactId, organizationId: organizationId
+        })
     }
 
     public async getAllContact(id: number) {
@@ -58,7 +60,7 @@ export class ContactService {
         await this.contactRepository
             .createQueryBuilder()
             .update(Contact)
-            .set({ encodedData: encodeId })
+            .set({ encodedId: encodeId })
             .where(
                 'organizationId = :organizationId AND contactId = :contactId',
                 { organizationId: organizationId, contactId: contactId })
@@ -66,13 +68,16 @@ export class ContactService {
         return encodeId
     }
 
-    public async recognitionImage(organizationId: number, base64: string){
-        const encodeId =  await this.restApiService.recognitionImage(base64)
-        if(encodeId == "UNKNOWN_CUSTOMER")
-            return "unknown"
-        else if(encodeId == "FACE_NOT_FOUND")
-            return "face not found"
-        else
-            return await this.contactRepository.findOneBy({ encodedData: encodeId, organizationId: organizationId })
+    public async recognitionImage(organizationId: number, base64: string) {
+        const resultObj = await this.restApiService.recognitionImage(base64)
+        const contact = await this.contactRepository
+            .findOneBy({ encodedId: resultObj.id, organizationId: organizationId })
+        let object = {
+            checkedTime: resultObj.checkedTime,
+            accuracy: resultObj.accuracy,
+            statusCode: resultObj.statusCode,
+            result: contact
+        }
+        return object
     }
 }

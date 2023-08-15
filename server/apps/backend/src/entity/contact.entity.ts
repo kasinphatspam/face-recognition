@@ -24,7 +24,7 @@ export class Contact {
     organizationName: string
 
     @Column()
-    titile: string
+    title: string
 
     @Column()
     officePhone: string
@@ -62,6 +62,6 @@ export class Contact {
     @Column({
         nullable: true
     })
-    encodedData: string
+    encodedId: string
     
 }

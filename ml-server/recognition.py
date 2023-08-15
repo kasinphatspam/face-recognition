@@ -70,15 +70,24 @@ class FaceRecognition:
 
         np.save(self.file_path_image, known_face_encodings)
         np.save(self.file_path_id, face_ids)
+
+        # Delete image file
+        os.unlink(f"./data/{ts}.jpg")
         
         return str(ts)
+    
+    # StatusCode
+    # -1: ERROR (Empty dataset, No face detected on the image)
+    #  0: Unknown
+    #  1: Success it will return id
 
     def recognition(self, encoded_data): 
         # Check if the file is empty
         file_size_id = os.path.getsize(self.file_path_id)
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if file_size_id == 0:
             print("ERROR in face-recognition system: dataset is empty.")
-            return { "id": "ERROR", "accuracy": "0", "timestamp": "0"}
+            return { "id": "ERROR","statusCode": -1, "accuracy": 0, "checkedTime": timestamp}
         else:
             # Import encoded image from encoded.npy
             known_face_encodings = np.load(self.file_path_image)
@@ -117,8 +126,8 @@ class FaceRecognition:
                     if(i == 2):
                         # Delete image file
                         os.unlink(f"./api/{ts}.jpg")
-                        print({ "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"})
-                        return { "id": "FACE_NOT_FOUND", "accuracy": "0", "timestamp": "0"}
+                        print({ "id": "FACE_NOT_FOUND","statusCode": -1, "accuracy": "0", "checkedTime": timestamp})
+                        return { "id": "FACE_NOT_FOUND","statusCode": -1, "accuracy": 0, "checkedTime": timestamp}
                     continue
                 else:
                     frame = face_image
@@ -158,10 +167,9 @@ class FaceRecognition:
                 # Check the condition, the displayed percentage must be greater than 90 percent, 
                 # the program will return the customer's id.
                 if(percentage > 80):
-                    timestamp = datetime.datetime.now()
-                    print({ "id": str(id), "accuracy": percentage, "timestamp": timestamp})
-                    return { "id": str(id), "accuracy": percentage, "timestamp": str(timestamp)}
+                    print({ "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp})
+                    return { "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp}
 
         # This result will return when not all datasets match the given image
-        print( { "id": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"})
-        return { "id": "UNKNOWN_CUSTOMER", "accuracy": "0", "timestamp": "0"}
+        print( { "id": "UNKNOWN_CUSTOMER","statusCode": 0, "accuracy": 0, "checkedTime": timestamp})
+        return { "id": "UNKNOWN_CUSTOMER","statusCode": 0, "accuracy": 0, "checkedTime": timestamp}
