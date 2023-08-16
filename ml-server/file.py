@@ -17,12 +17,12 @@ def check_unique_filename(filename):
         return False
     return True
 
-def createFile(filename):
+def create_file(filename):
     if check_unique_filename(filename):
         file_image = f"dataset/image/{filename}.npy"
         file_encodeId = f"dataset/id/{filename}.npy"
         open(file_image, 'wb')
         open(file_encodeId, 'wb')
         return True
-    return createFile(generate_random_filename(8))
+    return create_file(generate_random_filename(8))
     
