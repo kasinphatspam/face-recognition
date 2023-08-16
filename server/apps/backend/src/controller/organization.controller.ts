@@ -200,9 +200,12 @@ export class OrganizationController {
         return
     }
 
-    @Delete(':organizationId/role')
-    public async deleteRole() {
-        return
+    @Delete(':organizationId/role/:roleId')
+    public async deleteRole(
+        @Param('organizationId') organizationId: number,
+        @Param('roleId') roleId: number
+    ) {
+        return this.roleService.deleteRole(organizationId,roleId)
     }
 
 }

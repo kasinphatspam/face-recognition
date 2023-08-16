@@ -4,11 +4,13 @@ import { Organization, Role, User } from "src/entity";
 import { CreateOrganizationDto, UpdateOrganizationDto } from "src/utils/dtos/organization.dto";
 import { Repository } from "typeorm";
 import { RoleService } from "./role.service";
+import { RecognitionApiService } from "./recognition.api.service";
 
 @Injectable()
 export class OrganizationService {
 
     constructor(
+        private readonly recognitionApiService: RecognitionApiService,
         private readonly roleService: RoleService,
         @InjectRepository(Organization) private organizationRepository: Repository<Organization>,
         @InjectRepository(User) private userRepository: Repository<User>
@@ -36,6 +38,9 @@ export class OrganizationService {
         while (await this.organizationRepository.findOneBy({ code: passcode }) != null) {
             passcode = Math.random().toString(36).slice(-8).toUpperCase()
         }
+        // Create dataset file on ml-server
+        const packageKey = await this.recognitionApiService.createPackage()
+
         // Get current datetime
         const createdTime = new Date()
         // Find expiration time with current time + 30 days
@@ -51,7 +56,8 @@ export class OrganizationService {
                 organizationName: body.organizationName,
                 code: passcode,
                 codeCreatedTime: createdTime,
-                codeExpiredTime: expirationTime
+                codeExpiredTime: expirationTime,
+                packageKey: packageKey
             }])
             .execute()
         // Create simple role to new organization

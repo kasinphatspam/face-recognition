@@ -9,12 +9,12 @@ import base64
 from PIL import Image
 
 # Running
-def run(image):
-    fr = FaceRecognition()
+def run(packageKey, image):
+    fr = FaceRecognition(packageKey)
     return fr.recognition(image)
 
-def encode(image):
-    fr = FaceRecognition()
+def encode(packageKey, image):
+    fr = FaceRecognition(packageKey)
     return fr.encode(image)
 
 # Helper
@@ -31,14 +31,17 @@ def face_confidence(face_distance, face_match_threshold=0.6):
         return str(round(value, 2)) + "%"
 
 class FaceRecognition:
-    # Initialize variable for encoding image
-    file_path_image = "encodedimage.npy"
-    file_path_id = "encodedid.npy"
-    face_locations = []
-    face_encodings = []
-    face_ids = []
+
+    def __init__(self, packageKey):
+        # Initialize variable for encoding image
+        self.file_path_image = "dataset/image/" + packageKey + ".npy"
+        self.file_path_id = "dataset/id/" + packageKey + ".npy"
+        self.face_locations = []
+        self.face_encodings = []
+        self.face_ids = []
 
     def encode(self, encoded_data):
+
         # Decode base64 string data
         decoded_data = base64.b64decode((encoded_data))
 
@@ -82,6 +85,7 @@ class FaceRecognition:
     #  1: Success it will return id
 
     def recognition(self, encoded_data): 
+
         # Check if the file is empty
         file_size_id = os.path.getsize(self.file_path_id)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

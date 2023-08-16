@@ -31,4 +31,8 @@ class RecognitionImageResponseDto {
     public checkedTime: Date
 }
 
-export { CreateNewContactDto, EncodeContactImageDto, EncodeImageResponseDto, RecognitionImageResponseDto }
+class CreatePackageResponseDto {
+    public packageKey: string
+}
+
+export { CreateNewContactDto, EncodeContactImageDto, EncodeImageResponseDto, RecognitionImageResponseDto, CreatePackageResponseDto }

@@ -1,12 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Role } from "src/entity";
+import { Role, User } from "src/entity";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class RoleService {
     constructor(
-        @InjectRepository(Role) private roleRepository: Repository<Role>
+        @InjectRepository(Role) private roleRepository: Repository<Role>,
+        @InjectRepository(Role) private userRepository: Repository<User>
     ) { }
 
     public async createNewRole(roleName: string, organizationId: number): Promise<number> {
@@ -36,5 +37,16 @@ export class RoleService {
     public async getAllRole(organizationId: number) {
         await this.roleRepository
             .find({ where: { organizationId: organizationId } })
+    }
+
+    public async deleteRole(organizationId: number, roleId: number){
+        const property = await this.userRepository.find({ 
+            where: { organizationId: organizationId, roleId: roleId } 
+        })
+
+        if(property != null){
+            throw new BadRequestException("There are still employee using this role.")
+        }
+        return await this.roleRepository.delete({ roleId: roleId, organizationId: organizationId })
     }
 }

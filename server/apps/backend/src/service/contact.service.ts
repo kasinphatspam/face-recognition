@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Contact } from "src/entity";
+import { Contact, Organization } from "src/entity";
 import { CreateNewContactDto } from "src/utils/dtos/contact.dto";
 import { Repository } from "typeorm";
 import { RecognitionApiService } from "./recognition.api.service";
@@ -8,8 +8,9 @@ import { RecognitionApiService } from "./recognition.api.service";
 @Injectable()
 export class ContactService {
     constructor(
-        private readonly restApiService: RecognitionApiService,
-        @InjectRepository(Contact) private contactRepository: Repository<Contact>
+        private readonly recognitionApiService: RecognitionApiService,
+        @InjectRepository(Contact) private contactRepository: Repository<Contact>,
+        @InjectRepository(Organization) private organizationRepository: Repository<Organization>
     ) { }
 
     public async createNewContact(
@@ -56,7 +57,11 @@ export class ContactService {
     }
 
     public async encodeImage(organizationId: number, contactId: number, base64: string) {
-        const encodeId = await this.restApiService.encodeImage(base64)
+        const packageKey = (await this.organizationRepository
+            .findOneBy({
+                organizationId: organizationId
+            })).packageKey
+        const encodeId = await this.recognitionApiService.encodeImage(packageKey, base64)
         await this.contactRepository
             .createQueryBuilder()
             .update(Contact)
@@ -69,7 +74,11 @@ export class ContactService {
     }
 
     public async recognitionImage(organizationId: number, base64: string) {
-        const resultObj = await this.restApiService.recognitionImage(base64)
+        const packageKey = (await this.organizationRepository
+            .findOneBy({
+                organizationId: organizationId
+            })).packageKey
+        const resultObj = await this.recognitionApiService.recognitionImage(packageKey, base64)
         const contact = await this.contactRepository
             .findOneBy({ encodedId: resultObj.id, organizationId: organizationId })
         let object = {

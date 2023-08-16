@@ -47,6 +47,12 @@ class Organization {
         default: ""
     })
     vtigerLink: string
+
+    @Column({
+        nullable: true,
+        default: ""
+    })
+    packageKey: string
 }
 
 export { Organization }
