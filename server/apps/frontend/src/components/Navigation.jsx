@@ -13,7 +13,7 @@ import {
     Dropdown, 
     DropdownMenu, 
     Avatar, 
-    Button
+    Button,
     } from "@nextui-org/react";
 
     {/* menu Item for small devices screen */}
@@ -78,7 +78,8 @@ export default function Navigation(props) {
           </Link>
         </NavbarItem>
       </NavbarContent>
-
+    
+    
     {/* Sign up or Logined parts */}
     <NavbarContent as="div" justify="end">
         <NavbarItem hidden={!StatusLogin}>
@@ -146,6 +147,10 @@ export function AnalyticsNavigation(props) {
       </NavbarBrand>
     </NavbarContent>
 
+    {/* Tabs for medium devices or desktop */}
+    <NavbarContent className="hidden sm:flex gap-4" justify="center">
+
+    </NavbarContent>
     {/* Sign up or Logined parts */}
     <NavbarContent as="div" justify="end">
         <NavbarItem hidden={!StatusLogin}>

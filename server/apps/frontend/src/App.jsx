@@ -2,9 +2,10 @@ import { NextUIProvider } from '@nextui-org/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from '@/pages/HomePage';
 import Analytics from '@/pages/Analytics';
-import Loginpage from './pages/LoginPage';
+import Loginpage from '@/pages/LoginPage';
 import Signuppage from '@/pages/SignUpPage';
 import Profile from '@/pages/ProfilePage';
+import PermissionPage from '@/pages/Permission';
 
 export const App = () => {
   
@@ -17,6 +18,7 @@ export const App = () => {
           <Route path='/login' element={<Loginpage />} />
           <Route path='/signup' element={<Signuppage />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/permission' element={<PermissionPage />} />
         </Routes>
       </BrowserRouter>
     </NextUIProvider>
