@@ -23,6 +23,6 @@ export const role = [
     },
     {id: 2,
     name: 'C.M.',
+    },
     
-    }
 ]

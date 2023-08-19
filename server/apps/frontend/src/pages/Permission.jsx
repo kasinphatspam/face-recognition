@@ -301,13 +301,13 @@ export default function PermissionPage() {
 
         <div className="flex flex-row mt-12 ml-[80px] mb-6">
           <div className="flex flex-col">
-            <p className="text-inherit font-semibold text-4xl align-bottom">Dashboard</p>
+            <p className="text-inherit font-bold text-4xl align-bottom">Dashboard</p>
 
             {/* Head text display forum */}
             <div className="flex flex-row mt-6 ml-1">
               <p className="text-inherit font-light text-md align-bottom hover:underline">Analytics</p>
               <p className="text-inherit font-light text-md align-bottom ml-2">/</p>
-              <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">permission</p>
+              <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">Permission</p>
             </div>
           
           {/* Employee list */}
@@ -328,9 +328,11 @@ export default function PermissionPage() {
               sortDescriptor={sortDescriptor}
               topContent={topContent}
               topContentPlacement="outside"
+              bottomContent={bottomContent}
+              bottomContentPlacement="outside"
               onSortChange={setSortDescriptor}
               classNames={{
-                wrapper: "max-h-[382px]",
+                wrapper: "max-h-[284px]",
               }}
               >
                 <TableHeader columns={headerColumns}>

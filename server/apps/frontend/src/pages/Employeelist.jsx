@@ -308,7 +308,7 @@ export default function PermissionPage() {
 
         <div className="flex flex-row mt-12 ml-[80px] mb-6">
           <div className="flex flex-col">
-            <p className="text-inherit font-semibold text-4xl align-bottom">Dashboard</p>
+            <p className="text-inherit font-bold text-4xl align-bottom">Dashboard</p>
 
             {/* Head text display forum */}
             <div className="flex flex-row mt-6 ml-1">

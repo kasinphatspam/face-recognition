@@ -36,7 +36,7 @@ export default function HomePage() {
         {/* Right Content */}
         <div className="flex flex-col items-center -mb-16">
           {/* Images */}
-          <img src="/Faceillus.svg" className="w-[550px] min-w-[220px] ml-[35vw] -translate-x-1/2 mt-[28.125vw] -translate-y-3/4" />
+          <img src="/Faceillus.svg" className="w-[550px] min-w-[220px] ml-[35vw] -translate-x-1/2 mt-[40vh] -translate-y-3/4" />
 
         </div>
       </div>
