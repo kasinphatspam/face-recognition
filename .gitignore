@@ -6,6 +6,7 @@ ml-server/encodedimage.npy
 ml-server/encodedid.npy
 ml-server/dataset/
 server/apps/backend/.env
+server/apps/backend/images/
 server/apps/backend/dist/
 server/apps/backend/node_modules/
 server/.env

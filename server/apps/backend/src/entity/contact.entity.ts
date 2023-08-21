@@ -2,66 +2,65 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('contact')
 export class Contact {
-    @PrimaryGeneratedColumn("increment")
-    contactId: number
+  @PrimaryGeneratedColumn('increment')
+  contactId: number;
 
-    @Column({
-        nullable: false
-    })
-    organizationId: number
+  @Column({
+    nullable: false,
+  })
+  organizationId: number;
 
-    @Column({
-        nullable: false
-    })
-    firstname: string
-    
-    @Column({
-        nullable: false
-    })
-    lastname: string
+  @Column({
+    nullable: false,
+  })
+  firstname: string;
 
-    @Column()
-    organizationName: string
+  @Column({
+    nullable: false,
+  })
+  lastname: string;
 
-    @Column()
-    title: string
+  @Column()
+  organizationName: string;
 
-    @Column()
-    officePhone: string
+  @Column()
+  title: string;
 
-    @Column()
-    mobile: string
+  @Column()
+  officePhone: string;
 
-    @Column()
-    email: string
+  @Column()
+  mobile: string;
 
-    @Column()
-    alternateEmail: string
+  @Column()
+  email: string;
 
-    @Column()
-    dob: Date
+  @Column()
+  alternateEmail: string;
 
-    @Column()
-    contactOwner: string
+  @Column()
+  dob: Date;
 
-    @Column()
-    createdTime: Date
+  @Column()
+  contactOwner: string;
 
-    @Column()
-    modifiedTime: Date
+  @Column()
+  createdTime: Date;
 
-    @Column()
-    lineId: string
+  @Column()
+  modifiedTime: Date;
 
-    @Column()
-    facebook: string
+  @Column()
+  lineId: string;
 
-    @Column()
-    linkedin: string
+  @Column()
+  facebook: string;
 
-    @Column({
-        nullable: true
-    })
-    encodedId: string
-    
+  @Column()
+  linkedin: string;
+
+  @Column({
+    nullable: true,
+  })
+  encodedId: string;
 }

@@ -1,9 +1,9 @@
 class CreateNewRoleDto {
-    public roleName: string
+  public roleName: string;
 }
 
 class EditRoleDto {
-    public roleName: string
+  public roleName: string;
 }
 
-export { CreateNewRoleDto, EditRoleDto }
+export { CreateNewRoleDto, EditRoleDto };

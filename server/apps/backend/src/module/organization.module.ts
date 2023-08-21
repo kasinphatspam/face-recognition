@@ -9,9 +9,14 @@ import { ContactService } from 'src/service/contact.service';
 import { RecognitionApiService } from 'src/service/recognition.api.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Organization, Role, User, Contact])],
-    providers: [OrganizationService, RoleService, EmployeeService, ContactService, RecognitionApiService],
-    controllers: [OrganizationController],
+  imports: [TypeOrmModule.forFeature([Organization, Role, User, Contact])],
+  providers: [
+    OrganizationService,
+    RoleService,
+    EmployeeService,
+    ContactService,
+    RecognitionApiService,
+  ],
+  controllers: [OrganizationController],
 })
-
-export class OrganizationModule { }
+export class OrganizationModule {}

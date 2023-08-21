@@ -6,11 +6,17 @@ import { Organization, Role, User } from 'src/entity';
 import { RoleService } from 'src/service/role.service';
 import { OrganizationService } from 'src/service/organization.service';
 import { RecognitionApiService } from 'src/service/recognition.api.service';
+import { ImageService } from 'src/service/image.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Organization, Role])],
-    providers: [UserService, OrganizationService, RoleService, RecognitionApiService],
-    controllers: [UserController],
+  imports: [TypeOrmModule.forFeature([User, Organization, Role])],
+  providers: [
+    UserService,
+    OrganizationService,
+    RoleService,
+    RecognitionApiService,
+    ImageService,
+  ],
+  controllers: [UserController],
 })
-
-export class UserModule { }
+export class UserModule {}

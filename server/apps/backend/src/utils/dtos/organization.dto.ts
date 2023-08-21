@@ -1,9 +1,9 @@
 class CreateOrganizationDto {
-    public organizationName: string
+  public organizationName: string;
 }
 
 class UpdateOrganizationDto {
-    public organizatioName: string
+  public organizatioName: string;
 }
 
-export { CreateOrganizationDto, UpdateOrganizationDto }
+export { CreateOrganizationDto, UpdateOrganizationDto };
