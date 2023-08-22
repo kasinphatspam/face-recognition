@@ -47,12 +47,12 @@ export class OrganizationService {
     body: CreateOrganizationDto,
   ) {
     // Generate a random passcode
-    let passcode = Math.random().toString(36).slice(-8).toUpperCase();
+    let passcode = Math.random().toString(36).slice(-6).toUpperCase();
     // Check if this passcode is not exist
     while (
       (await this.organizationRepository.findOneBy({ code: passcode })) != null
     ) {
-      passcode = Math.random().toString(36).slice(-8).toUpperCase();
+      passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }
     // Create dataset file on ml-server
     const packageKey = await this.recognitionApiService.createPackage();
@@ -133,13 +133,12 @@ export class OrganizationService {
 
   public async generateNewPasscode(organizationId: number): Promise<string> {
     // Generate a random passcode
-    let passcode = Math.random().toString(36).slice(-8).toUpperCase();
+    let passcode = Math.random().toString(36).slice(-6).toUpperCase();
     // Check if this passcode is not exist
     while (
       (await this.organizationRepository.findOneBy({ code: passcode })) != null
     ) {
-      passcode = Math.floor(Math.random() * (5 - 1 + 1) + 1).toString();
-      passcode = Math.random().toString(36).slice(-8).toUpperCase();
+      passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }
     await this.organizationRepository.save({
       organizationId: organizationId,

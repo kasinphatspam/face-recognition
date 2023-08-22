@@ -5,8 +5,10 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import * as dotenv from 'dotenv';
 import { Organization } from './organization.entity';
 
+dotenv.config()
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment')
@@ -34,7 +36,7 @@ export class User {
   lastname: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   gender: string;
 
@@ -44,14 +46,14 @@ export class User {
   personalId: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   dob: Date;
 
   @Column({
     name: 'profileImage',
     nullable: true,
-    default: '',
+    default: `${process.env.BACKEND_URL}/images/users/default.jpeg`,
   })
   image: string;
 

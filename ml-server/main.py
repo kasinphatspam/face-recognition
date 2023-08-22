@@ -22,7 +22,7 @@ def status():
 @app.route("/create-package")
 def create_package():
     packageKey = file.generate_random_filename(8)
-    if(file.createFile(packageKey)):
+    if(file.create_file(packageKey)):
         return { "message": "File package has been created", "packageKey": packageKey }
     return { "message": "Failed to create the file package."}
 

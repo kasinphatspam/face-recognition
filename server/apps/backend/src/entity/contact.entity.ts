@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 @Entity('contact')
 export class Contact {
   @PrimaryGeneratedColumn('increment')
@@ -63,4 +65,10 @@ export class Contact {
     nullable: true,
   })
   encodedId: string;
+
+  @Column({
+    nullable: false,
+    default: `${process.env.BACKEND_URL}/images/contact/default.jpeg`
+  })
+  image: string
 }
