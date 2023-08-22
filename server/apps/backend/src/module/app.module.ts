@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from '../controller/app.controller';
-import { AppService } from '../service/app.service';
-import { AuthModule } from './auth.module';
-import { UserModule } from './user.module';
+import { AppController } from '@/controller/app.controller';
+import { AppService } from '@/service/app.service';
+import { AuthModule } from '@/module/auth.module';
+import { UserModule } from '@/module//user.module';
 import * as dotenv from 'dotenv';
-import entities from 'src/entity';
-import { OrganizationModule } from './organization.module';
-import { ImageModule } from './image.module';
+import entities from '@/entity';
+import { OrganizationModule } from '@/module/organization.module';
+import { ImageModule } from '@/module/image.module';
 
 dotenv.config();
 @Module({

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contact, Organization } from 'src/entity';
-import { CreateNewContactDto } from 'src/utils/dtos/contact.dto';
+import { Contact, Organization } from '@/entity';
+import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
 import { Repository } from 'typeorm';
-import { RecognitionApiService } from './recognition.api.service';
+import { RecognitionApiService } from '@/service/recognition.api.service';
 
 @Injectable()
 export class ContactService {
@@ -99,7 +99,7 @@ export class ContactService {
       encodedId: resultObj.id,
       organizationId: organizationId,
     });
-    let object = {
+    const object = {
       checkedTime: resultObj.checkedTime,
       accuracy: resultObj.accuracy,
       statusCode: resultObj.statusCode,

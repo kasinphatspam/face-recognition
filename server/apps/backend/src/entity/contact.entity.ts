@@ -68,7 +68,7 @@ export class Contact {
 
   @Column({
     nullable: false,
-    default: `${process.env.BACKEND_URL}/images/contact/default.jpeg`
+    default: `${process.env.BACKEND_URL}/images/contact/default.jpeg`,
   })
-  image: string
+  image: string;
 }

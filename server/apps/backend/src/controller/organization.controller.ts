@@ -10,19 +10,19 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ContactService } from 'src/service/contact.service';
-import { EmployeeService } from 'src/service/employee.service';
-import { OrganizationService } from 'src/service/organization.service';
-import { RoleService } from 'src/service/role.service';
+import { ContactService } from '@/service/contact.service';
+import { EmployeeService } from '@/service/employee.service';
+import { OrganizationService } from '@/service/organization.service';
+import { RoleService } from '@/service/role.service';
 import {
   CreateNewContactDto,
   EncodeContactImageDto,
-} from 'src/utils/dtos/contact.dto';
+} from '@/utils/dtos/contact.dto';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
-} from 'src/utils/dtos/organization.dto';
-import { CreateNewRoleDto, EditRoleDto } from 'src/utils/dtos/role.dto';
+} from '@/utils/dtos/organization.dto';
+import { CreateNewRoleDto, EditRoleDto } from '@/utils/dtos/role.dto';
 
 @Controller('organization')
 export class OrganizationController {
