@@ -1,11 +1,20 @@
-import { Card, Divider, Link, Image, CardFooter, CardHeader, Tooltip } from "@nextui-org/react";
+import { Card, 
+    Divider, 
+    Link, 
+    Image, 
+    CardFooter, 
+    CardHeader, 
+    Tooltip } 
+        from "@nextui-org/react";
 import React from "react";
 
 export default function OrganizeCard(props) {
     return (
         <>  
+            {/** Tool name */}
             <Tooltip color="default" content={props.name}>
                 <Card isFooterBlurred isHeaderBlurred className="w-[300px] h-[240px] col-span-12 sm:col-span-7">
+                    {/** Box Upper */}
                     <CardHeader className="absolute z-10 top-1 flex-col items-start bg-white/30 mt-2">
                         <p className=" text-[0.6rem] text-black/60 uppercase font-bold">Total {props.employee} users</p>
                         <h4 className="text-black/90 font-medium text-2xl">{props.name}</h4>
@@ -15,6 +24,7 @@ export default function OrganizeCard(props) {
                         className="z-0 w-full h-full object-cover"
                         src="/default.jpg"
                     />
+                    {/** Box Bottom */}
                     <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
                         <div className="flex flex-col ml-8">
                             <div className="flex flex-col">

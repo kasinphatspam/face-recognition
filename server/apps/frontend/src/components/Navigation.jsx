@@ -45,6 +45,7 @@ export default function Navigation(props) {
     isMenuOpen={isMenuOpen}
     onMenuOpenChange={setIsMenuOpen}
   >
+    {/** ------------------------------------------------- */}
     {/* Tabs for small devices */}
     <NavbarContent className="sm:hidden" justify="start">
       <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
@@ -54,12 +55,12 @@ export default function Navigation(props) {
     <NavbarContent className="pr-3" justify="start">
         {/* Logo */}
         {/* ... */}
-        
       <NavbarBrand>
         <p className="font-bold text-inherit">Face Prove</p>
       </NavbarBrand>
     </NavbarContent>
 
+    {/** ------------------------------------------------- */}
     {/* Tabs for medium devices or desktop */}
     <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
