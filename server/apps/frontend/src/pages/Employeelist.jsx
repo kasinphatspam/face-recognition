@@ -30,7 +30,7 @@ const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
-export default function PermissionPage() {
+export default function EmployeePage() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -115,7 +115,7 @@ export default function PermissionPage() {
       case "name":
         return (
           <User
-            avatarProps={{radius: "lg", src: user.avatar}}
+            avatarProps={{radius: "lg", src: user.profileImage}}
             description={user.email}
             name={cellValue}
           >
@@ -239,7 +239,7 @@ export default function PermissionPage() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {role.length} Roles</span>
+          <span className="text-default-400 text-small">Total {role.length} Users</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -314,7 +314,7 @@ export default function PermissionPage() {
             <div className="flex flex-row mt-6 ml-1">
               <p className="text-inherit font-light text-md align-bottom hover:underline">Analytics</p>
               <p className="text-inherit font-light text-md align-bottom ml-2">/</p>
-              <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">permission</p>
+              <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">Employee list</p>
             </div>
           
           {/* Employee list */}

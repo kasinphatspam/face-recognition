@@ -7,6 +7,7 @@ import Signuppage from '@/pages/SignUpPage';
 import Profile from '@/pages/ProfilePage';
 import PermissionPage from '@/pages/Permission';
 import OrganizationService from '@/pages/Organize';
+import EmployeePage from '@/pages/Employeelist';
 export const App = () => {
   
   return (
@@ -20,6 +21,7 @@ export const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path='/permission' element={<PermissionPage />} />
           <Route path='/organize' element={<OrganizationService />} />
+          <Route path='/employee' element={<EmployeePage/>} />
         </Routes>
       </BrowserRouter>
     </NextUIProvider>
