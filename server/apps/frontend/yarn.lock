@@ -522,10 +522,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mediapipe/camera_utils@^0.3.1640029074":
+"@mediapipe/camera_utils@^0.3.1640029074", "@mediapipe/camera_utils@^0.3.1675466862":
   version "0.3.1675466862"
   resolved "https://registry.yarnpkg.com/@mediapipe/camera_utils/-/camera_utils-0.3.1675466862.tgz#861051d4343325a7e838714fe72050df37c0cdd0"
   integrity sha512-siuXBoUxWo9WL0MeAxIxvxY04bvbtdNl7uCxoJxiAiRtNnCYrurr7Vl5VYQ94P7Sq0gVq6PxIDhWWeZ/pLnSzw==
+
+"@mediapipe/drawing_utils@^0.3.1675466124":
+  version "0.3.1675466124"
+  resolved "https://registry.yarnpkg.com/@mediapipe/drawing_utils/-/drawing_utils-0.3.1675466124.tgz#40e9dd87ffaefc58aea7dac36a98cc917e0d90d0"
+  integrity sha512-/IWIB/iYRMtiUKe3k7yGqvwseWHCOqzVpRDfMgZ6gv9z7EEimg6iZbRluoPbcNKHbYSxN5yOvYTzUYb8KVf22Q==
 
 "@mediapipe/face_detection@^0.4.1646425229":
   version "0.4.1646425229"
@@ -932,9 +937,9 @@
     "@nextui-org/shared-utils" "2.0.2"
 
 "@nextui-org/react@^2.0.22":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-2.1.3.tgz#2eab4cd848071257c8f8bd454f403fc7836f73a1"
-  integrity sha512-EjTpPEz9vFGilYVFty65BZOWZWxpwoG6q/J6O/3amBXsFlo+K6k8rqTwUO06kbtsplWsuRzONK4IcppBMFQTXA==
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-2.1.5.tgz#08f7d5738c46dc3ed56bd236661f3bdbf588a7f1"
+  integrity sha512-DPBAdoEARFgJgueasOWZcIDkiRYkI1CC0V17j/jqovaezBBKt+pTS5I3djgKuuXL5iUW6FnhmZP39fZh1Rf1UQ==
   dependencies:
     "@nextui-org/accordion" "2.0.16"
     "@nextui-org/avatar" "2.0.14"
@@ -959,9 +964,9 @@
     "@nextui-org/progress" "2.0.14"
     "@nextui-org/radio" "2.0.15"
     "@nextui-org/scroll-shadow" "2.1.2"
-    "@nextui-org/select" "2.1.3"
+    "@nextui-org/select" "2.1.4"
     "@nextui-org/skeleton" "2.0.12"
-    "@nextui-org/snippet" "2.0.17"
+    "@nextui-org/snippet" "2.0.18"
     "@nextui-org/spacer" "2.0.12"
     "@nextui-org/spinner" "2.0.12"
     "@nextui-org/switch" "2.0.14"
@@ -969,7 +974,7 @@
     "@nextui-org/table" "2.0.16"
     "@nextui-org/tabs" "2.0.14"
     "@nextui-org/theme" "2.1.2"
-    "@nextui-org/tooltip" "2.0.16"
+    "@nextui-org/tooltip" "2.0.17"
     "@nextui-org/user" "2.0.15"
     "@react-aria/visually-hidden" "^3.8.3"
 
@@ -994,10 +999,10 @@
     "@nextui-org/theme" "2.1.2"
     "@nextui-org/use-data-scroll-overflow" "2.1.0"
 
-"@nextui-org/select@2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@nextui-org/select/-/select-2.1.3.tgz#cbec60fb63ea02505c69ff25cd1d978e99d719a7"
-  integrity sha512-r2BbvI2SOZpJ+XooZMT1aHlvqvhQXwA4jYC/jq5xbzrCJ9fl5BqaFUxCPIBnfb02g+p06o2+sUhc2v974NnvUA==
+"@nextui-org/select@2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@nextui-org/select/-/select-2.1.4.tgz#99313102eef8d57677456933dad025edd4c976af"
+  integrity sha512-C5XPeJZ9bpp/uyJ2zI1Q+miQuQ8T4yiX1hqk7WuUGe8nkQ3ZOBRGb9ohSsREsaXJhLkYnnTDph3ngd6ZMqtX8Q==
   dependencies:
     "@nextui-org/aria-utils" "2.0.5"
     "@nextui-org/listbox" "2.1.3"
@@ -1037,10 +1042,10 @@
     "@nextui-org/system-rsc" "2.0.3"
     "@nextui-org/theme" "2.1.2"
 
-"@nextui-org/snippet@2.0.17":
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/@nextui-org/snippet/-/snippet-2.0.17.tgz#e20e16f354cf841fb12711341d0503d00c2f39c2"
-  integrity sha512-J2cKVGsF5MAxlaOa7TEUXUkyd3QWECY0WlCX/FBMcvj4SMCLJMwvC+XcPhzYQ1E8oZ5dBaqT8lqUCXIdQZFXyQ==
+"@nextui-org/snippet@2.0.18":
+  version "2.0.18"
+  resolved "https://registry.yarnpkg.com/@nextui-org/snippet/-/snippet-2.0.18.tgz#e69b50869b7b0acc27a6442d21ab1b1f7abcbaf8"
+  integrity sha512-qvUQQ/GMkb5v+t7pkjlCphiUjBkJca4Qm8cuTzYu9ytTEDFYNBO8Z1UqbgjP+z5QMYF88//LdGERw6VWrY90jg==
   dependencies:
     "@nextui-org/button" "2.0.14"
     "@nextui-org/react-utils" "2.0.7"
@@ -1048,7 +1053,7 @@
     "@nextui-org/shared-utils" "2.0.2"
     "@nextui-org/system" "2.0.5"
     "@nextui-org/theme" "2.1.2"
-    "@nextui-org/tooltip" "2.0.16"
+    "@nextui-org/tooltip" "2.0.17"
     "@nextui-org/use-clipboard" "2.0.2"
     "@react-aria/focus" "^3.14.0"
     "@react-aria/utils" "^3.19.0"
@@ -1175,10 +1180,10 @@
     tailwind-variants "^0.1.13"
     tailwindcss "^3.2.7"
 
-"@nextui-org/tooltip@2.0.16":
-  version "2.0.16"
-  resolved "https://registry.yarnpkg.com/@nextui-org/tooltip/-/tooltip-2.0.16.tgz#c3d0611ebd9a7e8b3c63d1f802d6fa695c554bcb"
-  integrity sha512-uK+g1xYKucioav7bnXVZ7wQU4Uc2BaMynVWHcJQRasKHJqAwjaJzYmwYCK8GMQlUZHI9zAhQ5Pju2QSpG83EBA==
+"@nextui-org/tooltip@2.0.17":
+  version "2.0.17"
+  resolved "https://registry.yarnpkg.com/@nextui-org/tooltip/-/tooltip-2.0.17.tgz#cf9d3232b12a9a1a179f3ace1efcb4b996270faa"
+  integrity sha512-RXcrs3pVLv1FhGdKw+j1SDJ/Djb7Lm/NUYGt2oPIyvW3VXT5AjB9By+biayEtSkoLKXHzbtHUQtmsw992/P9Cg==
   dependencies:
     "@nextui-org/aria-utils" "2.0.5"
     "@nextui-org/framer-transitions" "2.0.5"
@@ -2081,9 +2086,9 @@
     "@types/color-convert" "*"
 
 "@types/d3-array@^3.0.3":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.0.5.tgz#857c1afffd3f51319bbc5b301956aca68acaa7b8"
-  integrity sha512-Qk7fpJ6qFp+26VeQ47WY0mkwXaiq8+76RJcncDEfMc2ocRzXLO67bLFRNI4OX1aGBoPzsM5Y2T+/m1pldOgD+A==
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.0.6.tgz#6b12c074aa685135d0eb6a73fc2a1ae50e8bedf6"
+  integrity sha512-NHkizg870sKYQn45oZT5ItoHqcgRgJD7KAiWZp4Udc6YdrFH2W0tZ2vv4shRHP+SXHoJ1G8B4I1GWb5oQSGypA==
 
 "@types/d3-color@*":
   version "3.1.0"
@@ -2108,16 +2113,16 @@
   integrity sha512-0g/A+mZXgFkQxN3HniRDbXMN79K3CdTpLsevj+PXiTcb2hVyvkZUBg37StmgCQkaD84cUJ4uaDAWq7UJOQy2Tg==
 
 "@types/d3-scale@^4.0.2":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-4.0.3.tgz#7a5780e934e52b6f63ad9c24b105e33dd58102b5"
-  integrity sha512-PATBiMCpvHJSMtZAMEhc2WyL+hnzarKzI6wAHYjhsonjWJYGq5BXTzQjv4l8m2jO183/4wZ90rKvSeT7o72xNQ==
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-4.0.4.tgz#3c5e2263eea5a3670cd91043b9f4d150a94c43f1"
+  integrity sha512-eq1ZeTj0yr72L8MQk6N6heP603ubnywSDRfNpi5enouR112HzGLS6RIvExCzZTraFF4HdzNpJMwA/zGiMoHUUw==
   dependencies:
     "@types/d3-time" "*"
 
 "@types/d3-shape@^3.1.0":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-3.1.1.tgz#15cc497751dac31192d7aef4e67a8d2c62354b95"
-  integrity sha512-6Uh86YFF7LGg4PQkuO2oG6EMBRLuW9cbavUW46zkIO5kuS2PfTqo2o9SkgtQzguBHbLgNnU90UNsITpsX1My+A==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-3.1.2.tgz#a3d421d8b0bc0c6c67cb3f4b4471ddc133cb0117"
+  integrity sha512-NN4CXr3qeOUNyK5WasVUV8NCSAx/CRVcwcb0BuuS1PiTqwIm6ABi1SyasLZ/vsVCFDArF+W4QiGzSry1eKYQ7w==
   dependencies:
     "@types/d3-path" "*"
 
@@ -2223,9 +2228,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.2.14":
-  version "18.2.20"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.20.tgz#1605557a83df5c8a2cc4eeb743b3dfc0eb6aaeb2"
-  integrity sha512-WKNtmsLWJM/3D5mG4U84cysVY31ivmyw85dE84fOCk5Hx78wezB/XEjVPWl2JTZ5FkEeaTJf+VgUAUn3PE7Isw==
+  version "18.2.21"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.21.tgz#774c37fd01b522d0b91aed04811b58e4e0514ed9"
+  integrity sha512-neFKG/sBAwGxHgXiIxnbm3/AAVQ/cMRS93hvBpg8xYRbeQSPVABp9U2bRnPf0iI4+Ucdv3plSxKK+3CW2ENJxA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -3036,9 +3041,9 @@ dotgitignore@^2.1.0:
     minimatch "^3.0.4"
 
 electron-to-chromium@^1.4.477:
-  version "1.4.498"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.498.tgz#cef35341123f62a35ba7084e439c911d25e0d81b"
-  integrity sha512-4LODxAzKGVy7CJyhhN5mebwe7U2L29P+0G+HUriHnabm0d7LSff8Yn7t+Wq+2/9ze2Fu1dhX7mww090xfv7qXQ==
+  version "1.4.499"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.499.tgz#dc36b67f4c8e273524e8d2080c5203a6a76987b6"
+  integrity sha512-0NmjlYBLKVHva4GABWAaHuPJolnDuL0AhV3h1hES6rcLCWEIbRL6/8TghfsVwkx6TEroQVdliX7+aLysUpKvjw==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -4760,9 +4765,9 @@ react-style-singleton@^2.2.1:
     tslib "^2.0.0"
 
 react-textarea-autosize@^8.5.2:
-  version "8.5.2"
-  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.5.2.tgz#6421df2b5b50b9ca8c5e96fd31be688ea7fa2f9d"
-  integrity sha512-uOkyjkEl0ByEK21eCJMHDGBAAd/BoFQBawYK5XItjAmCTeSbjxghd8qnt7nzsLYzidjnoObu6M26xts0YGKsGg==
+  version "8.5.3"
+  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.5.3.tgz#d1e9fe760178413891484847d3378706052dd409"
+  integrity sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
     use-composed-ref "^1.3.0"

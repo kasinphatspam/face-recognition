@@ -11,15 +11,18 @@ import {
   CardFooter,
   Listbox,
   ListboxItem,
-  ListboxSection,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
 import Navigation from "@/components/Navigation";
-import { CameraOff, Camera, Send, Delete, File, CornerDownRight } from "react-feather";
-
+import { CameraOff, Camera as CameraIcon, Send, Delete, File, CornerDownRight } from "react-feather";
+import faceDetection from '@mediapipe/face_detection';
+import { Camera } from '@mediapipe/camera_utils';
 
 export default function Recognition() {
+  const webcamRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
+  const [isSelected, setIsSelected] = React.useState(true);
   const [deviceId, setDeviceId] = React.useState({});
   const [devices, setDevices] = React.useState([]);
   const [image, setImage] = React.useState("");
@@ -33,8 +36,70 @@ export default function Recognition() {
     [setDevices]
   );
 
+  /** Face recognition */
+  React.useEffect(() => {
+    const runFaceDetection = async () => {
+      const faceDetectionModule = new faceDetection.FaceDetection({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+      });
+      faceDetectionModule.setOptions({
+        model: 'short',
+        minDetectionConfidence: 0.5
+      })
+      faceDetectionModule.onResults(onResults);
+      if (
+        typeof webcamRef.current !== 'undefined' &&
+        webcamRef.current !== null
+      ) {
+        const WebCamera = new Camera(webcamRef.current.video, {
+          onFrame: async () => {
+            await faceDetectionModule.send({ image: webcamRef.current.video })
+          },
+          width: 1280,
+          height: 720,
+        });
+        WebCamera.start();
+      }
+      faceDetectionModule.close()
+    };
+    if (isSelected) runFaceDetection()
+  }, [isSelected]);
+  /** get result of face recognition */
+  const onResults = (results) => {
+    const videoWidth = webcamRef.current.video.videoHeight
+    const videoHeight = webcamRef.current.video.videoWidth
+    canvasRef.current.width = videoWidth
+    canvasRef.current.height = videoHeight
+    const canvasElement = canvasRef.current
+    const canvasCtx = canvasElement.getContext("2d");
+
+    if (results.detections.length > 0) {
+      for (const Box of results.detections) {
+        const { xCenter, yCenter, width, height } = Box.boundingBox;
+        // Calculate the pixel coordinates based on normalized values
+        const topLeftX = xCenter * videoWidth - (width * videoWidth) / 2;
+        const topLeftY = yCenter * videoHeight - (height * videoHeight) / 2;
+        const boundingBoxWidth = width * videoWidth;
+        const boundingBoxHeight = height * videoHeight;
+        const message = Math.round(Box.V[0].ga * 100)
+        console.log('x:', topLeftX, ' y:', topLeftY, ' h:', boundingBoxHeight, ' w:', boundingBoxWidth)
+
+        // Draw the bounding box
+        canvasCtx.strokeStyle = '#2986cc';
+        canvasCtx.lineWidth = 2;
+        canvasCtx.beginPath();
+        canvasCtx.rect(topLeftX, topLeftY, boundingBoxWidth, boundingBoxHeight);
+        canvasCtx.fillStyle = '#2986cc';
+        canvasCtx.fillRect(topLeftX, topLeftY - 20, 16, 20)
+        canvasCtx.fillStyle = 'white';
+        canvasCtx.fillText(message, topLeftX + 6, topLeftY - 6, 8)
+        canvasCtx.stroke();
+      }
+    } canvasCtx.restore();
+  }
+
+
   /** Web cam capture */
-  const webcamRef = React.useRef(null);
   const capture = React.useCallback(
     () => {
       console.log("captured")
@@ -93,25 +158,27 @@ export default function Recognition() {
         </div>
         <div className="flex">
           <div className="mt-4 w-[50rem]">
-            <Card className="w-[48.5rem] h-[41rem]"
+            <Card className="w-[700px] h-[606px]"
               isFooterBlurred
               radius="lg"
             >
-              {open && <Webcam
+              <Webcam
                 ref={webcamRef}
                 audio={false}
                 height={720}
                 screenshotFormat="image/jpeg"
                 width={1280}
                 videoConstraints={{ deviceId: deviceId, facingMode: "user" }}
-                className=" drop-shadow-md w-[48.5rem] h-[40rem]"
-              />}
-              {!open && <div className="w-[48.5rem] h-[40rem] bg-gray-500 flex flex-col pt-52 pl-64">
-                <CameraOff className="w-8 h-8 ml-32 mt-12 text-white/50" />
-                <p className="text-lg text-white/30 mt-2 ml-[4.4rem]">Camera is closing</p>
+                className={open ? "absolute drop-shadow-md w-[700px] h-[526px]" : "hidden"}
+              />
+              <canvas ref={canvasRef} className={open ? "absolute w-[700px] h-[526px] z-10" : "hidden"} />
+              <div className={open ? "bg-transparent w-[700px] h-[526px]" : "hidden"}></div>
+              {!open && <div className="w-[700px] h-[526px] bg-gray-500 flex flex-col pt-52 pl-64">
+                <CameraOff className="w-8 h-8 ml-[5rem] mt-4 text-white/50" />
+                <p className="text-lg text-white/30 mt-2 ml-[1.5rem]">Camera is closing</p>
 
               </div>}
-              <CardFooter className="mt-2 mb-2">
+              <CardFooter className="mt-8 mb-2">
                 <div className="flex justify-between">
                   <div className="mr-2">
                     <Dropdown>
@@ -158,6 +225,7 @@ export default function Recognition() {
                 <div className="w-full max-w-[260px] border-small drop-shadow-md px-1 py-2 rounded-small border-default-200 dark:border-default-100 mt-8 ml-1">
                   <Listbox
                     variant="flat"
+                    aria-label="Actions"
                     onAction={(key) => handleAction(key)}
                   >
                     <ListboxItem
@@ -165,7 +233,7 @@ export default function Recognition() {
 
                       startContent={
                         <div className="flex items-center bg-green-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                          <Camera className=" text-green-800/80 w-5 h-5" />
+                          <CameraIcon className=" text-green-800/80 w-5 h-5" />
                         </div>
                       }
                     >
@@ -218,6 +286,6 @@ export default function Recognition() {
           </Card>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
