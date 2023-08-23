@@ -56,7 +56,25 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
 
         if len(face_recognition.face_encodings(face_image)) <= 0:
-            return None
+            # Rotate the image to process
+            img = Image.open(f"./data/{ts}.jpg")
+
+            # Analyze the image on each axis in case that the image is rotated
+            for i in range(3):
+                img = img.rotate(90)
+                img.save(f"./data/{ts}.jpg")
+
+                # Initialize variables for scaling and recognition
+                face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
+                if len(face_recognition.face_encodings(face_image)) <= 0:
+                    # Returns this function when there are no faces in the image.
+                    if(i == 2):
+                        # Delete image file
+                        os.unlink(f"./data/{ts}.jpg")
+                        return -1
+                    continue
+                else:
+                    break
         
         face_encodings = face_recognition.face_encodings(face_image)
 
