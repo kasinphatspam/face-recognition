@@ -62,9 +62,9 @@ export default function Recognition() {
 
   /** handle action on list box */
   const handleAction = (item) => {
-    if (item === "capture") 
+    if (item === "capture")
       capture()
-    if (item === "clear") 
+    if (item === "clear")
       setImage("")
     if (item === "send")
       handleSendtoserver()
@@ -84,16 +84,16 @@ export default function Recognition() {
       <Navigation />
       <div className="flex flex-col mt-[4vh] ml-[10vw]">
         <div className="flex flex-row">
-        <CornerDownRight className="mt-1 mr-2"/>
-        <p className="text-inherit font-bold text-4xl align-bottom">
-          Face Recognition
-        </p>
+          <CornerDownRight className="mt-1 mr-2" />
+          <p className="text-inherit font-bold text-4xl align-bottom">
+            Face Recognition
+          </p>
         </div>
         <div className="">
         </div>
         <div className="flex">
           <div className="mt-4 w-[50rem]">
-            <Card className="w-[48.5rem] h-[40.125rem]"
+            <Card className="w-[48.5rem] h-[41rem]"
               isFooterBlurred
               radius="lg"
             >
@@ -104,33 +104,35 @@ export default function Recognition() {
                 screenshotFormat="image/jpeg"
                 width={1280}
                 videoConstraints={{ deviceId: deviceId, facingMode: "user" }}
-                className=" drop-shadow-md w-[48.5rem] h-[36.5rem]"
+                className=" drop-shadow-md w-[48.5rem] h-[40rem]"
               />}
-              {!open && <div className="w-[48.5rem] h-[36.5rem] bg-gray-500 flex flex-col pt-52 pl-64">
+              {!open && <div className="w-[48.5rem] h-[40rem] bg-gray-500 flex flex-col pt-52 pl-64">
                 <CameraOff className="w-8 h-8 ml-32 mt-12 text-white/50" />
                 <p className="text-lg text-white/30 mt-2 ml-[4.4rem]">Camera is closing</p>
 
               </div>}
-              <CardFooter className="mt-2">
+              <CardFooter className="mt-2 mb-2">
                 <div className="flex justify-between">
-                  <Dropdown>
-                    <DropdownTrigger>
-                      <Button variant="bordered">Choose Camera</Button>
-                    </DropdownTrigger>
-                    <DropdownMenu
-                      aria-label="Dynamic Actions"
-                      items={devices}
-                      selectionMode="single"
-                      disallowEmptySelection
-                      selectedKeys={selectedKeys}
-                      onSelectionChange={setSelectedKeys}>
-                      {(item) => (
-                        <DropdownItem key={item.deviceId} color={"default"}>
-                          {item.label}
-                        </DropdownItem>
-                      )}
-                    </DropdownMenu>
-                  </Dropdown>
+                  <div className="mr-2">
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button variant="bordered">Choose Camera</Button>
+                      </DropdownTrigger>
+                      <DropdownMenu
+                        aria-label="Dynamic Actions"
+                        items={devices}
+                        selectionMode="single"
+                        disallowEmptySelection
+                        selectedKeys={selectedKeys}
+                        onSelectionChange={setSelectedKeys}>
+                        {(item) => (
+                          <DropdownItem key={item.deviceId} color={"default"}>
+                            {item.label}
+                          </DropdownItem>
+                        )}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
                   <div className="ml-2">
                     <Button color={open ? "foreground" : "danger"} variant={open ? "ghost" : "flat"} onClick={handleOnclose}>{open ? "Open camera" : "Close camera"}</Button>
                   </div>
@@ -160,10 +162,10 @@ export default function Recognition() {
                   >
                     <ListboxItem
                       key="capture"
-                      
+
                       startContent={
                         <div className="flex items-center bg-green-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                          <Camera className=" text-green-800/80 w-5 h-5"/>
+                          <Camera className=" text-green-800/80 w-5 h-5" />
                         </div>
                       }
                     >
@@ -173,7 +175,7 @@ export default function Recognition() {
                       key="send"
                       startContent={
                         <div className="flex items-center bg-yellow-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                          <Send className=" text-yellow-800/80 w-5 h-5"/>
+                          <Send className=" text-yellow-800/80 w-5 h-5" />
                         </div>
                       }
                     >
@@ -183,7 +185,7 @@ export default function Recognition() {
                       key="clear"
                       startContent={
                         <div className="flex items-center bg-purple-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                          <Delete className=" text-purple-800/80 w-5 h-5"/>
+                          <Delete className=" text-purple-800/80 w-5 h-5" />
                         </div>
                       }
                     >
