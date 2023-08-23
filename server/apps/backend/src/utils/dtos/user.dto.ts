@@ -13,19 +13,19 @@ class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public firstname: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public lastname: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(10)
   public gender: string;
 
   @IsOptional()
@@ -42,20 +42,13 @@ class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsBase64()
-  public profileImage: string;
+  public image: string;
 
   @IsOptional()
-  @IsNotEmpty()
   @IsNumber()
   public organizationId: number;
 
   @IsOptional()
-  @IsNotEmpty()
-  @IsNumber()
-  public departmentId: number;
-
-  @IsOptional()
-  @IsNotEmpty()
   @IsNumber()
   public roleId: number;
 }

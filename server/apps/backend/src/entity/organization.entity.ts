@@ -1,62 +1,81 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  PrimaryColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { User } from './user.entity';
-
+import { History } from './history.entity';
+import { Contact } from './contact.entity';
+import { RequestJoin } from './requestJoin.entity';
+import { Role } from './role.entity';
 @Entity('organization')
 class Organization {
   @PrimaryGeneratedColumn('increment')
-  organizationId: number;
+  public id: number;
 
   @Column({
     nullable: false,
+    length: 30,
   })
-  organizationName: string;
+  public name: string;
 
   @Column({
-    name: 'organizationCode',
     unique: true,
     nullable: false,
+    length: 6,
   })
-  code: string;
+  public passcode: string;
+
+  @Column({
+    type: 'datetime',
+    nullable: false,
+  })
+  public codeCreatedTime: Date;
+
+  @Column({
+    nullable: true,
+    default: '',
+    length: 30,
+  })
+  public vtigerToken: string;
+
+  @Column({
+    nullable: true,
+    default: '',
+    length: 30,
+  })
+  public vtigerAccessKey: string;
+
+  @Column({
+    nullable: true,
+    default: '',
+    length: 50,
+  })
+  public vtigerLink: string;
+
+  @Column({
+    nullable: true,
+    default: '',
+    length: 8,
+  })
+  public packageKey: string;
 
   @Column({
     nullable: false,
+    default: false,
   })
-  codeExpiredTime: Date;
+  public isPublic: boolean;
 
-  @Column({
-    nullable: false,
-  })
-  codeCreatedTime: Date;
+  @OneToMany(() => User, (user) => user.organization)
+  public users: User[];
 
-  @Column({
-    nullable: true,
-    default: '',
-  })
-  vtigerToken: string;
+  @OneToMany(() => Role, (role) => role.organization)
+  public roles: Role[];
 
-  @Column({
-    nullable: true,
-    default: '',
-  })
-  vtigerAccessKey: string;
+  @OneToMany(() => History, (history) => history.organization)
+  public histories: History[];
 
-  @Column({
-    nullable: true,
-    default: '',
-  })
-  vtigerLink: string;
+  @OneToMany(() => Contact, (contact) => contact.organization)
+  public contacts: Contact[];
 
-  @Column({
-    nullable: true,
-    default: '',
-  })
-  packageKey: string;
+  @OneToMany(() => RequestJoin, (requestJoin) => requestJoin.organization)
+  public requestJoins: RequestJoin[];
 }
 
 export { Organization };

@@ -21,7 +21,7 @@ export class UserService {
   }
 
   public async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ userId: userId });
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -30,7 +30,7 @@ export class UserService {
 
   public async updateUserInfo(userId: number, body: UpdateUserDto) {
     return this.userRepository.update(
-      { userId: userId },
+      { id: userId },
       {
         firstname: body.firstname,
         lastname: body.lastname,
@@ -50,7 +50,7 @@ export class UserService {
         )
       : this.imageService.defaultImagePath('users');
     return this.userRepository.update(
-      { userId: userId },
+      { id: userId },
       {
         image: imagePath,
       },
@@ -58,6 +58,6 @@ export class UserService {
   }
 
   public async deleteUserAccount(userId: number) {
-    return this.userRepository.delete({ userId: userId });
+    return this.userRepository.delete({ id: userId });
   }
 }

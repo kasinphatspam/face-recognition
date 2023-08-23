@@ -37,7 +37,7 @@ export class AuthService {
           gender: body.gender,
           personalId: body.personalId,
           dob: body.dob,
-          image: body.profileImage,
+          image: body.image,
         },
       ])
       .execute();

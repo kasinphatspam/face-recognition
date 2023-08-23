@@ -1,0 +1,19 @@
+{
+    "name": "face-recognition",
+    "version": "1.0.0",
+    "author": "Gura Team",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "start": "turbo run start:prod",
+        "dev:frontend": "yarn dev --filter=frontend",
+        "dev:backend": "yarn dev --filter=backend"
+    },
+    "devDependencies": {
+        "turbo": "^1.10.12"
+    }
+}

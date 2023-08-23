@@ -1,74 +1,118 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { Organization } from './organization.entity';
 
 dotenv.config();
 @Entity('contact')
 export class Contact {
   @PrimaryGeneratedColumn('increment')
-  contactId: number;
+  public id: number;
+
+  @ManyToOne(() => Organization, (organization) => organization.contacts)
+  public organization: Organization;
 
   @Column({
     nullable: false,
+    length: 30,
   })
-  organizationId: number;
+  public firstname: string;
 
   @Column({
     nullable: false,
+    length: 30,
   })
-  firstname: string;
-
-  @Column({
-    nullable: false,
-  })
-  lastname: string;
-
-  @Column()
-  organizationName: string;
-
-  @Column()
-  title: string;
-
-  @Column()
-  officePhone: string;
-
-  @Column()
-  mobile: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  alternateEmail: string;
-
-  @Column()
-  dob: Date;
-
-  @Column()
-  contactOwner: string;
-
-  @Column()
-  createdTime: Date;
-
-  @Column()
-  modifiedTime: Date;
-
-  @Column()
-  lineId: string;
-
-  @Column()
-  facebook: string;
-
-  @Column()
-  linkedin: string;
+  public lastname: string;
 
   @Column({
     nullable: true,
+    length: 60,
   })
-  encodedId: string;
+  public contactCompany: string;
+
+  @Column({
+    nullable: true,
+    length: 30,
+  })
+  public title: string;
+
+  @Column({
+    nullable: true,
+    length: 12,
+  })
+  public officePhone: string;
+
+  @Column({
+    nullable: true,
+    length: 12,
+  })
+  public mobile: string;
+
+  @Column({
+    nullable: true,
+    length: 50,
+  })
+  public email1: string;
+
+  @Column({
+    nullable: true,
+    length: 50,
+  })
+  public email2: string;
+
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  public dob: Date;
+
+  @Column({
+    nullable: true,
+    length: 60,
+  })
+  public contactOwner: string;
+
+  @Column({
+    type: 'datetime',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public createdTime: Date;
+
+  @Column({
+    type: 'datetime',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  public modifiedTime: Date;
+
+  @Column({
+    nullable: true,
+    length: 30,
+  })
+  public lineId: string;
+
+  @Column({
+    nullable: true,
+    length: 100,
+  })
+  public facebook: string;
+
+  @Column({
+    nullable: true,
+    length: 100,
+  })
+  public linkedin: string;
+
+  @Column({
+    nullable: true,
+    length: 100,
+  })
+  public encodedId: string;
 
   @Column({
     nullable: false,
-    default: `${process.env.BACKEND_URL}/images/contact/default.jpeg`,
+    length: 255,
+    default: `${process.env.BACKEND_URL}/images/contact/default.png`,
   })
-  image: string;
+  public image: string;
 }

@@ -23,8 +23,8 @@ export class AuthController {
   public async login(@Body() body: AuthLoginDto, @Res() res: Response) {
     const user = await this.authService.login(body);
     return res.status(HttpStatus.OK).json({
-      message: `Login account id: ${user.userId} sucessfully`,
-      userId: user.userId,
+      message: `Login account id: ${user.id} sucessfully`,
+      userId: user.id,
     });
   }
 
@@ -32,8 +32,8 @@ export class AuthController {
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
     const user = await this.authService.register(body);
     return res.status(HttpStatus.OK).json({
-      message: `Created account id: ${user.userId} successfully`,
-      userId: user.userId,
+      message: `Created account id: ${user.id} successfully`,
+      userId: user.id,
     });
   }
 

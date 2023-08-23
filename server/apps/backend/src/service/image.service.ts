@@ -9,7 +9,7 @@ export class ImageService {
   public readonly folderPath = path.join(__dirname, '../../images');
 
   public defaultImagePath(folder: Folder): string {
-    return `${process.env.BACKEND_URL}/images/${folder}/default.jpeg`;
+    return `${process.env.BACKEND_URL}/images/${folder}/default.png`;
   }
 
   public getImagePath(folder: Folder, filename: string): string {

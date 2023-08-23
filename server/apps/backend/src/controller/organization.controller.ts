@@ -91,7 +91,7 @@ export class OrganizationController {
         passcode,
       );
     return res.status(HttpStatus.OK).json({
-      message: `User id: ${userId} joined Organiztion id: ${organization.organizationId} successfully`,
+      message: `User id: ${userId} joined Organiztion id: ${organization.id} successfully`,
       organization,
     });
   }
@@ -164,7 +164,7 @@ export class OrganizationController {
     const encodedId = await this.contactService.encodeImage(
       organizationId,
       contactId,
-      body.imageBase64,
+      body.image,
     );
     return res
       .status(HttpStatus.OK)
@@ -178,7 +178,7 @@ export class OrganizationController {
   ) {
     return await this.contactService.recognitionImage(
       organizationId,
-      body.imageBase64,
+      body.image,
     );
   }
 
@@ -197,7 +197,7 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Body() body: CreateNewRoleDto,
   ) {
-    return await this.roleService.createNewRole(body.roleName, organizationId);
+    return await this.roleService.createNewRole(body.name, organizationId);
   }
 
   @Put(':organizationId/role/:roleId')
@@ -206,11 +206,7 @@ export class OrganizationController {
     @Param('roleId') roleId: number,
     @Body() body: EditRoleDto,
   ) {
-    return await this.roleService.editRole(
-      roleId,
-      body.roleName,
-      organizationId,
-    );
+    return await this.roleService.editRole(roleId, body.name, organizationId);
   }
 
   @Put(':organizationId/role/permission')

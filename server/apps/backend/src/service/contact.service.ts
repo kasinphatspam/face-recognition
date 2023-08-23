@@ -24,15 +24,15 @@ export class ContactService {
       .into(Contact)
       .values([
         {
-          organizationId: organizationId,
+          id: organizationId,
           firstname: body.firstname,
           lastname: body.lastname,
-          organizationName: body.organizationName,
+          contactCompany: body.contactCompany,
           title: body.title,
           officePhone: body.officePhone,
           mobile: body.mobile,
-          email: body.email,
-          alternateEmail: body.alternateEmail,
+          email1: body.email1,
+          email2: body.email2,
           dob: body.dob,
           contactOwner: body.contactOwner,
           createdTime: body.createdTime,
@@ -48,14 +48,14 @@ export class ContactService {
 
   public async getContactById(organizationId: number, contactId: number) {
     return await this.contactRepository.findOneBy({
-      contactId: contactId,
-      organizationId: organizationId,
+      id: contactId,
+      organization: { id: organizationId },
     });
   }
 
   public async getAllContact(id: number) {
     return await this.contactRepository.find({
-      where: [{ organizationId: id }],
+      where: [{ organization: { id } }],
     });
   }
 
@@ -66,7 +66,7 @@ export class ContactService {
   ) {
     const packageKey = (
       await this.organizationRepository.findOneBy({
-        organizationId: organizationId,
+        id: organizationId,
       })
     ).packageKey;
     const encodeId = await this.recognitionApiService.encodeImage(
@@ -88,7 +88,7 @@ export class ContactService {
   public async recognitionImage(organizationId: number, base64: string) {
     const packageKey = (
       await this.organizationRepository.findOneBy({
-        organizationId: organizationId,
+        id: organizationId,
       })
     ).packageKey;
     const resultObj = await this.recognitionApiService.recognitionImage(
@@ -97,7 +97,7 @@ export class ContactService {
     );
     const contact = await this.contactRepository.findOneBy({
       encodedId: resultObj.id,
-      organizationId: organizationId,
+      id: organizationId,
     });
     const object = {
       checkedTime: resultObj.checkedTime,

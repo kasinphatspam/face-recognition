@@ -21,8 +21,8 @@ export class RoleService {
       .into(Role)
       .values([
         {
-          roleName: roleName,
-          organizationId: organizationId,
+          name: roleName,
+          organization: { id: organizationId },
         },
       ])
       .execute();
@@ -38,20 +38,20 @@ export class RoleService {
     await this.roleRepository
       .createQueryBuilder()
       .update(Role)
-      .set({ roleName: roleName })
-      .where('roleId = :id', { id: roleId })
+      .set({ name: roleName })
+      .where('id = :id', { id: roleId })
       .execute();
   }
 
   public async getAllRole(organizationId: number) {
     await this.roleRepository.find({
-      where: { organizationId: organizationId },
+      where: { organization: { id: organizationId } },
     });
   }
 
   public async deleteRole(organizationId: number, roleId: number) {
     const property = await this.userRepository.find({
-      where: { organizationId: organizationId, roleId: roleId },
+      where: { id: organizationId, role: { id: roleId } },
     });
 
     if (property != null) {
@@ -60,8 +60,8 @@ export class RoleService {
       );
     }
     return await this.roleRepository.delete({
-      roleId: roleId,
-      organizationId: organizationId,
+      id: roleId,
+      organization: { id: organizationId },
     });
   }
 }

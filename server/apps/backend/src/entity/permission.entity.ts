@@ -3,15 +3,24 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('permission')
 class Permission {
   @PrimaryGeneratedColumn('increment')
-  permissionId: number;
+  id: number;
 
-  @Column()
+  @Column({
+    nullable: false,
+    length: 40,
+  })
   title: string;
 
-  @Column()
+  @Column({
+    nullable: false,
+    length: 255,
+  })
   description: string;
 
-  @Column()
+  @Column({
+    nullable: false,
+    type: 'datetime',
+  })
   createdTime: Date;
 }
 

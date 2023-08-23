@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsOptional,
@@ -10,17 +11,13 @@ import {
 class CreateOrganizationDto {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
-  public organizationName: string;
+  @MaxLength(30)
+  public name: string;
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
-  public organizationCode: string;
-
-  @Type(() => Date)
-  @IsDate()
-  public codeExpiredTime: Date;
+  @MaxLength(6)
+  public passcode: string;
 
   @Type(() => Date)
   @IsDate()
@@ -29,39 +26,44 @@ class CreateOrganizationDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public vtigerToken: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public vtigerAccessKey: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(50)
+  public vtigerLink: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(8)
   public packageKey: string;
+
+  @IsOptional()
+  @IsBoolean()
+  public isPublic: boolean;
 }
 
 class UpdateOrganizationDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
-  public organizatioName: string;
+  @MaxLength(30)
+  public name: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
-  public organizationCode: string;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  public codeExpiredTime: Date;
+  @MaxLength(6)
+  public passcode: string;
 
   @IsOptional()
   @Type(() => Date)
@@ -71,20 +73,30 @@ class UpdateOrganizationDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public vtigerToken: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(30)
   public vtigerAccessKey: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
+  @MaxLength(50)
+  public vtigerLink: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(8)
   public packageKey: string;
+
+  @IsOptional()
+  @IsBoolean()
+  public isPublic: boolean;
 }
 
 export { CreateOrganizationDto, UpdateOrganizationDto };

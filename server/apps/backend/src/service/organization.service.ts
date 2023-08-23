@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Organization, Role, User } from '@/entity';
+import { Organization, User } from '@/entity';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -23,23 +23,22 @@ export class OrganizationService {
     organizationId: number,
   ): Promise<Organization> {
     return await this.organizationRepository.findOneBy({
-      organizationId: organizationId,
+      id: organizationId,
     });
   }
 
   public async getCurrentOrganization(userId: number): Promise<Organization> {
     const userProperty = await this.userRepository.findOneBy({
-      userId: userId,
+      id: userId,
     });
     if (!userProperty) {
       throw new BadRequestException('User not found');
     }
-    if (!userProperty.organizationId) {
+    if (!userProperty.organization) {
       throw new BadRequestException("User hasn't joined organization");
     }
-    return await this.organizationRepository.findOneBy({
-      organizationId: userProperty.organizationId,
-    });
+
+    return userProperty.organization;
   }
 
   public async createNewOraganization(
@@ -50,7 +49,7 @@ export class OrganizationService {
     let passcode = Math.random().toString(36).slice(-6).toUpperCase();
     // Check if this passcode is not exist
     while (
-      (await this.organizationRepository.findOneBy({ code: passcode })) != null
+      (await this.organizationRepository.findOneBy({ passcode })) != null
     ) {
       passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }
@@ -59,10 +58,6 @@ export class OrganizationService {
 
     // Get current datetime
     const createdTime = new Date();
-    // Find expiration time with current time + 30 days
-    const date = new Date();
-    date.setDate(date.getDate() + 30);
-    const expirationTime = date;
     // Insert data into database
     const organization = await this.organizationRepository
       .createQueryBuilder()
@@ -70,10 +65,9 @@ export class OrganizationService {
       .into(Organization)
       .values([
         {
-          organizationName: body.organizationName,
-          code: passcode,
+          name: body.name,
+          passcode: passcode,
           codeCreatedTime: createdTime,
-          codeExpiredTime: expirationTime,
           packageKey: packageKey,
         },
       ])
@@ -86,14 +80,14 @@ export class OrganizationService {
     this.roleService.createNewRole('user', organization.raw.insertId);
     // Check if the user account exists or not.
     const property = await this.userRepository.findOneBy({
-      userId: userId,
+      id: userId,
     });
     if (!property) {
       throw new BadRequestException(`Not found user id: ${userId}`);
     }
     // Put organization id and role_id to user table with user id
     await this.userRepository.save({
-      userId: property.userId,
+      id: property.id,
       organizationId: organization.raw.insertId,
       roleId: roleId,
     });
@@ -104,20 +98,20 @@ export class OrganizationService {
     body: UpdateOrganizationDto,
   ) {
     return await this.organizationRepository.save({
-      organizationId: organizationId,
-      organizationName: body.organizatioName,
+      id: organizationId,
+      name: body.name,
     });
   }
 
   public async deleteOrganization(organizationId: number) {
     return await this.organizationRepository.delete({
-      organizationId: organizationId,
+      id: organizationId,
     });
   }
 
   public async joinOrganizationWithPasscode(userId: number, passcode: string) {
     const organization = await this.organizationRepository.findOneBy({
-      code: passcode,
+      passcode,
     });
     if (!organization) {
       throw new BadRequestException('Wrong passcode');
@@ -125,8 +119,8 @@ export class OrganizationService {
     await this.userRepository
       .createQueryBuilder()
       .update(User)
-      .set({ organizationId: organization.organizationId })
-      .where('userId = :userId', { userId })
+      .set({ organization })
+      .where('id = :userId', { userId })
       .execute();
     return organization;
   }
@@ -136,12 +130,12 @@ export class OrganizationService {
     let passcode = Math.random().toString(36).slice(-6).toUpperCase();
     // Check if this passcode is not exist
     while (
-      (await this.organizationRepository.findOneBy({ code: passcode })) != null
+      (await this.organizationRepository.findOneBy({ passcode })) != null
     ) {
       passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }
     await this.organizationRepository.save({
-      organizationId: organizationId,
+      id: organizationId,
       code: passcode,
     });
     return passcode;
