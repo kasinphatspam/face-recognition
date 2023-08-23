@@ -13,7 +13,7 @@ export default ({ mode }) => {
       },
     },
     server: {
-      port: 3001,
+      port: 3003,
     },
   });
 };
