@@ -1,10 +1,9 @@
-import fetch from 'node-fetch';
 import * as dotenv from 'dotenv';
 import {
   CreatePackageResponseDto,
   EncodeImageResponseDto,
   RecognitionImageResponseDto,
-} from 'src/utils/dtos/contact.dto';
+} from '@/utils/dtos/contact.dto';
 
 dotenv.config();
 export class RecognitionApiService {
@@ -24,7 +23,7 @@ export class RecognitionApiService {
       throw new Error(`Error! status: ${response.status}`);
     }
     const result = await response.json();
-    let obj: CreatePackageResponseDto = await JSON.parse(
+    const obj: CreatePackageResponseDto = await JSON.parse(
       JSON.stringify(result),
     );
     return obj.packageKey;
@@ -51,7 +50,9 @@ export class RecognitionApiService {
     }
 
     const result = await response.json();
-    let obj: EncodeImageResponseDto = await JSON.parse(JSON.stringify(result));
+    const obj: EncodeImageResponseDto = await JSON.parse(
+      JSON.stringify(result),
+    );
     return obj.encodedId;
   }
 
@@ -76,7 +77,7 @@ export class RecognitionApiService {
     }
 
     const result = await response.json();
-    let object: RecognitionImageResponseDto = await JSON.parse(
+    const object: RecognitionImageResponseDto = await JSON.parse(
       JSON.stringify(result),
     );
     return object;

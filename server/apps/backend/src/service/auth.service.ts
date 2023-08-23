@@ -5,8 +5,8 @@ import {
   AuthForgotPasswordDto,
   AuthLoginDto,
   AuthRegisterDto,
-} from 'src/utils/dtos/auth.dto';
-import { User } from 'src/entity';
+} from '@/utils/dtos/auth.dto';
+import { User } from '@/entity';
 
 @Injectable()
 export class AuthService {

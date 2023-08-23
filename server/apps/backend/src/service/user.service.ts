@@ -1,7 +1,7 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entity';
-import { UpdateUserImageDto, UpdateUserDto } from 'src/utils/dtos/user.dto';
+import { User } from '@/entity';
+import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
 import { Repository } from 'typeorm';
 import { ImageService } from './image.service';
 

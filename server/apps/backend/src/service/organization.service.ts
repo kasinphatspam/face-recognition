@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Organization, Role, User } from 'src/entity';
+import { Organization, Role, User } from '@/entity';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
-} from 'src/utils/dtos/organization.dto';
+} from '@/utils/dtos/organization.dto';
+import { RoleService } from '@/service/role.service';
+import { RecognitionApiService } from '@/service/recognition.api.service';
 import { Repository } from 'typeorm';
-import { RoleService } from './role.service';
-import { RecognitionApiService } from './recognition.api.service';
 
 @Injectable()
 export class OrganizationService {
@@ -60,7 +60,7 @@ export class OrganizationService {
     // Get current datetime
     const createdTime = new Date();
     // Find expiration time with current time + 30 days
-    let date = new Date();
+    const date = new Date();
     date.setDate(date.getDate() + 30);
     const expirationTime = date;
     // Insert data into database

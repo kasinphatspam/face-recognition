@@ -1,18 +1,18 @@
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
-class CreateNewRoleDto {
+class CreateDepartmentDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  public roleName: string;
+  public departmentName: string;
 }
 
-class EditRoleDto {
+class EditDepartmentDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  public roleName: string;
+  public departmentName: string;
 }
 
-export { CreateNewRoleDto, EditRoleDto };
+export { CreateDepartmentDto, EditDepartmentDto };

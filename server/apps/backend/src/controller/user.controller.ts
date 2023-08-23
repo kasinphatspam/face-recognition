@@ -10,9 +10,9 @@ import {
   Param,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserService } from '../service/user.service';
-import { UpdateUserImageDto, UpdateUserDto } from 'src/utils/dtos/user.dto';
-import { OrganizationService } from 'src/service/organization.service';
+import { UserService } from '@/service/user.service';
+import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
+import { OrganizationService } from '@/service/organization.service';
 
 @Controller('user')
 export class UserController {
