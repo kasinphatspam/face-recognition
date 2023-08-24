@@ -9,6 +9,7 @@ import PermissionPage from "@/pages/Permission";
 import OrganizationService from "@/pages/Organize";
 import EmployeePage from "@/pages/Employeelist";
 import Recognition from "@/pages/Recognition";
+
 export const App = () => {
   return (
     <NextUIProvider>

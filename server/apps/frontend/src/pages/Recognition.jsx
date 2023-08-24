@@ -11,10 +11,17 @@ import {
   CardFooter,
   Listbox,
   ListboxItem,
+  Switch,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
 import Navigation from "@/components/Navigation";
-import { CameraOff, Camera as CameraIcon, Send, Delete, File, CornerDownRight } from "react-feather";
+import { CameraOff,
+   Camera as CameraIcon, 
+   Send, 
+   Delete, 
+   File, 
+   CornerDownRight 
+  } from "react-feather";
 import faceDetection from '@mediapipe/face_detection';
 import { Camera } from '@mediapipe/camera_utils';
 
@@ -22,12 +29,13 @@ export default function Recognition() {
   const webcamRef = React.useRef(null);
   const canvasRef = React.useRef(null);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
-  const [isSelected, setIsSelected] = React.useState(true);
+  const [auto, setAuto] = React.useState(false);
   const [deviceId, setDeviceId] = React.useState({});
   const [devices, setDevices] = React.useState([]);
   const [image, setImage] = React.useState("");
   const [date, setDate] = React.useState(Date.now());
   const [open, setOpen] = React.useState(true);
+  const FaceCamRef = React.useRef(null)
 
   /** handle other device that connect to hardware */
   const handleDevices = React.useCallback(
@@ -58,14 +66,16 @@ export default function Recognition() {
           width: 1280,
           height: 720,
         });
-        WebCamera.start();
+        FaceCamRef.current = WebCamera
       }
-      faceDetectionModule.close()
+      console.log("On detected")
     };
-    if (isSelected) runFaceDetection()
-  }, [isSelected]);
+    runFaceDetection()
+  }, []);
+
   /** get result of face recognition */
   const onResults = (results) => {
+    /** Call WebcamRef and CanvasRef */
     const videoWidth = webcamRef.current.video.videoHeight
     const videoHeight = webcamRef.current.video.videoWidth
     canvasRef.current.width = videoWidth
@@ -82,7 +92,7 @@ export default function Recognition() {
         const boundingBoxWidth = width * videoWidth;
         const boundingBoxHeight = height * videoHeight;
         const message = Math.round(Box.V[0].ga * 100)
-        console.log('x:', topLeftX, ' y:', topLeftY, ' h:', boundingBoxHeight, ' w:', boundingBoxWidth)
+        // console.log('x:', topLeftX, ' y:', topLeftY, ' h:', boundingBoxHeight, ' w:', boundingBoxWidth)
 
         // Draw the bounding box
         canvasCtx.strokeStyle = '#2986cc';
@@ -107,8 +117,6 @@ export default function Recognition() {
       const DateNow = new Date()
       setImage(imageSrc)
       setDate(DateNow.toLocaleTimeString("th-TH") + " " + DateNow.toLocaleDateString("th-TH"))
-
-      console.log(image)
     },
     [webcamRef]
   );
@@ -119,8 +127,33 @@ export default function Recognition() {
   })
   /** handle action open & close */
   const handleOnclose = React.useCallback(() => {
-    setOpen(!open);
+    console.log(!open)
+    if (open) {
+      //AI cam
+      FaceCamRef.current.stop()
+      //Client cam
+      const tracks = webcamRef.current.stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setOpen(false);
+    }
+    else {
+      const openWebcam = async () => {
+        try {
+          //client cam
+          const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId, facingMode: "user" }});
+          webcamRef.current.stream = stream;
+          //AI cam
+          FaceCamRef.current.start()
+          setOpen(true);
+        } catch (error) {
+          console.error('Error opening webcam:', error);
+        }
+      }
+      openWebcam()
+    }
   }, [open]);
+
+  /** handle device input i/o */
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
@@ -162,15 +195,15 @@ export default function Recognition() {
               isFooterBlurred
               radius="lg"
             >
-              <Webcam
-                ref={webcamRef}
-                audio={false}
-                height={720}
-                screenshotFormat="image/jpeg"
-                width={1280}
-                videoConstraints={{ deviceId: deviceId, facingMode: "user" }}
-                className={open ? "absolute drop-shadow-md w-[700px] h-[526px]" : "hidden"}
-              />
+                <Webcam
+                  ref={webcamRef}
+                  audio={false}
+                  height={720}
+                  screenshotFormat="image/jpeg"
+                  width={1280}
+                  videoConstraints={{ deviceId: deviceId, facingMode: "user" }}
+                  className={open ? "absolute drop-shadow-md w-[700px] h-[526px]" : "hidden"}
+                />
               <canvas ref={canvasRef} className={open ? "absolute w-[700px] h-[526px] z-10" : "hidden"} />
               <div className={open ? "bg-transparent w-[700px] h-[526px]" : "hidden"}></div>
               {!open && <div className="w-[700px] h-[526px] bg-gray-500 flex flex-col pt-52 pl-64">
