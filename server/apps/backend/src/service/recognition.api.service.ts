@@ -10,7 +10,7 @@ dotenv.config();
 export class RecognitionApiService {
   public async createPackage() {
     const response = await axios.get(
-      `http://${process.env.ML_SERVER_URL}/create-package`,
+      `${process.env.ML_SERVER_URL}/create-package`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export class RecognitionApiService {
 
   public async encodeImage(packageKey: string, image: string): Promise<string> {
     const response = await axios.put(
-      `http://${process.env.ML_SERVER_URL}/face-recognition`,
+      `${process.env.ML_SERVER_URL}/face-recognition`,
       {
         packageKey: packageKey,
         imageBase64: image,
