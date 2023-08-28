@@ -187,6 +187,16 @@ export class OrganizationController {
     return await this.contactService.getAllContact(organizationId);
   }
 
+  @Post(':organizationId/contact/import/excel')
+  public async importContactFromExcelFile() {
+    return
+  }
+
+  @Post(':organizationId/contact/import/vtiger')
+  public async importContactFromVtigerAPI() {
+    return
+  }
+
   @Get(':organizationId/role/list/all')
   public async getAllRole(@Param('organizationId') organizationId: number) {
     return await this.roleService.getAllRole(organizationId);

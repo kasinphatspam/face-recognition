@@ -38,7 +38,8 @@ export class User {
 
   @Column({
     nullable: false,
-    length: 30,
+    length: 100,
+    select: false,
   })
   public password: string;
 

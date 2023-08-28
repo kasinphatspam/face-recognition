@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     private readonly imageService: ImageService,
     @InjectRepository(User) private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   public async getAllUser(): Promise<User[]> {
     const user = await this.userRepository.find();
@@ -22,6 +22,27 @@ export class UserService {
 
   public async getUserById(userId: number): Promise<User> {
     const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new BadRequestException('Not found');
+    }
+    return user;
+  }
+
+  public async getUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ email: email });
+    if (!user) {
+      throw new BadRequestException('Not found');
+    }
+    return user;
+  }
+
+  public async getRawUserDataByEmail(email: string): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder()
+      .select(["id", "email", "firstname", "lastname", "gender", "personalId", "dob", "image"])
+      .addSelect("password")
+      .where("email = :email", { email: email })
+      .getRawOne();
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -44,10 +65,10 @@ export class UserService {
   public async updateImage(userId: number, body: UpdateUserImageDto) {
     const imagePath = body.image
       ? this.imageService.saveImageFromBase64(
-          body.image,
-          'users',
-          `${userId}.png`,
-        )
+        body.image,
+        'users',
+        `${userId}.png`,
+      )
       : this.imageService.defaultImagePath('users');
     return this.userRepository.update(
       { id: userId },

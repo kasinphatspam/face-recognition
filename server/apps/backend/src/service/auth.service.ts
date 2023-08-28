@@ -7,23 +7,31 @@ import {
   AuthRegisterDto,
 } from '@/utils/dtos/auth.dto';
 import { User } from '@/entity';
+import * as bcrypt from 'bcrypt';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly userService: UserService,
     @InjectRepository(User) private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   public async login(body: AuthLoginDto): Promise<User> {
     const email = body.email;
     const password = body.password;
-    const user = await this.userRepository.findOneBy({ email: email });
-    if (user.password != password)
+    const user = await this.userService.getRawUserDataByEmail(email);
+    if (!user)
+      throw new BadRequestException('The user account with this email address was not found.');
+    if (!await bcrypt.compare(password, user.password))
       throw new BadRequestException('Password Incorrect.');
-    return user;
+    
+    return await this.userService.getUserByEmail(email);
   }
 
   public async register(body: AuthRegisterDto): Promise<User> {
+    const date = new Date(body.dob.toString())
+    const hashedPassword = await bcrypt.hash(body.password, 12);
     await this.userRepository
       .createQueryBuilder()
       .insert()
@@ -31,17 +39,17 @@ export class AuthService {
       .values([
         {
           email: body.email,
-          password: body.password,
+          password: hashedPassword,
           firstname: body.firstname,
           lastname: body.lastname,
           gender: body.gender,
           personalId: body.personalId,
-          dob: body.dob,
+          dob: date,
           image: body.image,
         },
       ])
       .execute();
-    return await this.userRepository.findOneBy({ email: body.email });
+    return await this.userService.getUserByEmail(body.email);
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {

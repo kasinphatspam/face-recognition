@@ -5,7 +5,6 @@ import {
   Body,
   Res,
   HttpStatus,
-  BadRequestException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import {
@@ -23,8 +22,8 @@ export class AuthController {
   public async login(@Body() body: AuthLoginDto, @Res() res: Response) {
     const user = await this.authService.login(body);
     return res.status(HttpStatus.OK).json({
-      message: `Login account id: ${user.id} sucessfully`,
-      userId: user.id,
+      message: `Login account id: ${user.id}is sucessfully.`,
+      user: user,
     });
   }
 
@@ -32,8 +31,8 @@ export class AuthController {
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
     const user = await this.authService.register(body);
     return res.status(HttpStatus.OK).json({
-      message: `Created account id: ${user.id} successfully`,
-      userId: user.id,
+      message: `Create account id: ${user.id}is successfully.`,
+      user: user,
     });
   }
 
