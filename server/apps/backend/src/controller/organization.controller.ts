@@ -192,7 +192,7 @@ export class OrganizationController {
 
   /* 
     Service name:  Get contact by id
-    Url: http://localhost:3001/organization/employee/:userId
+    Url: http://localhost:3001/organization/:organizationId/contact/:contactId
     Method: GET
     Body: {}
   */
