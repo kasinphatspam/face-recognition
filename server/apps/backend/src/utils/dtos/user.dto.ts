@@ -3,7 +3,6 @@ import {
   IsBase64,
   IsDate,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
@@ -38,19 +37,6 @@ class UpdateUserDto {
   @Type(() => Date)
   @IsDate()
   public dob: Date;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsBase64()
-  public image: string;
-
-  @IsOptional()
-  @IsNumber()
-  public organizationId: number;
-
-  @IsOptional()
-  @IsNumber()
-  public roleId: number;
 }
 
 class UpdateUserImageDto {

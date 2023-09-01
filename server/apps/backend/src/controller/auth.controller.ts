@@ -5,8 +5,10 @@ import {
   Body,
   Res,
   HttpStatus,
+  Req,
+  Get,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   AuthForgotPasswordDto,
   AuthLoginDto,
@@ -20,10 +22,11 @@ export class AuthController {
 
   @Post('login')
   public async login(@Body() body: AuthLoginDto, @Res() res: Response) {
-    const user = await this.authService.login(body);
+    const jwt = await this.authService.login(body);
+
+    res.cookie('jwt', jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).json({
-      message: `Login account id: ${user.id}is sucessfully.`,
-      user: user,
+      message: `Login sucessfully.`,
     });
   }
 
@@ -34,6 +37,20 @@ export class AuthController {
       message: `Create account id: ${user.id}is successfully.`,
       user: user,
     });
+  }
+
+  @Get('me')
+  public async me(@Req() req: Request, @Res() res: Response) {
+    const data = await this.authService.me(req);
+
+    return res.status(HttpStatus.OK).json(data);
+  }
+
+  @Get('logout')
+  public async logout(@Res() res: Response) {
+    res.clearCookie('jwt');
+
+    return res.status(HttpStatus.OK).json({ msg: 'logout success' });
   }
 
   @Put('forgot-password')

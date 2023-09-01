@@ -50,6 +50,7 @@ export class User {
   public gender: string;
 
   @Column({
+    unique: true,
     nullable: false,
     length: 13,
   })

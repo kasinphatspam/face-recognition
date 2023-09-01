@@ -189,12 +189,12 @@ export class OrganizationController {
 
   @Post(':organizationId/contact/import/excel')
   public async importContactFromExcelFile() {
-    return
+    return;
   }
 
   @Post(':organizationId/contact/import/vtiger')
   public async importContactFromVtigerAPI() {
-    return
+    return;
   }
 
   @Get(':organizationId/role/list/all')

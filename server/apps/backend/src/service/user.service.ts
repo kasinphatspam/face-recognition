@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/entity';
 import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
@@ -10,7 +10,7 @@ export class UserService {
   constructor(
     private readonly imageService: ImageService,
     @InjectRepository(User) private userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   public async getAllUser(): Promise<User[]> {
     const user = await this.userRepository.find();
@@ -39,9 +39,18 @@ export class UserService {
   public async getRawUserDataByEmail(email: string): Promise<User> {
     const user = await this.userRepository
       .createQueryBuilder()
-      .select(["id", "email", "firstname", "lastname", "gender", "personalId", "dob", "image"])
-      .addSelect("password")
-      .where("email = :email", { email: email })
+      .select([
+        'id',
+        'email',
+        'firstname',
+        'lastname',
+        'gender',
+        'personalId',
+        'dob',
+        'image',
+      ])
+      .addSelect('password')
+      .where('email = :email', { email: email })
       .getRawOne();
     if (!user) {
       throw new BadRequestException('Not found');
@@ -50,25 +59,16 @@ export class UserService {
   }
 
   public async updateUserInfo(userId: number, body: UpdateUserDto) {
-    return this.userRepository.update(
-      { id: userId },
-      {
-        firstname: body.firstname,
-        lastname: body.lastname,
-        gender: body.gender,
-        personalId: body.personalId,
-        dob: body.dob,
-      },
-    );
+    return this.userRepository.update({ id: userId }, body);
   }
 
   public async updateImage(userId: number, body: UpdateUserImageDto) {
     const imagePath = body.image
       ? this.imageService.saveImageFromBase64(
-        body.image,
-        'users',
-        `${userId}.png`,
-      )
+          body.image,
+          'users',
+          `${userId}.png`,
+        )
       : this.imageService.defaultImagePath('users');
     return this.userRepository.update(
       { id: userId },
@@ -79,6 +79,7 @@ export class UserService {
   }
 
   public async deleteUserAccount(userId: number) {
+    this.imageService.deleteImageFromName('users', `${userId}.png`);
     return this.userRepository.delete({ id: userId });
   }
 }
