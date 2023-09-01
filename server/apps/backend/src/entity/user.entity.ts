@@ -9,7 +9,7 @@ import * as dotenv from 'dotenv';
 import { Organization } from './organization.entity';
 import { Role } from './role.entity';
 import { History } from './history.entity';
-import { RequestJoin } from './requestJoin.entity';
+import { RequestJoin } from './request.join.entity';
 
 dotenv.config();
 @Entity('users')

@@ -17,6 +17,10 @@ def encode(packageKey, image):
     fr = FaceRecognition(packageKey)
     return fr.encode(image)
 
+def update_encode(packageKey, encodedId, image):
+    fr = FaceRecognition(packageKey)
+    return fr.update(encodedId, image)
+
 # Helper
 def face_confidence(face_distance, face_match_threshold=0.6):
     range = 1.0 - face_match_threshold
@@ -39,6 +43,13 @@ class FaceRecognition:
         self.face_locations = []
         self.face_encodings = []
         self.face_ids = []
+
+    def update(self, encodedId, encoded_data):
+        # Decode base64 string data
+        decoded_data = base64.b64decode((encoded_data))
+
+
+        return 
 
     def encode(self, encoded_data):
 

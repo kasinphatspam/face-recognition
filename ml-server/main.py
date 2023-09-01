@@ -37,7 +37,11 @@ def face_recognition_service():
     if request.method == 'PUT':
         packageKey = data['packageKey']
         image = data['imageBase64']
-        dict = { "encodedId":  recognition.encode(packageKey, image) }
+        encodedId = data['encodedId']
+        if encodedId == None:
+            dict = { "encodedId":  recognition.encode(packageKey, image) }
+        else:
+            dict = { "encodedId":  recognition.update_encode(packageKey, image) }
         return dict
     
     return 'HTTP_METHOD_NOT_SUPPORTED'

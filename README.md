@@ -18,8 +18,8 @@ http://localhost:3001/auth/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Login | http://localhost:3001/auth/login | POST
-Backend | Register | http://localhost:3001/auth/register | POST
+Backend | Login | http://localhost:3001/auth/login | POST | success
+Backend | Register | http://localhost:3001/auth/register | POST | success
 Backend | Forgot password | http://localhost:3001/auth/forgot-password | PUT
 
 User account\
@@ -27,22 +27,25 @@ http://localhost:3001/user/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Get current user | http://localhost:3001/user/me | GET
-Backend | Get list of all user | http://localhost:3001/user/all | GET
-Backend | Get user by id | http://localhost:3001/user | GET
-Backend | Edit user account | http://localhost:3001/user | PUT
-Backend | Edit user profile | http://localhost:3001/user/profile | PUT
+Backend | Get current user | http://localhost:3001/user/me | GET | deleted
+Backend | Get list of all user | http://localhost:3001/user/list/all | GET | success
+Backend | Get user by id | http://localhost:3001/user/:userId | GET | success
+Backend | Edit user account | http://localhost:3001/user/:userId | PUT | success
+Backend | Edit user profile | http://localhost:3001/user/:userId/image | PUT | success
+Backend | Update user info | http://localhost:3001/user/:userId | PUT | success
+Backend | Delete user account | http://localhost:3001/user/:userId | DELETE 
+Backend | Get current organization | http://localhost:3001/user/:userId/organization
 
 Organization\
-http://localhost:3001/group/
+http://localhost:3001/organization/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Get current organization | http://localhost:3001/organization/me | GET
-Backend | Get organization by id | http://localhost:3001/organization/ | GET
-Backend | Create organization | http://localhost:3001/organization | POST
-Backend | Edit organization | http://localhost:3001/organization | PUT
-Backend | Delete organization | http://localhost:3001/organization | DELETE
+Backend | Get current organization | http://localhost:3001/organization/me | GET | success
+Backend | Get organization by id | http://localhost:3001/organization/ | GET | success
+Backend | Create organization | http://localhost:3001/organization | POST | success
+Backend | Edit organization | http://localhost:3001/organization | PUT | success
+Backend | Delete organization | http://localhost:3001/organization | DELETE | success
 Backend | Join organization | http://localhost:3001/organization/join/:id | POST
 Backend | Get passcode | http://localhost:3001/organization/passcode | GET
 Backend | Re-generate passcode | http://localhost:3001/organization/passcode | PUT

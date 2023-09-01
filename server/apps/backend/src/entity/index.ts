@@ -4,7 +4,7 @@ import { Organization } from './organization.entity';
 import { Permission } from './permission.entity';
 import { Role } from './role.entity';
 import { User } from './user.entity';
-import { RequestJoin } from './requestJoin.entity';
+import { RequestJoin } from './request.join.entity';
 
 const entities = [
   User,

@@ -70,7 +70,7 @@ export class UserService {
           `${userId}.png`,
         )
       : this.imageService.defaultImagePath('users');
-    return this.userRepository.update(
+    return await this.userRepository.update(
       { id: userId },
       {
         image: imagePath,

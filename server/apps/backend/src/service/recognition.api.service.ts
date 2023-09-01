@@ -5,9 +5,13 @@ import {
   RecognitionImageResponseDto,
 } from '@/utils/dtos/contact.dto';
 import axios from 'axios';
+import { ContactService } from './contact.service';
 
 dotenv.config();
 export class RecognitionApiService {
+
+  constructor(private readonly contactService: ContactService) {}
+
   public async createPackage() {
     const response = await axios.get(
       `${process.env.ML_SERVER_URL}/create-package`,
@@ -28,12 +32,14 @@ export class RecognitionApiService {
     return obj.packageKey;
   }
 
-  public async encodeImage(packageKey: string, image: string): Promise<string> {
+  public async encodeImage(packageKey: string, image: string,organizationId: number ,contactId: number): Promise<string> {
+    const contactProperty = await this.contactService.getContactById(organizationId,contactId)
     const response = await axios.put(
       `${process.env.ML_SERVER_URL}/face-recognition`,
       {
         packageKey: packageKey,
         imageBase64: image,
+        encodedId: contactProperty.encodedId
       },
       {
         headers: {
@@ -76,5 +82,9 @@ export class RecognitionApiService {
       JSON.stringify(response.data),
     );
     return object;
+  }
+
+  public async deleteEncodeImage(){
+    return 
   }
 }

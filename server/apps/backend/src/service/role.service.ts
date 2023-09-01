@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class RoleService {
   constructor(
     @InjectRepository(Role) private roleRepository: Repository<Role>,
-    @InjectRepository(Role) private userRepository: Repository<User>,
+    @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
   public async createNewRole(
@@ -44,21 +44,36 @@ export class RoleService {
   }
 
   public async getAllRole(organizationId: number) {
-    await this.roleRepository.find({
+    return await this.roleRepository.find({
       where: { organization: { id: organizationId } },
     });
   }
 
   public async deleteRole(organizationId: number, roleId: number) {
+    // Find the user who used this role
     const property = await this.userRepository.find({
-      where: { id: organizationId, role: { id: roleId } },
-    });
-
-    if (property != null) {
+      relations: ['organization', 'role'],
+      where: [ {
+        organization: { id: organizationId },
+        role: { id: roleId } 
+      } ] 
+    })
+    // Check if the user who used this role is empty
+    if (property.length > 0) {
       throw new BadRequestException(
         'There are still employee using this role.',
       );
     }
+    // Delete and return affected column
+    return await this.roleRepository.delete({
+      id: roleId,
+      organization: { id: organizationId },
+    });
+  }
+
+  public async forceDeleteRole(organizationId: number, roleId: number){
+    // This function removes roles regardless of whether they are active or not.
+    // Delete and return affected column
     return await this.roleRepository.delete({
       id: roleId,
       organization: { id: organizationId },

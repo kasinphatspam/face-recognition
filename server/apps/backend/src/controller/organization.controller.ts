@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -31,8 +32,14 @@ export class OrganizationController {
     private readonly roleService: RoleService,
     private readonly employeeService: EmployeeService,
     private readonly contactService: ContactService,
-  ) {}
+  ) { }
 
+  /* 
+    Service name:  Get organization by id
+    Url: http://localhost:3001/organization/:organizationId/
+    Method: GET
+    Body: {}
+  */
   @Get(':organizationId')
   public async getOrganizationById(
     @Param('organizationId') organizationId: number,
@@ -41,11 +48,20 @@ export class OrganizationController {
     const organization = await this.organizationService.getOrganizationById(
       organizationId,
     );
+    if (organization == null) {
+      throw new BadRequestException("Not found organization.");
+    }
     return res.status(HttpStatus.OK).json({ organization });
   }
 
-  @Post(':userId')
-  public async create(
+  /* 
+    Service name:  Create new organization
+    Url: http://localhost:3001/organization/user/:userId
+    Method: POST
+    Body: { "name": "" }
+  */
+  @Post('/user/:userId')
+  public async createNewOrganization(
     @Param('userId') userId: number,
     @Body() body: CreateOrganizationDto,
     @Res() res: Response,
@@ -56,8 +72,14 @@ export class OrganizationController {
     });
   }
 
+  /* 
+    Service name:  Update organization Information
+    Url: http://localhost:3001/organization/:organizationId
+    Method: PUT
+    Body: { "name": "", "vtigerToken": "", "vtigerAccessKey": "", "vtigerLink": "", "isPublic": false }
+  */
   @Put(':organizationId')
-  public async update(
+  public async updateOrganizationInfo(
     @Param('organizationId') organizationId: number,
     @Body() body: UpdateOrganizationDto,
     @Res() res: Response,
@@ -68,8 +90,14 @@ export class OrganizationController {
     });
   }
 
+  /* 
+    Service name:  Delete organization
+    Url: http://localhost:3001/organization/:organizationId
+    Method: DELETE
+    Body: {}
+  */
   @Delete(':organizationId')
-  public async delete(
+  public async deleteOrganization(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
   ) {
@@ -79,8 +107,14 @@ export class OrganizationController {
     });
   }
 
+  /* 
+    Service name:  Join organization with passcode
+    Url: http://localhost:3001/organization/user/:userId/join/:passcode
+    Method: POST
+    Body: {}
+  */
   @Post('user/:userId/join/:passcode')
-  public async join(
+  public async joinOrganizationWithPasscode(
     @Param('userId') userId: number,
     @Param('passcode') passcode: string,
     @Res() res: Response,
@@ -96,6 +130,12 @@ export class OrganizationController {
     });
   }
 
+  /* 
+    Service name:  Generate new passcode (for administator)
+    Url: http://localhost:3001/organization/user/:userId/join/:passcode
+    Method: POST
+    Body: {}
+  */
   @Put(':organizationId/passcode')
   public async generateNewPasscode(
     @Param('organizationId') organizationId: number,
@@ -109,11 +149,23 @@ export class OrganizationController {
     });
   }
 
+  /* 
+    Service name:  Get list of employees in the organization
+    Url: http://localhost:3001/organization/employee/list/all
+    Method: GET
+    Body: {}
+  */
   @Get(':organizationId/employee/list/all')
   public async getAllEmployee(@Param('organizationId') organizationId: number) {
     return await this.employeeService.getAllEmployee(organizationId);
   }
 
+  /* 
+    Service name:  Delete employee (user account)
+    Url: http://localhost:3001/organization/employee/:userId
+    Method: GET
+    Body: {}
+  */
   @Delete(':organizationId/employee/:userId')
   public async deleteEmployee(
     @Param('organizationId') organizationId: number,
@@ -138,6 +190,12 @@ export class OrganizationController {
     return;
   }
 
+  /* 
+    Service name:  Get contact by id
+    Url: http://localhost:3001/organization/employee/:userId
+    Method: GET
+    Body: {}
+  */
   @Get(':organizationId/contact/:contactId')
   public async getContactById(
     @Param('organizationId') organizationId: number,
@@ -146,6 +204,15 @@ export class OrganizationController {
     return await this.contactService.getContactById(organizationId, contactId);
   }
 
+  /* 
+    Service name:  Create new contact
+    Url: http://localhost:3001/organization/:organizationId/contact
+    Method: POST
+    Body: { "firstname":"", "lastname":"", "contactCompany":"", 
+    "title":"", "officePhone":"", "mobile":"", "email1":"", "email2":"", 
+    "dob":"", "contactOwner":"", "createdTime":"", "modifiedTime": "",
+    "facebook":"", "linkedin":"" }
+  */
   @Post(':organizationId/contact')
   public async createNewContact(
     @Param('organizationId') organizationId: number,
@@ -197,6 +264,12 @@ export class OrganizationController {
     return;
   }
 
+  /* 
+    Service name:  Get all roles
+    Url: http://localhost:3001/organization/:organizationId/role/list/all
+    Method: GET
+    Body: {}
+  */
   @Get(':organizationId/role/list/all')
   public async getAllRole(@Param('organizationId') organizationId: number) {
     return await this.roleService.getAllRole(organizationId);

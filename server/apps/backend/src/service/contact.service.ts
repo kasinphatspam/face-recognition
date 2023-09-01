@@ -24,7 +24,7 @@ export class ContactService {
       .into(Contact)
       .values([
         {
-          id: organizationId,
+          organization: {id: organizationId},
           firstname: body.firstname,
           lastname: body.lastname,
           contactCompany: body.contactCompany,
@@ -72,6 +72,8 @@ export class ContactService {
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
       base64,
+      organizationId,
+      contactId
     );
     await this.contactRepository
       .createQueryBuilder()

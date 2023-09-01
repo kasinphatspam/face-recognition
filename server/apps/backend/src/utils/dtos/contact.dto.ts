@@ -88,20 +88,6 @@ class CreateNewContactDto {
   @IsString()
   @MaxLength(100)
   public linkedin: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(100)
-  public encodedId: string;
-
-  @IsNotEmpty()
-  @IsBase64()
-  public image: string;
-
-  @IsOptional()
-  @IsNumber()
-  public organizationId: number;
 }
 
 class EncodeContactImageDto {

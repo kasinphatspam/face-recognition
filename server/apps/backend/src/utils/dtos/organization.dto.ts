@@ -14,42 +14,42 @@ class CreateOrganizationDto {
   @MaxLength(30)
   public name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(6)
-  public passcode: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(6)
+  // public passcode: string;
 
-  @Type(() => Date)
-  @IsDate()
-  public codeCreatedTime: Date;
+  // @Type(() => Date)
+  // @IsDate()
+  // public codeCreatedTime: Date;
 
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(30)
-  public vtigerToken: string;
+  // @IsOptional()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(30)
+  // public vtigerToken: string;
 
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(30)
-  public vtigerAccessKey: string;
+  // @IsOptional()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(30)
+  // public vtigerAccessKey: string;
 
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  public vtigerLink: string;
+  // @IsOptional()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(50)
+  // public vtigerLink: string;
 
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(8)
-  public packageKey: string;
+  // @IsOptional()
+  // @IsNotEmpty()
+  // @IsString()
+  // @MaxLength(8)
+  // public packageKey: string;
 
-  @IsOptional()
-  @IsBoolean()
-  public isPublic: boolean;
+  // @IsOptional()
+  // @IsBoolean()
+  // public isPublic: boolean;
 }
 
 class UpdateOrganizationDto {
@@ -62,17 +62,6 @@ class UpdateOrganizationDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(6)
-  public passcode: string;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  public codeCreatedTime: Date;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
   @MaxLength(30)
   public vtigerToken: string;
 
@@ -87,12 +76,6 @@ class UpdateOrganizationDto {
   @IsString()
   @MaxLength(50)
   public vtigerLink: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(8)
-  public packageKey: string;
 
   @IsOptional()
   @IsBoolean()
