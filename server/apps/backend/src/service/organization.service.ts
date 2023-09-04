@@ -17,7 +17,7 @@ export class OrganizationService {
     @InjectRepository(Organization) private organizationRepository: Repository<Organization>,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) { }
-
+  
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
@@ -133,11 +133,17 @@ export class OrganizationService {
 
   public async generateNewPasscode(organizationId: number): Promise<string> {
     // Generate a random passcode
-    const passcode = this.randomPasscodeWithUniqueResult()
+    const passcode = await this.randomPasscodeWithUniqueResult()
+    // Check if organization is empty
+    const organization = await this.getOrganizationById(organizationId)
+    if (!organization) {
+      throw new BadRequestException("Not found organization.");
+    }
     // Update organization passcode and return it
     await this.organizationRepository.save({
       id: organizationId,
-      code: passcode,
+      passcode: passcode,
+      codeCreatedTime: new Date() 
     });
     return passcode;
   }

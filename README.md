@@ -27,14 +27,14 @@ http://localhost:3001/user/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Get current user | http://localhost:3001/user/me | GET | deleted
+Backend | Get current user | http://localhost:3001/user/me | GET | success
 Backend | Get list of all user | http://localhost:3001/user/list/all | GET | success
 Backend | Get user by id | http://localhost:3001/user/:userId | GET | success
 Backend | Edit user account | http://localhost:3001/user/:userId | PUT | success
 Backend | Edit user profile | http://localhost:3001/user/:userId/image | PUT | success
 Backend | Update user info | http://localhost:3001/user/:userId | PUT | success
 Backend | Delete user account | http://localhost:3001/user/:userId | DELETE 
-Backend | Get current organization | http://localhost:3001/user/:userId/organization
+Backend | Get current organization | http://localhost:3001/user/:userId/organization | success
 
 Organization\
 http://localhost:3001/organization/
@@ -46,9 +46,9 @@ Backend | Get organization by id | http://localhost:3001/organization/ | GET | s
 Backend | Create organization | http://localhost:3001/organization | POST | success
 Backend | Edit organization | http://localhost:3001/organization | PUT | success
 Backend | Delete organization | http://localhost:3001/organization | DELETE | success
-Backend | Join organization | http://localhost:3001/organization/join/:id | POST
-Backend | Get passcode | http://localhost:3001/organization/passcode | GET
-Backend | Re-generate passcode | http://localhost:3001/organization/passcode | PUT
+Backend | Join organization | http://localhost:3001/organization/join/:id | POST | success
+Backend | Get passcode | http://localhost:3001/organization/passcode | GET | success
+Backend | Re-generate passcode | http://localhost:3001/organization/passcode | PUT | success
 Backend | Get organization member | http://localhost:3001/organization/member | GET
 Backend | Delete organization member | http://localhost:3001/organization/member | DELETE
 Backend | Link organization with vtiger | http://localhost:3001/organization/vtiger | PUT

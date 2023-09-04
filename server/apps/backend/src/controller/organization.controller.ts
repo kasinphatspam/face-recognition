@@ -48,7 +48,7 @@ export class OrganizationController {
     const organization = await this.organizationService.getOrganizationById(
       organizationId,
     );
-    if (organization == null) {
+    if (!organization) {
       throw new BadRequestException("Not found organization.");
     }
     return res.status(HttpStatus.OK).json({ organization });
@@ -128,6 +128,27 @@ export class OrganizationController {
       message: `User id: ${userId} joined Organiztion id: ${organization.id} successfully`,
       organization,
     });
+  }
+
+  /* 
+    Service name:  Get organization passcode
+    Url: http://localhost:3001/organization/:organizationId/passcode
+    Method: POST
+    Body: {}
+  */
+  @Get(':organizationId/passcode')
+  public async getOrganizationPasscode(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response
+  ){
+    const organization =  await this.organizationService.getOrganizationById(
+      organizationId,
+    );
+
+    if (!organization) {
+      throw new BadRequestException("Not found organization.");
+    }
+    return res.status(HttpStatus.OK).json({ "passcode": organization.passcode });
   }
 
   /* 
@@ -221,6 +242,12 @@ export class OrganizationController {
     return await this.contactService.createNewContact(organizationId, body);
   }
 
+  /* 
+    Service name:  Encode contact image
+    Url: http://localhost:3001/organization/:organizationId/contact/:contactId/encode
+    Method: PUT
+    Body: { "image": "" }
+  */
   @Put(':organizationId/contact/:contactId/encode')
   public async encodeContactImage(
     @Param('organizationId') organizationId: number,
@@ -238,6 +265,12 @@ export class OrganizationController {
       .json({ message: 'encode image successfully', encodedId: encodedId });
   }
 
+  /* 
+    Service name:  Recognition contact image
+    Url: http://localhost:3001/organization/:organizationId/contact/encode/recognition
+    Method: POST
+    Body: { "image": "" }
+  */
   @Post(':organizationId/contact/encode/recognition')
   public async recognitionContactImage(
     @Param('organizationId') organizationId: number,
@@ -249,6 +282,12 @@ export class OrganizationController {
     );
   }
 
+  /* 
+    Service name:  Get all contact
+    Url: http://localhost:3001/organization/:organizationId/contact/list/all
+    Method: GET
+    Body: {}
+  */
   @Get(':organizationId/contact/list/all')
   public async getAllContact(@Param('organizationId') organizationId: number) {
     return await this.contactService.getAllContact(organizationId);
@@ -275,6 +314,12 @@ export class OrganizationController {
     return await this.roleService.getAllRole(organizationId);
   }
 
+  /* 
+    Service name:  Create new role
+    Url: http://localhost:3001/organization/:organizationId/role
+    Method: POST
+    Body: {}
+  */
   @Post(':organizationId/role')
   public async createNewRole(
     @Param('organizationId') organizationId: number,
@@ -283,6 +328,12 @@ export class OrganizationController {
     return await this.roleService.createNewRole(body.name, organizationId);
   }
 
+  /* 
+    Service name:  Edit role
+    Url: http://localhost:3001/organization/:organizationId/role/:roleId
+    Method: PUT
+    Body: {}
+  */
   @Put(':organizationId/role/:roleId')
   public async editRole(
     @Param('organizationId') organizationId: number,
@@ -292,11 +343,23 @@ export class OrganizationController {
     return await this.roleService.editRole(roleId, body.name, organizationId);
   }
 
+  /* 
+    Service name:  Edit role permission
+    Url: http://localhost:3001/organization/:organizationId/role/:roleId
+    Method: PUT
+    Body: {}
+  */
   @Put(':organizationId/role/permission')
   public async editRolePermission() {
     return;
   }
 
+  /* 
+    Service name:  Delete role
+    Url: http://localhost:3001/organization/:organizationId/role/:roleId
+    Method: DELETE
+    Body: {}
+  */
   @Delete(':organizationId/role/:roleId')
   public async deleteRole(
     @Param('organizationId') organizationId: number,
