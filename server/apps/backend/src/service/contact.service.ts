@@ -24,7 +24,7 @@ export class ContactService {
       .into(Contact)
       .values([
         {
-          organization: {id: organizationId},
+          organization: { id: organizationId },
           firstname: body.firstname,
           lastname: body.lastname,
           contactCompany: body.contactCompany,
@@ -73,7 +73,7 @@ export class ContactService {
       packageKey,
       base64,
       organizationId,
-      contactId
+      contactId,
     );
     await this.contactRepository
       .createQueryBuilder()

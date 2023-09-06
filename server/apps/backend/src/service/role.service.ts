@@ -2,15 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from '@/entity';
 import { Repository } from 'typeorm';
-import { OrganizationService } from './organization.service';
-import { UserService } from './user.service';
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(Role) private roleRepository: Repository<Role>,
     @InjectRepository(User) private userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   public async createNewRole(
     roleName: string,
@@ -32,17 +30,25 @@ export class RoleService {
     return role.raw.insertId;
   }
 
-  public async changeEmployeeRole(organizationId: number, roleId: number, userId: number) {
+  public async changeEmployeeRole(
+    organizationId: number,
+    roleId: number,
+    userId: number,
+  ) {
     const user = await this.userRepository.findOne({
       relations: ['organization'],
-      where: { id: userId, organization: { id: organizationId } }
-    })
+      where: { id: userId, organization: { id: organizationId } },
+    });
     if (!user) {
-      throw new BadRequestException("Not found user")
+      throw new BadRequestException('Not found user');
     }
-    return await this.userRepository.update({ 
-      id: userId, organization: { id: user.organization.id } }, 
-      { role: { id: roleId } });
+    return await this.userRepository.update(
+      {
+        id: userId,
+        organization: { id: user.organization.id },
+      },
+      { role: { id: roleId } },
+    );
   }
 
   public async editRole(
@@ -50,7 +56,10 @@ export class RoleService {
     roleName: string,
     organizationId: number,
   ) {
-    await this.roleRepository.update({ id: roleId, organization: { id: organizationId } }, { name: roleName })
+    await this.roleRepository.update(
+      { id: roleId, organization: { id: organizationId } },
+      { name: roleName },
+    );
   }
 
   public async getAllRole(organizationId: number) {
@@ -63,11 +72,13 @@ export class RoleService {
     // Find the user who used this role
     const property = await this.userRepository.find({
       relations: ['organization', 'role'],
-      where: [{
-        organization: { id: organizationId },
-        role: { id: roleId }
-      }]
-    })
+      where: [
+        {
+          organization: { id: organizationId },
+          role: { id: roleId },
+        },
+      ],
+    });
     // Check if the user who used this role is empty
     if (property.length > 0) {
       throw new BadRequestException(

@@ -10,16 +10,18 @@ export class EmployeeService {
   ) {}
 
   public async getAllEmployee(id: number) {
-    return await this.userRepository.find({ where: [{ organization: { id } }] });
+    return await this.userRepository.find({
+      where: [{ organization: { id } }],
+    });
   }
 
   public async deleteEmployee(organizationId: number, userId: number) {
     const user = await this.userRepository.findOne({
       relations: ['organization'],
-      where: { id: userId }
+      where: { id: userId },
     });
-    console.log(user)
-    if (!user.organization){
+    console.log(user);
+    if (!user.organization) {
       throw new BadRequestException("User hasn't joined organization");
     }
     if (user.organization.id != organizationId)

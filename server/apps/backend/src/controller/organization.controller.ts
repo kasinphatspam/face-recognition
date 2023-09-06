@@ -32,7 +32,7 @@ export class OrganizationController {
     private readonly roleService: RoleService,
     private readonly employeeService: EmployeeService,
     private readonly contactService: ContactService,
-  ) { }
+  ) {}
 
   /* 
     Service name:  Get organization by id
@@ -49,7 +49,7 @@ export class OrganizationController {
       organizationId,
     );
     if (!organization) {
-      throw new BadRequestException("Not found organization.");
+      throw new BadRequestException('Not found organization.');
     }
     return res.status(HttpStatus.OK).json({ organization });
   }
@@ -139,16 +139,16 @@ export class OrganizationController {
   @Get(':organizationId/passcode')
   public async getOrganizationPasscode(
     @Param('organizationId') organizationId: number,
-    @Res() res: Response
-  ){
-    const organization =  await this.organizationService.getOrganizationById(
+    @Res() res: Response,
+  ) {
+    const organization = await this.organizationService.getOrganizationById(
       organizationId,
     );
 
     if (!organization) {
-      throw new BadRequestException("Not found organization.");
+      throw new BadRequestException('Not found organization.');
     }
-    return res.status(HttpStatus.OK).json({ "passcode": organization.passcode });
+    return res.status(HttpStatus.OK).json({ passcode: organization.passcode });
   }
 
   /* 
@@ -201,14 +201,14 @@ export class OrganizationController {
 
   @Put(':organizationId/vtiger')
   public async linkWithVtiger(@Param('organizationId') organizationId: number) {
-    return;
+    return organizationId;
   }
 
   @Post(':organizationId/vtiger')
   public async importDataFromVtiger(
     @Param('organizationId') organizationId: number,
   ) {
-    return;
+    return organizationId;
   }
 
   /* 
@@ -339,10 +339,12 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('roleId') roleId: number,
     @Body() body: EditRoleDto,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     await this.roleService.editRole(roleId, body.name, organizationId);
-    return res.status(HttpStatus.OK).json({ message: "Update role info successfully."})
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Update role info successfully.' });
   }
 
   @Put(':organizationId/employee/:userId/role/:roleId')
@@ -350,11 +352,17 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('roleId') roleId: number,
     @Param('userId') userId: number,
-    @Res() res: Response
-  ){
-    const status = await this.roleService.changeEmployeeRole(organizationId, roleId, userId)
-    if(status.affected == 1){
-      res.status(HttpStatus.OK).json({ message: `Change role of user id: ${userId} to role id: ${roleId} successfully.` })
+    @Res() res: Response,
+  ) {
+    const status = await this.roleService.changeEmployeeRole(
+      organizationId,
+      roleId,
+      userId,
+    );
+    if (status.affected == 1) {
+      res.status(HttpStatus.OK).json({
+        message: `Change role of user id: ${userId} to role id: ${roleId} successfully.`,
+      });
     }
   }
 

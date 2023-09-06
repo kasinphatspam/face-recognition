@@ -14,10 +14,11 @@ export class OrganizationService {
   constructor(
     private readonly recognitionApiService: RecognitionApiService,
     private readonly roleService: RoleService,
-    @InjectRepository(Organization) private organizationRepository: Repository<Organization>,
+    @InjectRepository(Organization)
+    private organizationRepository: Repository<Organization>,
     @InjectRepository(User) private userRepository: Repository<User>,
-  ) { }
-  
+  ) {}
+
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
@@ -29,7 +30,7 @@ export class OrganizationService {
   public async getCurrentOrganization(userId: number): Promise<Organization> {
     const user = await this.userRepository.findOne({
       relations: ['organization'],
-      where: { id: userId }
+      where: { id: userId },
     });
 
     if (!user) {
@@ -69,7 +70,7 @@ export class OrganizationService {
       ])
       .execute();
     // Create simple role to new organization
-    const roleId = await this.createSimpleRole(organization)
+    const roleId = await this.createSimpleRole(organization);
     // Put organization id and role_id to user table with user id
     await this.userRepository.save({
       id: property.id,
@@ -87,24 +88,29 @@ export class OrganizationService {
       name: body.name,
       vtigerToken: body.vtigerToken,
       vtigerAccessKey: body.vtigerAccessKey,
-      vtigerLink: body.vtigerLink
+      vtigerLink: body.vtigerLink,
     });
   }
 
   public async deleteOrganization(organizationId: number) {
     // Find the roles in this organization
-    const roleProperty = await this.roleService.getAllRole(organizationId)
-    for (var i of roleProperty) {
+    const roleProperty = await this.roleService.getAllRole(organizationId);
+    for (const i of roleProperty) {
       // Find the user account that uses this role.
-      const userProperty = await this.userRepository
-        .find({ where: { organization: { id: organizationId }, role: { id: i.id } } })
+      const userProperty = await this.userRepository.find({
+        where: { organization: { id: organizationId }, role: { id: i.id } },
+      });
       // Remove the role id and organization id in each account of this organization
-      for (var j of userProperty) {
+      for (const j of userProperty) {
         if (j != null)
-          await this.userRepository.save({ id: j.id, organization: null, role: null })
+          await this.userRepository.save({
+            id: j.id,
+            organization: null,
+            role: null,
+          });
       }
-      // Force delete the role 
-      await this.roleService.forceDeleteRole(organizationId, i.id)
+      // Force delete the role
+      await this.roleService.forceDeleteRole(organizationId, i.id);
     }
     // Delete the organization
     return await this.organizationRepository.delete({
@@ -121,29 +127,29 @@ export class OrganizationService {
       throw new BadRequestException('Wrong passcode');
     }
     // Find user role id in organization
-    const roleId = await this.roleService.getAllRole(organization.id)
+    const roleId = await this.roleService.getAllRole(organization.id);
     // Add orgnaization id to user account
     await this.userRepository.save({
       id: userId,
       organization: { id: organization.id },
-      role: { id: roleId[1].id }
+      role: { id: roleId[1].id },
     });
     return organization;
   }
 
   public async generateNewPasscode(organizationId: number): Promise<string> {
     // Generate a random passcode
-    const passcode = await this.randomPasscodeWithUniqueResult()
+    const passcode = await this.randomPasscodeWithUniqueResult();
     // Check if organization is empty
-    const organization = await this.getOrganizationById(organizationId)
+    const organization = await this.getOrganizationById(organizationId);
     if (!organization) {
-      throw new BadRequestException("Not found organization.");
+      throw new BadRequestException('Not found organization.');
     }
     // Update organization passcode and return it
     await this.organizationRepository.save({
       id: organizationId,
       passcode: passcode,
-      codeCreatedTime: new Date() 
+      codeCreatedTime: new Date(),
     });
     return passcode;
   }
@@ -157,7 +163,7 @@ export class OrganizationService {
     ) {
       passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }
-    return passcode
+    return passcode;
   }
 
   private async createSimpleRole(organization: InsertResult) {
@@ -167,10 +173,7 @@ export class OrganizationService {
       organization.raw.insertId,
     );
     // Create an general user role for employee in organization
-    await this.roleService.createNewRole(
-      'user',
-      organization.raw.insertId
-    );
-    return roleId
+    await this.roleService.createNewRole('user', organization.raw.insertId);
+    return roleId;
   }
 }
