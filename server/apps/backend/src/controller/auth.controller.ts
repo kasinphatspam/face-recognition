@@ -59,6 +59,6 @@ export class AuthController {
     @Res() res: Response,
   ) {
     await this.authService.forgotPassword(body);
-    return;
+    return res.status(HttpStatus.OK).json({ message: 'Forgot password' });
   }
 }
