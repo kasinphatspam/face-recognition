@@ -7,11 +7,15 @@ import { RoleService } from '@/service/role.service';
 import { EmployeeService } from '@/service/employee.service';
 import { ContactService } from '@/service/contact.service';
 import { RecognitionApiService } from '@/service/recognition.api.service';
+import { UserService } from '@/service/user.service';
+import { ImageService } from '@/service/image.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Organization, Role, User, Contact])],
   providers: [
     OrganizationService,
+    UserService,
+    ImageService,
     RoleService,
     EmployeeService,
     ContactService,

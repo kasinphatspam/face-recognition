@@ -339,8 +339,23 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('roleId') roleId: number,
     @Body() body: EditRoleDto,
+    @Res() res: Response
   ) {
-    return await this.roleService.editRole(roleId, body.name, organizationId);
+    await this.roleService.editRole(roleId, body.name, organizationId);
+    return res.status(HttpStatus.OK).json({ message: "Update role info successfully."})
+  }
+
+  @Put(':organizationId/employee/:userId/role/:roleId')
+  public async changeEmployeeRole(
+    @Param('organizationId') organizationId: number,
+    @Param('roleId') roleId: number,
+    @Param('userId') userId: number,
+    @Res() res: Response
+  ){
+    const status = await this.roleService.changeEmployeeRole(organizationId, roleId, userId)
+    if(status.affected == 1){
+      res.status(HttpStatus.OK).json({ message: `Change role of user id: ${userId} to role id: ${roleId} successfully.` })
+    }
   }
 
   /* 

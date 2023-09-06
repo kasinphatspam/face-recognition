@@ -14,16 +14,22 @@ export class EmployeeService {
   }
 
   public async deleteEmployee(organizationId: number, userId: number) {
-    const userProperty = await this.userRepository.findOneBy({
-      id: userId,
+    const user = await this.userRepository.findOne({
+      relations: ['organization'],
+      where: { id: userId }
     });
-    if (userProperty.organization.id != organizationId)
+    console.log(user)
+    if (!user.organization){
+      throw new BadRequestException("User hasn't joined organization");
+    }
+    if (user.organization.id != organizationId)
       throw new BadRequestException(
         'Organization entered invalid: Organization ID in the user database does not match the organization ID entered.',
       );
     return await this.userRepository.update(
       { id: userId },
       {
+        role: null,
         organization: null,
       },
     );
