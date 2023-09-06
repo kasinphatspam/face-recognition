@@ -33,7 +33,7 @@ Backend | Get user by id | http://localhost:3001/user/:userId | GET | success
 Backend | Edit user account | http://localhost:3001/user/:userId | PUT | success
 Backend | Edit user profile | http://localhost:3001/user/:userId/image | PUT | success
 Backend | Update user info | http://localhost:3001/user/:userId | PUT | success
-Backend | Delete user account | http://localhost:3001/user/:userId | DELETE 
+Backend | Delete user account | http://localhost:3001/user/:userId | DELETE | success
 Backend | Get current organization | http://localhost:3001/user/:userId/organization | success
 
 Organization\
@@ -41,29 +41,29 @@ http://localhost:3001/organization/
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Get current organization | http://localhost:3001/organization/me | GET | success
-Backend | Get organization by id | http://localhost:3001/organization/ | GET | success
-Backend | Create organization | http://localhost:3001/organization | POST | success
-Backend | Edit organization | http://localhost:3001/organization | PUT | success
-Backend | Delete organization | http://localhost:3001/organization | DELETE | success
-Backend | Join organization | http://localhost:3001/organization/join/:id | POST | success
-Backend | Get passcode | http://localhost:3001/organization/passcode | GET | success
-Backend | Re-generate passcode | http://localhost:3001/organization/passcode | PUT | success
-Backend | Get organization member | http://localhost:3001/organization/member | GET
-Backend | Delete organization member | http://localhost:3001/organization/member | DELETE
+Backend | Get current organization | http://localhost:3001/user/:userId/organization | GET | success
+Backend | Get organization by id | http://localhost:3001/organization/:organizationId | GET | success
+Backend | Create organization | http://localhost:3001/organization/user/:userId | POST | success
+Backend | Edit organization | http://localhost:3001/organization/:organizationId | PUT | success
+Backend | Delete organization | http://localhost:3001/organization/:organizationId | DELETE | success
+Backend | Join organization | http://localhost:3001/organization/user/:userId/join/:id | POST | success
+Backend | Get passcode | http://localhost:3001/organization/:organizationId/passcode | GET | success
+Backend | Re-generate passcode | http://localhost:3001/organization/:oragnizationId/passcode | PUT | success
+Backend | Get organization employee | http://localhost:3001/organization/:organizationId/employee/list/all | GET
+Backend | Delete organization employee | http://localhost:3001/organization/:organizationId/employee/:userId | DELETE
 Backend | Link organization with vtiger | http://localhost:3001/organization/vtiger | PUT
 Backend | Sync data between vtiger and database | http://localhost:3001/organization/vtiger | POST
-Backend | Get contact by id | http://localhost:3001/organization/contact | GET
-Backend | Get all contact | http://localhost:3001/organization/contact/all | GET
-Backend | Change role of member in organization | http://localhost:3001/organization/member/role | PUT
-Backend | Get list of role in organization | http://localhost:3001/organization/role | GET
-Backend | Add role | http://localhost:3001/organization/role | POST
-Backend | Edit role | http://localhost:3001/organization/role | PUT
-Backend | Manager permission in each role | http://localhost:3001/organization/role/permission | PUT
-Backend | Delete role | http://localhost:3001/organization/role | DELETE
+Backend | Get contact by id | http://localhost:3001/organization/:oragnizationId/contact/:contactId | GET
+Backend | Get all contact | http://localhost:3001/organization/:oragnizationId/contact/list/all | GET
+Backend | Change role of member in organization | http://localhost:3001/organization/:oragnizationId/employee/:userId/role | PUT
+Backend | Get list of role in organization | http://localhost:3001/organization/:oragnizationId/role/list/all | GET
+Backend | Add role | http://localhost:3001/organization/:oragnizationId/role | POST
+Backend | Edit role | http://localhost:3001/organization/:oragnizationId/role | PUT
+Backend | Manager permission in each role | http://localhost:3001/organization/:oragnizationId/role/permission | PUT | cancel
+Backend | Delete role | http://localhost:3001/organization/:oragnizationId/role | DELETE
 
 Face recognition\
-http://localhost:3002/ml/
+http://localhost:3002/ml/ (Please don't connect directly. You need to call this from the backend server.)
 
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
@@ -74,8 +74,8 @@ ML | Delete dataset | http://localhost:3002/ml/dataset | DELETE
 Utils
 Server | API | Endpoint | Method | Status
 ----- | ----- | ----- | ----- | ----- |
-Backend | Check server status | http://localhost:3001/status | POST
-ML | Check server status | http://localhost:3002/status | POST
+Backend | Check server status | http://localhost:3001/status | GET
+ML | Check server status | http://localhost:3002/status | GET
 
 ## Creators
 ### Kasinphat Ketchom
