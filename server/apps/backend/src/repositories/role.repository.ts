@@ -13,6 +13,7 @@ export class RoleRepository {
       where: { organization: { id: organizationId } },
     });
   }
+
   public async createNewRole(organizationId: number, roleName: string) {
     return await connection
       .getRepository(Role)
