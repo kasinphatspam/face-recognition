@@ -24,11 +24,11 @@ class Role {
   public name: string;
 
   @ManyToOne(() => Organization, (organization) => organization.roles)
-  @JoinColumn({ name: "organizationId" })
+  @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
   @ManyToMany(() => Permission)
-  @JoinColumn({ name: "permissionId" })
+  @JoinColumn({ name: 'permissionId' })
   public permissions: Permission[];
 
   @OneToMany(() => User, (user) => user.role)

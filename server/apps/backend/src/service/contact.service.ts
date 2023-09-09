@@ -1,62 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Contact, Organization } from '@/entity';
 import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
-import { Repository } from 'typeorm';
 import { RecognitionApiService } from '@/service/recognition.api.service';
+import { ContactRepository } from '@/repositories/contact.repository';
+import { OrganizationRepository } from '@/repositories/organization.repository';
 
 @Injectable()
 export class ContactService {
   constructor(
     private readonly recognitionApiService: RecognitionApiService,
-    @InjectRepository(Contact) private contactRepository: Repository<Contact>,
-    @InjectRepository(Organization)
-    private organizationRepository: Repository<Organization>,
+    private readonly contactRepository: ContactRepository,
+    private readonly organizationRepository: OrganizationRepository,
   ) {}
 
   public async createNewContact(
     organizationId: number,
     body: CreateNewContactDto,
   ) {
-    const contact = await this.contactRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Contact)
-      .values([
-        {
-          organization: { id: organizationId },
-          firstname: body.firstname,
-          lastname: body.lastname,
-          contactCompany: body.contactCompany,
-          title: body.title,
-          officePhone: body.officePhone,
-          mobile: body.mobile,
-          email1: body.email1,
-          email2: body.email2,
-          dob: body.dob,
-          contactOwner: body.contactOwner,
-          createdTime: body.createdTime,
-          modifiedTime: body.modifiedTime,
-          lineId: body.lineId,
-          facebook: body.facebook,
-          linkedin: body.linkedin,
-        },
-      ])
-      .execute();
+    const contact = await this.contactRepository.createNewContact(
+      organizationId,
+      body,
+    );
     return contact.raw.insertId;
   }
 
   public async getContactById(organizationId: number, contactId: number) {
-    return await this.contactRepository.findOneBy({
-      id: contactId,
-      organization: { id: organizationId },
-    });
+    return await this.contactRepository.getContactById(
+      organizationId,
+      contactId,
+    );
   }
 
-  public async getAllContact(id: number) {
-    return await this.contactRepository.find({
-      where: [{ organization: { id } }],
-    });
+  public async getAllContact(orgnaizationId: number) {
+    return await this.contactRepository.getAllContactInOrganization(
+      orgnaizationId,
+    );
   }
 
   public async encodeImage(
@@ -65,9 +42,7 @@ export class ContactService {
     base64: string,
   ) {
     const packageKey = (
-      await this.organizationRepository.findOneBy({
-        id: organizationId,
-      })
+      await this.organizationRepository.getOrganizationById(organizationId)
     ).packageKey;
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
@@ -75,32 +50,26 @@ export class ContactService {
       organizationId,
       contactId,
     );
-    await this.contactRepository
-      .createQueryBuilder()
-      .update(Contact)
-      .set({ encodedId: encodeId })
-      .where('organizationId = :organizationId AND contactId = :contactId', {
-        organizationId: organizationId,
-        contactId: contactId,
-      })
-      .execute();
+    await this.contactRepository.updateContactEncodeId(
+      organizationId,
+      contactId,
+      encodeId,
+    );
     return encodeId;
   }
 
   public async recognitionImage(organizationId: number, base64: string) {
     const packageKey = (
-      await this.organizationRepository.findOneBy({
-        id: organizationId,
-      })
+      await this.organizationRepository.getOrganizationById(organizationId)
     ).packageKey;
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
     );
-    const contact = await this.contactRepository.findOneBy({
-      encodedId: resultObj.id,
-      id: organizationId,
-    });
+    const contact = await this.contactRepository.getContactByEncodedId(
+      organizationId,
+      resultObj.id,
+    );
     const object = {
       checkedTime: resultObj.checkedTime,
       accuracy: resultObj.accuracy,

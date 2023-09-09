@@ -1,19 +1,18 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/entity';
 import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
-import { Repository } from 'typeorm';
 import { ImageService } from './image.service';
+import { UserRepository } from '@/repositories/user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly imageService: ImageService,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
   ) {}
 
   public async getAllUser(): Promise<User[]> {
-    const user = await this.userRepository.find();
+    const user = await this.userRepository.getAllUserAccount();
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -21,7 +20,7 @@ export class UserService {
   }
 
   public async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.getUserById(userId);
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -29,7 +28,7 @@ export class UserService {
   }
 
   public async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email: email });
+    const user = await this.userRepository.getUserByEmail(email);
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -37,21 +36,7 @@ export class UserService {
   }
 
   public async getRawUserDataByEmail(email: string): Promise<User> {
-    const user = await this.userRepository
-      .createQueryBuilder()
-      .select([
-        'id',
-        'email',
-        'firstname',
-        'lastname',
-        'gender',
-        'personalId',
-        'dob',
-        'image',
-      ])
-      .addSelect('password')
-      .where('email = :email', { email: email })
-      .getRawOne();
+    const user = await this.userRepository.getRawUserDataByEmail(email);
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -59,7 +44,7 @@ export class UserService {
   }
 
   public async updateUserInfo(userId: number, body: UpdateUserDto) {
-    return this.userRepository.update({ id: userId }, body);
+    return this.userRepository.updateUserInformation(userId, body);
   }
 
   public async updateImage(userId: number, body: UpdateUserImageDto) {
@@ -70,16 +55,11 @@ export class UserService {
           `${userId}.png`,
         )
       : this.imageService.defaultImagePath('users');
-    return await this.userRepository.update(
-      { id: userId },
-      {
-        image: imagePath,
-      },
-    );
+    return await this.userRepository.updateUserImage(userId, imagePath);
   }
 
   public async deleteUserAccount(userId: number) {
     this.imageService.deleteImageFromName('users', `${userId}.png`);
-    return this.userRepository.delete({ id: userId });
+    return this.userRepository.deleteUserAccount(userId);
   }
 }

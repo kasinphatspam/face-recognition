@@ -4,9 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
 import { Request } from 'express';
 import {
   AuthForgotPasswordDto,
@@ -17,11 +15,12 @@ import { User } from '@/entity';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '@/service/user.service';
 import { ImageService } from '@/service/image.service';
+import { UserRepository } from '@/repositories/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     private readonly userService: UserService,
     private readonly imageService: ImageService,
     private readonly jwtService: JwtService,
@@ -30,10 +29,12 @@ export class AuthService {
   public async login(body: AuthLoginDto): Promise<string> {
     const { email, password } = body;
     const user = await this.userService.getRawUserDataByEmail(email);
+
     if (!user)
       throw new BadRequestException(
         'The user account with this email address was not found.',
       );
+
     if (!(await bcrypt.compare(password, user.password)))
       throw new BadRequestException('Password Incorrect.');
 
@@ -43,13 +44,10 @@ export class AuthService {
   }
 
   public async register(body: AuthRegisterDto): Promise<User> {
-    const user = await this.userRepository
-      .createQueryBuilder()
-      .where('email = :email OR personalId = :personalId', {
-        email: body.email,
-        personalId: body.personalId,
-      })
-      .getOne();
+    const user = await this.userRepository.getUserByMatchingEmailOrPersonalId(
+      body.email,
+      body.personalId,
+    );
 
     if (user) {
       if (user.email === body.email) {
@@ -63,23 +61,13 @@ export class AuthService {
     const date = new Date(body.dob.toString());
     const hashedPassword = await bcrypt.hash(body.password, 12);
     let imagePath = this.imageService.defaultImagePath('users');
-    const newUser = await this.userRepository
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values([
-        {
-          email: body.email,
-          password: hashedPassword,
-          firstname: body.firstname,
-          lastname: body.lastname,
-          gender: body.gender,
-          personalId: body.personalId,
-          dob: date,
-          image: imagePath,
-        },
-      ])
-      .execute();
+
+    const newUser = await this.userRepository.createNewUserAccount(
+      body,
+      hashedPassword,
+      imagePath,
+      date,
+    );
 
     if (body.image) {
       imagePath = this.imageService.saveImageFromBase64(
@@ -87,9 +75,10 @@ export class AuthService {
         'users',
         `${newUser.raw.insertId}.png`,
       );
-      await this.userRepository.update(
-        { id: newUser.raw.insertId },
-        { image: imagePath },
+
+      await this.userRepository.updateUserImage(
+        newUser.raw.insertId,
+        imagePath,
       );
     }
 
@@ -105,7 +94,7 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      const user = await this.userRepository.findOneBy(data.id);
+      const user = await this.userRepository.getUserById(data.id);
 
       return user;
     } catch (error) {
@@ -120,6 +109,6 @@ export class AuthService {
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {
-    return;
+    return body;
   }
 }

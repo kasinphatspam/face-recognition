@@ -93,17 +93,17 @@ export class AuthController {
   }
 
   @Post('forgot-password/verify')
-  public async verifyForgotPasswordRequest(){
-    
+  public async verifyForgotPasswordRequest() {
+    return;
   }
 
   @Put('change-password/wc')
-  public async changePasswordWithConfirmation(){
-
+  public async changePasswordWithConfirmation() {
+    return;
   }
 
   @Put('change-password/woc')
-  public async changePasswordWithoutConfirmation(){
-
+  public async changePasswordWithoutConfirmation() {
+    return;
   }
 }

@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { User } from './user.entity';
 
@@ -8,11 +14,11 @@ class History {
   public id: number;
 
   @ManyToOne(() => Organization, (organization) => organization.histories)
-  @JoinColumn({ name: "organizationId" })
+  @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
   @ManyToOne(() => User, (user) => user.histories)
-  @JoinColumn({ name: "userId" })
+  @JoinColumn({ name: 'userId' })
   public user: User;
 
   @Column({

@@ -1,10 +1,10 @@
-import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Length,
   MaxLength,
 } from 'class-validator';
 
@@ -25,6 +25,17 @@ class UpdateOrganizationDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @Length(6)
+  public passcode: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsDate()
+  public codeCreatedTime: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   @MaxLength(30)
   public vtigerToken: string;
 
@@ -39,6 +50,12 @@ class UpdateOrganizationDto {
   @IsString()
   @MaxLength(50)
   public vtigerLink: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @Length(8)
+  public packageKey: string;
 
   @IsOptional()
   @IsBoolean()

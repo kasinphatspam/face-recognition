@@ -360,16 +360,10 @@ export class OrganizationController {
     @Param('userId') userId: number,
     @Res() res: Response,
   ) {
-    const status = await this.roleService.changeEmployeeRole(
-      organizationId,
-      roleId,
-      userId,
-    );
-    if (status.affected == 1) {
-      res.status(HttpStatus.OK).json({
-        message: `Change role of user id: ${userId} to role id: ${roleId} successfully.`,
-      });
-    }
+    await this.roleService.changeEmployeeRole(organizationId, roleId, userId);
+    res.status(HttpStatus.OK).json({
+      message: `Change role of user id: ${userId} to role id: ${roleId} successfully.`,
+    });
   }
 
   /* 

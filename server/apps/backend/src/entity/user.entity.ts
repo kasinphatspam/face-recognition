@@ -71,11 +71,11 @@ export class User {
   public image: string;
 
   @ManyToOne(() => Organization, (organization) => organization.users)
-  @JoinColumn({ name: "organizationId" })
+  @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
   @ManyToOne(() => Role, (role) => role.users)
-  @JoinColumn({ name: "roleId" })
+  @JoinColumn({ name: 'roleId' })
   public role: Role;
 
   @OneToMany(() => History, (history) => history.organization)

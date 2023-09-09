@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Role, User } from '@/entity';
-import { Repository } from 'typeorm';
+import { UserRepository } from '@/repositories/user.repository';
+import { RoleRepository } from '@/repositories/role.repository';
 
 @Injectable()
 export class RoleService {
   constructor(
-    @InjectRepository(Role) private roleRepository: Repository<Role>,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly roleRepository: RoleRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   public async createNewRole(
@@ -15,17 +14,10 @@ export class RoleService {
     organizationId: number,
   ): Promise<number> {
     // Insert data into table: Role
-    const role = await this.roleRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Role)
-      .values([
-        {
-          name: roleName,
-          organization: { id: organizationId },
-        },
-      ])
-      .execute();
+    const role = await this.roleRepository.createNewRole(
+      organizationId,
+      roleName,
+    );
 
     return role.raw.insertId;
   }
@@ -35,20 +27,14 @@ export class RoleService {
     roleId: number,
     userId: number,
   ) {
-    const user = await this.userRepository.findOne({
-      relations: ['organization'],
-      where: { id: userId, organization: { id: organizationId } },
-    });
+    const user = await this.userRepository.getUserByIdAndOrganizationId(
+      userId,
+      organizationId,
+    );
     if (!user) {
       throw new BadRequestException('Not found user');
     }
-    return await this.userRepository.update(
-      {
-        id: userId,
-        organization: { id: user.organization.id },
-      },
-      { role: { id: roleId } },
-    );
+    await this.userRepository.updateUserRole(user.id, roleId);
   }
 
   public async editRole(
@@ -56,29 +42,23 @@ export class RoleService {
     roleName: string,
     organizationId: number,
   ) {
-    await this.roleRepository.update(
-      { id: roleId, organization: { id: organizationId } },
-      { name: roleName },
+    await this.roleRepository.updateRoleInformation(
+      organizationId,
+      roleId,
+      roleName,
     );
   }
 
   public async getAllRole(organizationId: number) {
-    return await this.roleRepository.find({
-      where: { organization: { id: organizationId } },
-    });
+    return await this.roleRepository.getAllRoleInOrganization(organizationId);
   }
 
   public async deleteRole(organizationId: number, roleId: number) {
     // Find the user who used this role
-    const property = await this.userRepository.find({
-      relations: ['organization', 'role'],
-      where: [
-        {
-          organization: { id: organizationId },
-          role: { id: roleId },
-        },
-      ],
-    });
+    const property = await this.userRepository.getAllUserByRoleAndOrganization(
+      organizationId,
+      roleId,
+    );
     // Check if the user who used this role is empty
     if (property.length > 0) {
       throw new BadRequestException(
@@ -86,18 +66,12 @@ export class RoleService {
       );
     }
     // Delete and return affected column
-    return await this.roleRepository.delete({
-      id: roleId,
-      organization: { id: organizationId },
-    });
+    return await this.roleRepository.deleteRole(organizationId, roleId);
   }
 
   public async forceDeleteRole(organizationId: number, roleId: number) {
     // This function removes roles regardless of whether they are active or not.
     // Delete and return affected column
-    return await this.roleRepository.delete({
-      id: roleId,
-      organization: { id: organizationId },
-    });
+    return await this.roleRepository.deleteRole(organizationId, roleId);
   }
 }

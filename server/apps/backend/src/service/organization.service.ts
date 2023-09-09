@@ -1,37 +1,36 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Organization, User } from '@/entity';
+import { Organization } from '@/entity';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
 } from '@/utils/dtos/organization.dto';
 import { RoleService } from '@/service/role.service';
 import { RecognitionApiService } from '@/service/recognition.api.service';
-import { InsertResult, Repository } from 'typeorm';
+import { InsertResult } from 'typeorm';
+import { OrganizationRepository } from '@/repositories/organization.repository';
+import { UserRepository } from '@/repositories/user.repository';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly recognitionApiService: RecognitionApiService,
     private readonly roleService: RoleService,
-    @InjectRepository(Organization)
-    private organizationRepository: Repository<Organization>,
-    @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly organizationRepository: OrganizationRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
-    return await this.organizationRepository.findOneBy({
-      id: organizationId,
-    });
+    return await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
   }
 
   public async getCurrentOrganization(userId: number): Promise<Organization> {
-    const user = await this.userRepository.findOne({
-      relations: ['organization'],
-      where: { id: userId },
-    });
+    const user = await this.organizationRepository.getOrganizationByUserId(
+      userId,
+    );
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -47,49 +46,43 @@ export class OrganizationService {
     body: CreateOrganizationDto,
   ) {
     // Check if the user account exists or not.
-    const property = await this.userRepository.findOneBy({
-      id: userId,
-    });
+    const property = await this.userRepository.getUserById(userId);
     if (!property) {
       throw new BadRequestException(`Not found user id: ${userId}`);
     }
     // Create dataset file on ml-server
     const packageKey = await this.recognitionApiService.createPackage();
     // Random passcode with unique result and insert data into database
-    const organization = await this.organizationRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Organization)
-      .values([
-        {
-          name: body.name,
-          passcode: await this.randomPasscodeWithUniqueResult(),
-          codeCreatedTime: new Date(),
-          packageKey: packageKey,
-        },
-      ])
-      .execute();
+    const organization =
+      await this.organizationRepository.createNewOrganization(
+        body.name,
+        await this.randomPasscodeWithUniqueResult(),
+        new Date(),
+        packageKey,
+      );
+
     // Create simple role to new organization
     const roleId = await this.createSimpleRole(organization);
     // Put organization id and role_id to user table with user id
-    await this.userRepository.save({
-      id: property.id,
-      organization: { id: organization.raw.insertId },
-      role: { id: roleId },
-    });
+    await this.userRepository.updateUserOrganization(
+      property.id,
+      organization.raw.insertId,
+    );
+    await this.userRepository.updateUserRole(property.id, roleId);
   }
 
   public async updateOrganizationInfo(
     organizationId: number,
     body: UpdateOrganizationDto,
   ) {
-    return await this.organizationRepository.save({
-      id: organizationId,
-      name: body.name,
-      vtigerToken: body.vtigerToken,
-      vtigerAccessKey: body.vtigerAccessKey,
-      vtigerLink: body.vtigerLink,
-    });
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+    if (!organization) throw new BadRequestException('Not found organization.');
+    return await this.organizationRepository.updateOrganizationInformation(
+      organizationId,
+      body,
+    );
   }
 
   public async deleteOrganization(organizationId: number) {
@@ -97,43 +90,37 @@ export class OrganizationService {
     const roleProperty = await this.roleService.getAllRole(organizationId);
     for (const i of roleProperty) {
       // Find the user account that uses this role.
-      const userProperty = await this.userRepository.find({
-        where: { organization: { id: organizationId }, role: { id: i.id } },
-      });
+      const userArray =
+        await this.userRepository.getAllUserByRoleAndOrganization(
+          organizationId,
+          i.id,
+        );
       // Remove the role id and organization id in each account of this organization
-      for (const j of userProperty) {
-        if (j != null)
-          await this.userRepository.save({
-            id: j.id,
-            organization: null,
-            role: null,
-          });
+      for (const j of userArray) {
+        if (j != null) {
+          await this.userRepository.updateUserOrganization(j.id, null);
+          await this.userRepository.updateUserRole(j.id, null);
+        }
       }
       // Force delete the role
       await this.roleService.forceDeleteRole(organizationId, i.id);
     }
     // Delete the organization
-    return await this.organizationRepository.delete({
-      id: organizationId,
-    });
+    return await this.organizationRepository.deleteOrganization(organizationId);
   }
 
   public async joinOrganizationWithPasscode(userId: number, passcode: string) {
     // Find the organization with passcode
-    const organization = await this.organizationRepository.findOneBy({
-      passcode,
-    });
+    const organization =
+      await this.organizationRepository.getOrganizationByPasscode(passcode);
     if (!organization) {
       throw new BadRequestException('Wrong passcode');
     }
     // Find user role id in organization
     const roleId = await this.roleService.getAllRole(organization.id);
     // Add orgnaization id to user account
-    await this.userRepository.save({
-      id: userId,
-      organization: { id: organization.id },
-      role: { id: roleId[1].id },
-    });
+    await this.userRepository.updateUserOrganization(userId, organization.id);
+    await this.userRepository.updateUserRole(userId, roleId[1].id);
     return organization;
   }
 
@@ -146,11 +133,17 @@ export class OrganizationService {
       throw new BadRequestException('Not found organization.');
     }
     // Update organization passcode and return it
-    await this.organizationRepository.save({
-      id: organizationId,
+    const newData = {
       passcode: passcode,
       codeCreatedTime: new Date(),
-    });
+    };
+
+    const data: UpdateOrganizationDto = JSON.parse(JSON.stringify(newData));
+
+    await this.organizationRepository.updateOrganizationInformation(
+      organizationId,
+      data,
+    );
     return passcode;
   }
 
@@ -159,7 +152,8 @@ export class OrganizationService {
     let passcode = Math.random().toString(36).slice(-6).toUpperCase();
     // Check if this passcode is not exist
     while (
-      (await this.organizationRepository.findOneBy({ passcode })) != null
+      (await this.organizationRepository.getOrganizationByPasscode(passcode)) !=
+      null
     ) {
       passcode = Math.random().toString(36).slice(-6).toUpperCase();
     }

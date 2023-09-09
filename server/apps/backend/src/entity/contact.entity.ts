@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Organization } from './organization.entity';
 
@@ -9,7 +15,7 @@ export class Contact {
   public id: number;
 
   @ManyToOne(() => Organization, (organization) => organization.contacts)
-  @JoinColumn({ name: "organizationId" })
+  @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
   @Column({
