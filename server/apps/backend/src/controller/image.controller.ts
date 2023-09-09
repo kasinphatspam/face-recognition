@@ -6,6 +6,12 @@ import { Folder, ImageService } from 'src/service/image.service';
 export class ImageController {
   public constructor(private readonly imageService: ImageService) {}
 
+   /* 
+    Service name:  Get Image By path
+    Url: http://localhost:3001/:folder/:file
+    Method: Get
+    Body: {}
+  */
   @Get(':folder/:file')
   public async getImagePath(
     @Param('folder') folder: Folder,

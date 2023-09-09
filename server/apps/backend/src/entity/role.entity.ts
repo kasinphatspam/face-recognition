@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from 'typeorm';
 import { Permission } from './permission.entity';
 import { User } from './user.entity';
@@ -23,10 +24,11 @@ class Role {
   public name: string;
 
   @ManyToOne(() => Organization, (organization) => organization.roles)
+  @JoinColumn({ name: "organizationId" })
   public organization: Organization;
 
   @ManyToMany(() => Permission)
-  @JoinTable()
+  @JoinColumn({ name: "permissionId" })
   public permissions: Permission[];
 
   @OneToMany(() => User, (user) => user.role)

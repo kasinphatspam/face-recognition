@@ -34,7 +34,7 @@ Backend | Edit user account | http://localhost:3001/user/:userId | PUT | success
 Backend | Edit user profile | http://localhost:3001/user/:userId/image | PUT | success
 Backend | Update user info | http://localhost:3001/user/:userId | PUT | success
 Backend | Delete user account | http://localhost:3001/user/:userId | DELETE | success
-Backend | Get current organization | http://localhost:3001/user/:userId/organization | success
+Backend | Get current organization | http://localhost:3001/user/:userId/organization | GET | success
 
 Organization\
 http://localhost:3001/organization/

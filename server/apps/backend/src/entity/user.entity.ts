@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Organization } from './organization.entity';
@@ -70,9 +71,11 @@ export class User {
   public image: string;
 
   @ManyToOne(() => Organization, (organization) => organization.users)
+  @JoinColumn({ name: "organizationId" })
   public organization: Organization;
 
   @ManyToOne(() => Role, (role) => role.users)
+  @JoinColumn({ name: "roleId" })
   public role: Role;
 
   @OneToMany(() => History, (history) => history.organization)

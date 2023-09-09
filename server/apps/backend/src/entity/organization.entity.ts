@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { History } from './history.entity';
 import { Contact } from './contact.entity';
 import { RequestJoin } from './request.join.entity';
 import { Role } from './role.entity';
+
 @Entity('organization')
 class Organization {
   @PrimaryGeneratedColumn('increment')

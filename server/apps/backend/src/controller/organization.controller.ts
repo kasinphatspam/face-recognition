@@ -347,6 +347,12 @@ export class OrganizationController {
       .json({ message: 'Update role info successfully.' });
   }
 
+  /* 
+    Service name:  Change employee role
+    Url: http://localhost:3001/organization/:organizationId/employee/:userId/role/:roleId
+    Method: PUT
+    Body: {}
+  */
   @Put(':organizationId/employee/:userId/role/:roleId')
   public async changeEmployeeRole(
     @Param('organizationId') organizationId: number,
