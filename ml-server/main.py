@@ -48,6 +48,12 @@ def face_recognition_service():
         result = recognition.run(package_key, image)
         return result
 
+    # Return an error message for unsupported HTTP methods
+    return 'HTTP_METHOD_NOT_SUPPORTED'
+
+@app.route("/recognition/dataset/encode")
+def encode():
+    data = request.json
     if request.method == 'PUT':
         # Handle a PUT request for encoding an image
         package_key = data['packageKey']
@@ -56,15 +62,15 @@ def face_recognition_service():
         response_dict = { "encodedId": encoded_id }
         return response_dict
 
-    if request.method == 'DELETE':
+@app.route("/recognition/dataset/delete")
+def delete():
+    data = request.json
+    if request.method == 'PUT':
         # Handle a PUT request for encoding an image
         package_key = data['packageKey']
         encode_id = data['encodedId']
         return recognition.delete(package_key, encode_id)
-
-    # Return an error message for unsupported HTTP methods
-    return 'HTTP_METHOD_NOT_SUPPORTED'
-
+    
 # Start the Flask app if this script is executed
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=3002)

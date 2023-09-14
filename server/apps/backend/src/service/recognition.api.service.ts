@@ -42,7 +42,7 @@ export class RecognitionApiService {
       contactId,
     );
     const response = await axios.put(
-      `${process.env.ML_SERVER_URL}/face-recognition`,
+      `${process.env.ML_SERVER_URL}/face-recognition/dataset/encode`,
       {
         packageKey: packageKey,
         imageBase64: image,
@@ -64,6 +64,28 @@ export class RecognitionApiService {
       JSON.stringify(response.data),
     );
     return obj.encodedId;
+  }
+
+  public async deleteEncodeImage(packageKey: string, encodedId: string) {
+    const response = await axios.put(
+      `http://${process.env.ML_SERVER_URL}/face-recognition/dataset/delete`,
+      {
+        packageKey: packageKey,
+        encodedId: encodedId,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      },
+    );
+
+    if (response.status !== 200) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+
+    return response.data;
   }
 
   public async recognitionImage(packageKey: string, image: string) {
@@ -89,9 +111,5 @@ export class RecognitionApiService {
       JSON.stringify(response.data),
     );
     return object;
-  }
-
-  public async deleteEncodeImage() {
-    return;
   }
 }
