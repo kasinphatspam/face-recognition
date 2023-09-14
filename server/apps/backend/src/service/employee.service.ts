@@ -5,12 +5,12 @@ import { UserRepository } from '@/repositories/user.repository';
 export class EmployeeService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  public async getAllEmployee(organizationId: number) {
-    return await this.userRepository.getAllUserInOrganization(organizationId);
+  public async findAll(organizationId: number) {
+    return await this.userRepository.findAllByOrganizationId(organizationId);
   }
 
-  public async deleteEmployee(organizationId: number, userId: number) {
-    const user = await this.userRepository.getUserById(userId);
+  public async delete(organizationId: number, userId: number) {
+    const user = await this.userRepository.getUserById(userId, null);
     console.log(user);
     if (!user.organization) {
       throw new BadRequestException("User hasn't joined organization");

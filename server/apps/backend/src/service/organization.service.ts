@@ -46,7 +46,7 @@ export class OrganizationService {
     body: CreateOrganizationDto,
   ) {
     // Check if the user account exists or not.
-    const property = await this.userRepository.getUserById(userId);
+    const property = await this.userRepository.getUserById(userId, null);
     if (!property) {
       throw new BadRequestException(`Not found user id: ${userId}`);
     }
@@ -71,27 +71,21 @@ export class OrganizationService {
     await this.userRepository.updateUserRole(property.id, roleId);
   }
 
-  public async updateOrganizationInfo(
-    organizationId: number,
-    body: UpdateOrganizationDto,
-  ) {
+  public async update(organizationId: number, body: UpdateOrganizationDto) {
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
     if (!organization) throw new BadRequestException('Not found organization.');
-    return await this.organizationRepository.updateOrganizationInformation(
-      organizationId,
-      body,
-    );
+    return await this.organizationRepository.update(organizationId, body);
   }
 
   public async deleteOrganization(organizationId: number) {
     // Find the roles in this organization
-    const roleProperty = await this.roleService.getAllRole(organizationId);
+    const roleProperty = await this.roleService.findAll(organizationId);
     for (const i of roleProperty) {
       // Find the user account that uses this role.
       const userArray =
-        await this.userRepository.getAllUserByRoleAndOrganization(
+        await this.userRepository.findAllByOrganizationIdAndRoleId(
           organizationId,
           i.id,
         );
@@ -103,10 +97,10 @@ export class OrganizationService {
         }
       }
       // Force delete the role
-      await this.roleService.forceDeleteRole(organizationId, i.id);
+      await this.roleService.forceDelete(organizationId, i.id);
     }
     // Delete the organization
-    return await this.organizationRepository.deleteOrganization(organizationId);
+    return await this.organizationRepository.delete(organizationId);
   }
 
   public async joinOrganizationWithPasscode(userId: number, passcode: string) {
@@ -117,7 +111,7 @@ export class OrganizationService {
       throw new BadRequestException('Wrong passcode');
     }
     // Find user role id in organization
-    const roleId = await this.roleService.getAllRole(organization.id);
+    const roleId = await this.roleService.findAll(organization.id);
     // Add orgnaization id to user account
     await this.userRepository.updateUserOrganization(userId, organization.id);
     await this.userRepository.updateUserRole(userId, roleId[1].id);
@@ -140,10 +134,7 @@ export class OrganizationService {
 
     const data: UpdateOrganizationDto = JSON.parse(JSON.stringify(newData));
 
-    await this.organizationRepository.updateOrganizationInformation(
-      organizationId,
-      data,
-    );
+    await this.organizationRepository.update(organizationId, data);
     return passcode;
   }
 

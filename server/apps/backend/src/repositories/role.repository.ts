@@ -8,7 +8,7 @@ export class RoleRepository {
     return await connection.getRepository(Role).findOneBy({ id: roleId });
   }
 
-  public async getAllRoleInOrganization(organizationId: number) {
+  public async findAllByOrganizationId(organizationId: number) {
     return await connection.getRepository(Role).find({
       where: { organization: { id: organizationId } },
     });
@@ -29,7 +29,7 @@ export class RoleRepository {
       .execute();
   }
 
-  public async updateRoleInformation(
+  public async update(
     organizationId: number,
     roleId: number,
     roleName: string,
@@ -42,7 +42,7 @@ export class RoleRepository {
       );
   }
 
-  public async deleteRole(organizationId: number, roleId: number) {
+  public async delete(organizationId: number, roleId: number) {
     return await connection
       .getRepository(Role)
       .delete({ id: roleId, organization: { id: organizationId } });

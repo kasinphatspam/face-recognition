@@ -28,7 +28,7 @@ export class ImageService {
     return `${process.env.BACKEND_URL}/images/${folderName}/${fileName}`;
   }
 
-  public deleteImageFromName(folderName: Folder, fileName: string): void {
+  public delete(folderName: Folder, fileName: string): void {
     const fullPath = path.join(this.folderPath, folderName, fileName);
     try {
       unlinkSync(fullPath);

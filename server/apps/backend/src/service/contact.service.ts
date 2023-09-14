@@ -31,9 +31,7 @@ export class ContactService {
   }
 
   public async getAllContact(orgnaizationId: number) {
-    return await this.contactRepository.getAllContactInOrganization(
-      orgnaizationId,
-    );
+    return await this.contactRepository.findAllByOrganizationId(orgnaizationId);
   }
 
   public async encodeImage(

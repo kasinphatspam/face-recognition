@@ -44,27 +44,23 @@ export class AuthService {
   }
 
   public async register(body: AuthRegisterDto): Promise<User> {
-    const user = await this.userRepository.getUserByMatchingEmailOrPersonalId(
-      body.email,
-      body.personalId,
-    );
-
-    if (user) {
-      if (user.email === body.email) {
+    const userArray = await this.userRepository.findAll();
+    for (const i of userArray) {
+      if (i.email === body.email) {
         throw new BadRequestException('This email already exists.');
       }
-      if (user.personalId === body.personalId) {
+      if (i.personalId === body.personalId) {
         throw new BadRequestException('This personalId already exists.');
       }
     }
 
     const date = new Date(body.dob.toString());
-    const hashedPassword = await bcrypt.hash(body.password, 12);
+    const password = await bcrypt.hash(body.password, 12);
     let imagePath = this.imageService.defaultImagePath('users');
 
-    const newUser = await this.userRepository.createNewUserAccount(
+    const newUser = await this.userRepository.insert(
       body,
-      hashedPassword,
+      password,
       imagePath,
       date,
     );
@@ -76,10 +72,7 @@ export class AuthService {
         `${newUser.raw.insertId}.png`,
       );
 
-      await this.userRepository.updateUserImage(
-        newUser.raw.insertId,
-        imagePath,
-      );
+      await this.userRepository.updateImage(newUser.raw.insertId, imagePath);
     }
 
     return await this.userService.getUserByEmail(body.email);
@@ -94,7 +87,7 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-      const user = await this.userRepository.getUserById(data.id);
+      const user = await this.userRepository.getUserById(data.id, null);
 
       return user;
     } catch (error) {

@@ -27,8 +27,8 @@ export class UserController {
     Body: {}
   */
   @Get('list/all')
-  public getAllUser() {
-    return this.userService.getAllUser();
+  public findAll() {
+    return this.userService.findAll();
   }
 
   /* 
@@ -54,7 +54,7 @@ export class UserController {
     @Body() body: UpdateUserDto,
     @Res() res: Response,
   ) {
-    await this.userService.updateUserInfo(userId, body);
+    await this.userService.update(userId, body);
     return res.status(HttpStatus.OK).json({
       message: 'Update user information successfully',
     });
@@ -67,7 +67,7 @@ export class UserController {
     Body: {}
   */
   @Put(':userId/image')
-  public async updateUserImage(
+  public async updateImage(
     @Param('userId') userId: number,
     @Body() body: UpdateUserImageDto,
     @Res() res: Response,
@@ -86,7 +86,7 @@ export class UserController {
   */
   @Delete(':userId')
   public async delete(@Param('userId') userId: number, @Res() res: Response) {
-    await this.userService.deleteUserAccount(userId);
+    await this.userService.delete(userId);
     return res.status(HttpStatus.OK).json({
       message: 'Delete user account successfully',
     });

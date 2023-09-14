@@ -27,35 +27,34 @@ export class RoleService {
     roleId: number,
     userId: number,
   ) {
-    const user = await this.userRepository.getUserByIdAndOrganizationId(
-      userId,
-      organizationId,
-    );
+    const relations = ['organization', 'role'];
+    const user = await this.userRepository.getUserById(userId, relations);
     if (!user) {
       throw new BadRequestException('Not found user');
+    }
+    if (user.organization.id !== organizationId) {
+      throw new BadRequestException(
+        'This user does not belong to this company.',
+      );
     }
     await this.userRepository.updateUserRole(user.id, roleId);
   }
 
-  public async editRole(
+  public async update(
     roleId: number,
     roleName: string,
     organizationId: number,
   ) {
-    await this.roleRepository.updateRoleInformation(
-      organizationId,
-      roleId,
-      roleName,
-    );
+    await this.roleRepository.update(organizationId, roleId, roleName);
   }
 
-  public async getAllRole(organizationId: number) {
-    return await this.roleRepository.getAllRoleInOrganization(organizationId);
+  public async findAll(organizationId: number) {
+    return await this.roleRepository.findAllByOrganizationId(organizationId);
   }
 
-  public async deleteRole(organizationId: number, roleId: number) {
+  public async delete(organizationId: number, roleId: number) {
     // Find the user who used this role
-    const property = await this.userRepository.getAllUserByRoleAndOrganization(
+    const property = await this.userRepository.findAllByOrganizationIdAndRoleId(
       organizationId,
       roleId,
     );
@@ -66,12 +65,12 @@ export class RoleService {
       );
     }
     // Delete and return affected column
-    return await this.roleRepository.deleteRole(organizationId, roleId);
+    return await this.roleRepository.delete(organizationId, roleId);
   }
 
-  public async forceDeleteRole(organizationId: number, roleId: number) {
+  public async forceDelete(organizationId: number, roleId: number) {
     // This function removes roles regardless of whether they are active or not.
     // Delete and return affected column
-    return await this.roleRepository.deleteRole(organizationId, roleId);
+    return await this.roleRepository.delete(organizationId, roleId);
   }
 }

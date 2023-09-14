@@ -49,10 +49,7 @@ export class OrganizationRepository {
       .execute();
   }
 
-  public async updateOrganizationInformation(
-    organizationId: number,
-    body: UpdateOrganizationDto,
-  ) {
+  public async update(organizationId: number, body: UpdateOrganizationDto) {
     return await connection.getRepository(Organization).save({
       id: organizationId,
       name: body.name,
@@ -66,7 +63,7 @@ export class OrganizationRepository {
     });
   }
 
-  public async deleteOrganization(organizationId: number) {
+  public async delete(organizationId: number) {
     return await connection.getRepository(Organization).delete({
       id: organizationId,
     });

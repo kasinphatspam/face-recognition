@@ -25,46 +25,42 @@ export class UserRepository {
       .getRawOne();
   }
 
-  public async getUserById(userId: number): Promise<User> {
+  public async getUserById(userId: number, relations: string[]): Promise<User> {
+    if (!relations) {
+      return await connection
+        .getRepository(User)
+        .findOne({ relations: relations, where: { id: userId } });
+    }
     return await connection
       .getRepository(User)
       .findOne({ relations: ['organization', 'role'], where: { id: userId } });
   }
 
-  public async getUserByEmail(email: string): Promise<User> {
-    return await connection.getRepository(User).findOneBy({ email: email });
-  }
-
-  public async getUserByIdAndOrganizationId(
-    userId: number,
-    organizationId: number,
-  ) {
-    return await connection.getRepository(User).findOne({
-      relations: ['organization'],
-      where: { id: userId, organization: { id: organizationId } },
-    });
-  }
-
-  public async getUserByMatchingEmailOrPersonalId(
+  public async getUserByEmail(
     email: string,
-    personalId: string,
+    relations: string[],
   ): Promise<User> {
+    if (!relations) {
+      return await connection
+        .getRepository(User)
+        .findOne({ relations: relations, where: { email: email } });
+    }
     return await connection
       .getRepository(User)
-      .findOne({ where: [{ email: email }, { personalId: personalId }] });
+      .findOne({ relations: relations, where: { email: email } });
   }
 
-  public async getAllUserAccount(): Promise<User[]> {
+  public async findAll(): Promise<User[]> {
     return await connection.getRepository(User).find();
   }
 
-  public async getAllUserInOrganization(organizationId: number) {
+  public async findAllByOrganizationId(organizationId: number) {
     return await connection.getRepository(User).find({
       where: [{ organization: { id: organizationId } }],
     });
   }
 
-  public async getAllUserByRoleAndOrganization(
+  public async findAllByOrganizationIdAndRoleId(
     organizationId: number,
     roleId: number,
   ): Promise<User[]> {
@@ -73,7 +69,7 @@ export class UserRepository {
     });
   }
 
-  public async createNewUserAccount(
+  public async insert(
     body: AuthRegisterDto,
     password: string,
     imagePath: string,
@@ -98,11 +94,11 @@ export class UserRepository {
       .execute();
   }
 
-  public async updateUserInformation(userId: number, body: UpdateUserDto) {
+  public async update(userId: number, body: UpdateUserDto) {
     return await connection.getRepository(User).update({ id: userId }, body);
   }
 
-  public async updateUserImage(userId: number, imagePath: string) {
+  public async updateImage(userId: number, imagePath: string) {
     return await connection
       .getRepository(User)
       .update({ id: userId }, { image: imagePath });
@@ -122,7 +118,7 @@ export class UserRepository {
     });
   }
 
-  public async deleteUserAccount(userId: number) {
+  public async delete(userId: number) {
     return await connection.getRepository(User).delete({ id: userId });
   }
 }

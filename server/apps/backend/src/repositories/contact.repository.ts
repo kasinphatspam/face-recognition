@@ -22,7 +22,7 @@ export class ContactRepository {
     });
   }
 
-  public async getAllContactInOrganization(orgnaizationId: number) {
+  public async findAllByOrganizationId(orgnaizationId: number) {
     return await connection.getRepository(Contact).find({
       where: [{ organization: { id: orgnaizationId } }],
     });

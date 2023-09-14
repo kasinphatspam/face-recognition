@@ -11,8 +11,8 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  public async getAllUser(): Promise<User[]> {
-    const user = await this.userRepository.getAllUserAccount();
+  public async findAll(): Promise<User[]> {
+    const user = await this.userRepository.findAll();
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -20,7 +20,7 @@ export class UserService {
   }
 
   public async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.getUserById(userId);
+    const user = await this.userRepository.getUserById(userId, null);
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -28,7 +28,7 @@ export class UserService {
   }
 
   public async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.getUserByEmail(email);
+    const user = await this.userRepository.getUserByEmail(email, null);
     if (!user) {
       throw new BadRequestException('Not found');
     }
@@ -43,8 +43,8 @@ export class UserService {
     return user;
   }
 
-  public async updateUserInfo(userId: number, body: UpdateUserDto) {
-    return this.userRepository.updateUserInformation(userId, body);
+  public async update(userId: number, body: UpdateUserDto) {
+    return this.userRepository.update(userId, body);
   }
 
   public async updateImage(userId: number, body: UpdateUserImageDto) {
@@ -55,11 +55,11 @@ export class UserService {
           `${userId}.png`,
         )
       : this.imageService.defaultImagePath('users');
-    return await this.userRepository.updateUserImage(userId, imagePath);
+    return await this.userRepository.updateImage(userId, imagePath);
   }
 
-  public async deleteUserAccount(userId: number) {
-    this.imageService.deleteImageFromName('users', `${userId}.png`);
-    return this.userRepository.deleteUserAccount(userId);
+  public async delete(userId: number) {
+    this.imageService.delete('users', `${userId}.png`);
+    return this.userRepository.delete(userId);
   }
 }

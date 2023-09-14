@@ -84,7 +84,7 @@ export class OrganizationController {
     @Body() body: UpdateOrganizationDto,
     @Res() res: Response,
   ) {
-    await this.organizationService.updateOrganizationInfo(organizationId, body);
+    await this.organizationService.update(organizationId, body);
     return res.status(HttpStatus.OK).json({
       message: `Updated organization successfully`,
     });
@@ -178,7 +178,7 @@ export class OrganizationController {
   */
   @Get(':organizationId/employee/list/all')
   public async getAllEmployee(@Param('organizationId') organizationId: number) {
-    return await this.employeeService.getAllEmployee(organizationId);
+    return await this.employeeService.findAll(organizationId);
   }
 
   /* 
@@ -193,7 +193,7 @@ export class OrganizationController {
     @Param('userId') userId: number,
     @Res() res: Response,
   ) {
-    await this.employeeService.deleteEmployee(organizationId, userId);
+    await this.employeeService.delete(organizationId, userId);
     return res.status(HttpStatus.OK).json({
       message: `Successfully deleted employee id ${userId} from organization id: ${organizationId}`,
     });
@@ -311,7 +311,7 @@ export class OrganizationController {
   */
   @Get(':organizationId/role/list/all')
   public async getAllRole(@Param('organizationId') organizationId: number) {
-    return await this.roleService.getAllRole(organizationId);
+    return await this.roleService.findAll(organizationId);
   }
 
   /* 
@@ -341,7 +341,7 @@ export class OrganizationController {
     @Body() body: EditRoleDto,
     @Res() res: Response,
   ) {
-    await this.roleService.editRole(roleId, body.name, organizationId);
+    await this.roleService.update(roleId, body.name, organizationId);
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Update role info successfully.' });
@@ -388,6 +388,6 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('roleId') roleId: number,
   ) {
-    return this.roleService.deleteRole(organizationId, roleId);
+    return this.roleService.delete(organizationId, roleId);
   }
 }
