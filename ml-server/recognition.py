@@ -1,25 +1,27 @@
-import face_recognition
-import time
-import os, sys
+import random
+import string
+import os
 import cv2
 import numpy as np
 import math
 import datetime
 import base64
 from PIL import Image
+import face_recognition
+import time
 
 # Running
-def run(packageKey, image):
-    fr = FaceRecognition(packageKey)
+def run(package_key, image):
+    fr = FaceRecognition(package_key)
     return fr.recognition(image)
 
-def encode(packageKey, image):
-    fr = FaceRecognition(packageKey)
+def encode(package_key, image):
+    fr = FaceRecognition(package_key)
     return fr.encode(image)
 
-def update_encode(packageKey, encodedId, image):
-    fr = FaceRecognition(packageKey)
-    return fr.update(encodedId, image)
+def delete(package_key, encode_id):
+    fr = FaceRecognition(package_key)
+    fr.deleteimage(encode_id)
 
 # Helper
 def face_confidence(face_distance, face_match_threshold=0.6):
@@ -35,31 +37,41 @@ def face_confidence(face_distance, face_match_threshold=0.6):
         return str(round(value, 2)) + "%"
 
 class FaceRecognition:
-
-    def __init__(self, packageKey):
-        # Initialize variable for encoding image
-        self.file_path_image = "dataset/image/" + packageKey + ".npy"
-        self.file_path_id = "dataset/id/" + packageKey + ".npy"
+    def __init__(self, package_key):
+        # Initialize variables for encoding image
+        self.file_path_image = "dataset/image/" + package_key + ".npy"
+        self.file_path_id = "dataset/id/" + package_key + ".npy"
         self.face_locations = []
         self.face_encodings = []
         self.face_ids = []
 
-    def update(self, encodedId, encoded_data):
-        # Decode base64 string data
-        decoded_data = base64.b64decode((encoded_data))
+    def deleteimage(self, encode_id):
+        # Load the encoded images and IDs from file paths.
+        encoded_image = np.load(self.file_path_image, allow_pickle=True)
+        encoded_id = np.load(self.file_path_id, allow_pickle=True)
 
+        # Iterate through the IDs to find the index of the user to be deleted.
+        for i in range(len(encoded_id)):
+            if encoded_id[i] == encode_id:
+                break  # Stop the loop when the user ID is found.
 
-        return 
+        # Delete the corresponding image and ID from the arrays.
+        encoded_image = np.delete(encoded_image, i, axis=0)
+        encoded_id = np.delete(encoded_id, i, axis=0)
+
+        # Save the updated arrays back to their respective files.
+        np.save(self.file_path_image, encoded_image)
+        np.save(self.file_path_id, encoded_id)
+
 
     def encode(self, encoded_data):
-
         # Decode base64 string data
-        decoded_data = base64.b64decode((encoded_data))
+        decoded_data = base64.b64decode(encoded_data)
 
-         # Getting the timestamp
+        # Getting the timestamp
         ts = time.time()
 
-        # Write the decoded data back to original format in  file
+        # Write the decoded data back to the original format in a file
         img_file = open(f"./data/{ts}.jpg", "wb")
         img_file.write(decoded_data)
         img_file.close()
@@ -70,7 +82,7 @@ class FaceRecognition:
             # Rotate the image to process
             img = Image.open(f"./data/{ts}.jpg")
 
-            # Analyze the image on each axis in case that the image is rotated
+            # Analyze the image on each axis in case the image is rotated
             for i in range(3):
                 img = img.rotate(90)
                 img.save(f"./data/{ts}.jpg")
@@ -79,17 +91,17 @@ class FaceRecognition:
                 face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
                 if len(face_recognition.face_encodings(face_image)) <= 0:
                     # Returns this function when there are no faces in the image.
-                    if(i == 2):
+                    if i == 2:
                         # Delete image file
                         os.unlink(f"./data/{ts}.jpg")
                         return -1
                     continue
                 else:
                     break
-        
+
         face_encodings = face_recognition.face_encodings(face_image)
 
-        # check that is it first time for encoding ?
+        # Check if it's the first time for encoding
         if os.path.getsize(self.file_path_image) == 0:
             known_face_encodings = np.empty((0, 128))
             face_ids = []
@@ -98,29 +110,23 @@ class FaceRecognition:
             face_ids = np.load(self.file_path_id)
 
         known_face_encodings = np.concatenate((known_face_encodings, [face_encodings[0]]), axis=0)
-        face_ids = np.concatenate((face_ids, [ts]),axis=0)
+        face_ids = np.concatenate((face_ids, [ts]), axis=0)
 
         np.save(self.file_path_image, known_face_encodings)
         np.save(self.file_path_id, face_ids)
 
         # Delete image file
         os.unlink(f"./data/{ts}.jpg")
-        
+
         return str(ts)
-    
-    # StatusCode
-    # -1: ERROR (Empty dataset, No face detected on the image)
-    #  0: Unknown
-    #  1: Success it will return id
 
-    def recognition(self, encoded_data): 
-
+    def recognition(self, encoded_data):
         # Check if the file is empty
         file_size_id = os.path.getsize(self.file_path_id)
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if file_size_id == 0:
             print("ERROR in face-recognition system: dataset is empty.")
-            return { "id": "ERROR","statusCode": -1, "accuracy": 0, "checkedTime": timestamp}
+            return { "id": "ERROR", "statusCode": -1, "accuracy": 0, "checkedTime": timestamp }
         else:
             # Import encoded image from encoded.npy
             known_face_encodings = np.load(self.file_path_image)
@@ -129,12 +135,12 @@ class FaceRecognition:
             known_face_id = np.array(known_face_id)
 
         # Decode base64 string data
-        decoded_data = base64.b64decode((encoded_data))
+        decoded_data = base64.b64decode(encoded_data)
 
         # Getting the timestamp
         ts = time.time()
 
-        # Write the decoded data back to original format in  file
+        # Write the decoded data back to the original format in a file
         img_file = open(f"./api/{ts}.jpg", "wb")
         img_file.write(decoded_data)
         img_file.close()
@@ -147,7 +153,7 @@ class FaceRecognition:
             # Rotate the image to process
             img = Image.open(f"./api/{ts}.jpg")
 
-            # Analyze the image on each axis in case that the image is rotated
+            # Analyze the image on each axis in case the image is rotated
             for i in range(3):
                 img = img.rotate(90)
                 img.save(f"./api/{ts}.jpg")
@@ -156,16 +162,16 @@ class FaceRecognition:
                 face_image = face_recognition.load_image_file(f"api/{ts}.jpg")
                 if len(face_recognition.face_encodings(face_image)) <= 0:
                     # Returns this function when there are no faces in the image.
-                    if(i == 2):
+                    if i == 2:
                         # Delete image file
                         os.unlink(f"./api/{ts}.jpg")
-                        print({ "id": "FACE_NOT_FOUND","statusCode": -1, "accuracy": "0", "checkedTime": timestamp})
-                        return { "id": "FACE_NOT_FOUND","statusCode": -1, "accuracy": 0, "checkedTime": timestamp}
+                        print({ "id": "FACE_NOT_FOUND", "statusCode": -1, "accuracy": "0", "checkedTime": timestamp })
+                        return { "id": "FACE_NOT_FOUND", "statusCode": -1, "accuracy": 0, "checkedTime": timestamp }
                     continue
                 else:
                     frame = face_image
                     break
-        
+
         # Resize frame of video to 1/4 size for faster face recognition processing
         small_frame = cv2.resize(
             frame, (0, 0), fx=0.25, fy=0.25
@@ -186,7 +192,6 @@ class FaceRecognition:
         # Finds all faces whose index best matches the given image
         self.face_ids = []
         for face_encoding in self.face_encodings:
-            
             # Compare distance between the given image and dataset image
             face_distances = face_recognition.face_distance(
                 known_face_encodings, face_encoding
@@ -196,13 +201,13 @@ class FaceRecognition:
                 id = known_face_id[best_match_index]
                 # Convert face confidence value to percentage
                 confidence = face_confidence(face_distances[best_match_index])
-                percentage = float(confidence.replace("%",""))
-                # Check the condition, the displayed percentage must be greater than 90 percent, 
+                percentage = float(confidence.replace("%", ""))
+                # Check the condition, the displayed percentage must be greater than 90 percent,
                 # the program will return the customer's id.
-                if(percentage > 80):
-                    print({ "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp})
-                    return { "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp}
+                if percentage > 80:
+                    print({ "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp })
+                    return { "id": str(id), "statusCode": 1, "accuracy": percentage, "checkedTime": timestamp }
 
         # This result will return when not all datasets match the given image
-        print( { "id": "UNKNOWN_CUSTOMER","statusCode": 0, "accuracy": 0, "checkedTime": timestamp})
-        return { "id": "UNKNOWN_CUSTOMER","statusCode": 0, "accuracy": 0, "checkedTime": timestamp}
+        print({ "id": "UNKNOWN_CUSTOMER", "statusCode": 0, "accuracy": 0, "checkedTime": timestamp })
+        return { "id": "UNKNOWN_CUSTOMER", "statusCode": 0, "accuracy": 0, "checkedTime": timestamp }
