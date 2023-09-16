@@ -1,5 +1,5 @@
-import React from "react";
 
+/** Column for employee list */
 export const columns = [
   {name: "ID", uid: "id", sortable: true},
   {name: "NAME", uid: "name", sortable: true},
@@ -11,12 +11,14 @@ export const columns = [
   {name: "ACTIONS", uid: "actions"},
 ];
 
+/** status option for employee list */
 export const statusOptions = [
   {name: "Active", uid: "active"},
   {name: "Paused", uid: "paused"},
   {name: "Vacation", uid: "vacation"},
 ];
 
+/** role premission */
 export const role = [
     {id: 1,
     name: 'employee',

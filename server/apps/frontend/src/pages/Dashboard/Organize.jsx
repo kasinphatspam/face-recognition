@@ -27,7 +27,7 @@ export default function OrganizationService() {
                 <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">Organization</p>
               </div>
 
-              {/* Employee list */}
+              {/* Organize list */}
               <div className="w-[75vw] min-h-[300px] -ml-4 mt-8 bg-white shadow-md rounded-lg p-6">
                 <div className="flex flex-row">
                   <CornerLeftDown className="h-6 w-6 mt-3 mr-1 ml-2" />
@@ -35,7 +35,7 @@ export default function OrganizationService() {
                 </div>
                 <p className="font-light text-sm text-black/40 ml-12">There are list of organization group</p>
                 <div className="flex flex-col">
-                  <div className="grid grid-cols-3 gap-3 gap-y-7 mt-8 ml-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 gap-y-7 mt-8 ml-8">
                     <div>
                       <OrganizeCard
                         name="example"

@@ -8,21 +8,20 @@ export default function Signuppage() {
     {/* variable for keeping register */}
     const [ email, setEmail ] = React.useState("");
     const [ password, setPassword ] = React.useState("");
-		const [ firstname, setFirstname ] = React.useState(""); 
-		const [ lastname, setLastname ] = React.useState(""); 
-		const [ confirmpassword, setConfirmpassword] = React.useState("");
+	const [ firstname, setFirstname ] = React.useState(""); 
+	const [ lastname, setLastname ] = React.useState(""); 
+	const [ confirmpassword, setConfirmpassword] = React.useState("");
     const [ error, setError ] = React.useState(false);
 
+	/** check email and password to identify user */
     const handleSubmit = async (event) => {
       event.preventDefault();
       if (/\S+@\S+\.\S+/.test(email)) {
         // Email is valid, do something
         console.log("Valid email:", email);
         setError(false);
-      } else if (password == confirmpassword) {
-				console.log("password match.");
-				setError(false);
-			}	else {
+      } else if (password == confirmpassword) setError(false);
+		else {
        	// Email is invalid or password didn't match, show error message
         setError(true);
       }

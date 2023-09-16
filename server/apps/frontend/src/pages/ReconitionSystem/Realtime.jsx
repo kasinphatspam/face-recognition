@@ -9,20 +9,13 @@ import {
   CardBody,
   Image,
   CardFooter,
-  Listbox,
-  ListboxItem,
-  Switch,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
 import Navigation from "@/components/Navigation";
 import {
   CameraOff,
   Camera as CameraIcon,
-  Send,
-  Delete,
   File,
-  CornerDownRight,
-  Box
 } from "react-feather";
 import faceDetection from '@mediapipe/face_detection';
 import { Camera } from '@mediapipe/camera_utils';
@@ -33,7 +26,7 @@ export function Realtime() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
   const [deviceId, setDeviceId] = React.useState({});
   const [devices, setDevices] = React.useState([]);
-  const [image, setImage] = React.useState([]);
+  const [image, setImage] = React.useState([""]);
   const [date, setDate] = React.useState(Date.now());
   const [open, setOpen] = React.useState(true);
   const FaceCamRef = React.useRef(null)
@@ -157,20 +150,19 @@ export function Realtime() {
     }
   }, [open]);
 
+  /** handle selected device */
+  React.useEffect(() => {
+    for (const item of devices) {
+      if (item.deviceId == (selectedKeys.values()).next().value)
+        setDeviceId(item.deviceId)
+    }
+  }, [selectedKeys])
+
   /** handle device input i/o */
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
 
-  /** handle action on list box */
-  const handleAction = (item) => {
-    if (item === "capture")
-      capture()
-    if (item === "clear")
-      setImage("")
-    if (item === "send")
-      handleSendtoserver()
-  }
 
   return (
     <>
@@ -180,6 +172,7 @@ export function Realtime() {
             isFooterBlurred
             radius="lg"
           >
+            {/* Webcam */}
             <Webcam
               ref={webcamRef}
               audio={false}
@@ -194,7 +187,6 @@ export function Realtime() {
             {!open && <div className="w-[700px] h-[526px] bg-gray-500 flex flex-col pt-52 pl-64">
               <CameraOff className="w-8 h-8 ml-[5rem] mt-4 text-white/50" />
               <p className="text-lg text-white/30 mt-2 ml-[1.5rem]">Camera is closing</p>
-
             </div>}
             <CardFooter className="mt-8 mb-2">
               <div className="flex justify-between">
@@ -211,9 +203,11 @@ export function Realtime() {
                       selectedKeys={selectedKeys}
                       onSelectionChange={setSelectedKeys}>
                       {(item) => (
+                        item.length > 0 ?
                         <DropdownItem key={item.deviceId} color={"default"}>
                           {item.label}
                         </DropdownItem>
+                        : <DropdownItem key={null}>camera not found</DropdownItem>
                       )}
                     </DropdownMenu>
                   </Dropdown>
@@ -229,7 +223,7 @@ export function Realtime() {
           <Card className="py-4 w-[20rem]">
             <CardBody className="overflow-visible py-2">
               <p className="font-light text-sm text-gray-400 ml-2 mb-1">Photo result</p>
-              {(image.length() == 0) && <div className="flex flex-row ml-4 mt-8 mr-12">
+              {(image.length == 0) && <div className="flex flex-row ml-4 mt-8 mr-12">
                 <File />
                 <p className="ml-2 text-gray-600 text-md">no user found</p>
               </div>}

@@ -44,6 +44,7 @@ export default function Navigation(props) {
     isBordered
     isMenuOpen={isMenuOpen}
     onMenuOpenChange={setIsMenuOpen}
+    className="w-full"
   >
     {/** ------------------------------------------------- */}
     {/* Tabs for small devices */}

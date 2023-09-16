@@ -1,14 +1,15 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "@/pages/HomePage";
-import Analytics from "@/pages/Analytics";
+import Analytics from "@/pages/Dashboard/Analytics";
 import Loginpage from "@/pages/LoginPage";
 import Signuppage from "@/pages/SignUpPage";
-import Profile from "@/pages/ProfilePage";
-import PermissionPage from "@/pages/Permission";
-import OrganizationService from "@/pages/Organize";
-import EmployeePage from "@/pages/Employeelist";
+import Profile from "@/pages/Dashboard/ProfilePage";
+import PermissionPage from "@/pages/Dashboard/Permission";
+import OrganizationService from "@/pages/Dashboard/Organize";
+import EmployeePage from "@/pages/Dashboard/Employeelist";
 import Recognition from "@/pages/Recognition";
+import OrganizationInfo from "@/pages/Dashboard/OrganizeInfo";
 
 export const App = () => {
   return (
@@ -22,6 +23,7 @@ export const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/permission" element={<PermissionPage />} />
           <Route path="/organize" element={<OrganizationService />} />
+          <Route path="/organize/:id" element={<OrganizationInfo />} />
           <Route path="/employee" element={<EmployeePage />} />
           <Route path="/recognition" element={<Recognition />} />
         </Routes>

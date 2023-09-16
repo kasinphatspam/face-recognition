@@ -13,6 +13,7 @@ export default function Vertical() {
               <p className="ml-4 mt-[0.15rem] text-base text-gray-700 font-regular">Dashboard</p>
             </div>
           </Link>
+          <div className="ml-6 mt-6 text-sm text-gray-400 font-regular">Management</div>
           <Link to="/employee">
             <div className="flex flex-row pt-4 pb-4 rounded-lg hover:bg-gray-100 duration-100 px-8">
               <Users className="w-5 h-5 text-gray-700 mt-1" />
@@ -31,6 +32,7 @@ export default function Vertical() {
               <p className="ml-4 mt-[0.15rem] text-base text-gray-700 font-regular">Contact</p>
             </div>
           </Link>
+          <div className="ml-6 mt-6 text-sm text-gray-400 font-regular">Administration</div>
           <Link to="/permission">
             <div className="flex flex-row pt-4 pb-4 rounded-lg hover:bg-gray-100 duration-100 px-8">
               <Trello className="w-5 h-5 text-gray-700 mt-1" />
