@@ -1,10 +1,8 @@
 import { Card, 
-    Divider, 
-    Link, 
     Image, 
     CardFooter, 
     CardHeader, 
-    Tooltip } 
+     } 
         from "@nextui-org/react";
 import React from "react";
 import { Link as LinkR } from "react-router-dom";
@@ -14,8 +12,7 @@ export default function OrganizeCard(props) {
         <>  
             {/** Tool name */}
             <LinkR to={{pathname:`/organize/${props.id}`}}>
-            <Tooltip color="default" content={props.name}>
-                <Card isFooterBlurred isHeaderBlurred className="min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
+                <Card isFooterBlurred isHeaderBlurred className="group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
                     {/** Box Upper */}
                     <CardHeader className="absolute z-10 top-0 flex-col items-start bg-white/30">
                         <p className=" text-[0.6rem] text-black/60 uppercase font-bold">Total {props.employee} users</p>
@@ -24,7 +21,7 @@ export default function OrganizeCard(props) {
                     {/** background image */}
                     <Image
                         removeWrapper
-                        className="z-0 w-full h-full object-cover"
+                        className="z-0 w-full h-full object-cover group-hover:opacity-80 duration-250 delay-100"
                         src="/default.jpg"
                     />
                     {/** Box Bottom */}
@@ -36,7 +33,6 @@ export default function OrganizeCard(props) {
                         </div>
                     </CardFooter>
                 </Card>
-            </Tooltip>
             </LinkR>
         </>
     )

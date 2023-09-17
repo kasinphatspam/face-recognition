@@ -11,7 +11,6 @@ import {
   CardFooter,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
-import Navigation from "@/components/Navigation";
 import {
   CameraOff,
   Camera as CameraIcon,
@@ -20,7 +19,7 @@ import {
 import faceDetection from '@mediapipe/face_detection';
 import { Camera } from '@mediapipe/camera_utils';
 
-export function Realtime() {
+export default function Realtime() {
   const webcamRef = React.useRef(null);
   const canvasRef = React.useRef(null);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
@@ -163,7 +162,6 @@ export function Realtime() {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
 
-
   return (
     <>
       <div className="flex flex-row">
@@ -203,6 +201,7 @@ export function Realtime() {
                       selectedKeys={selectedKeys}
                       onSelectionChange={setSelectedKeys}>
                       {(item) => (
+                        console.log(item),
                         item.length > 0 ?
                         <DropdownItem key={item.deviceId} color={"default"}>
                           {item.label}

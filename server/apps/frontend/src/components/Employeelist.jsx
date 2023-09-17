@@ -1,5 +1,4 @@
 import React from "react";
-import { AnalyticsNavigation } from "@/components/Navigation";
 import {
   Table,
   TableHeader,
@@ -17,10 +16,9 @@ import {
   User,
   Pagination,
 } from "@nextui-org/react";
-import Vertical from "@/components/Vertical";
-import {columns, statusOptions , role} from "@/data/column";
-import {capitalize} from "@/utils/capitalize";
-import { Search , ChevronDown, Plus , MoreVertical , CornerLeftDown } from "react-feather";
+import { columns, statusOptions, role } from "@/data/column";
+import { capitalize } from "@/utils/capitalize";
+import { Search, ChevronDown, Plus, MoreVertical } from "react-feather";
 
 const statusColorMap = {
   active: "success",
@@ -30,7 +28,7 @@ const statusColorMap = {
 
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 
-export default function EmployeePage() {
+export default function Employeecomponent() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -102,11 +100,11 @@ export default function EmployeePage() {
   }, []);
 
   /** function call when clear value on search */
-  const onClear = React.useCallback(()=>{
+  const onClear = React.useCallback(() => {
     setFilterValue("")
     setPage(1)
-  },[])
-  
+  }, [])
+
   /* Cell table content */
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
@@ -115,7 +113,7 @@ export default function EmployeePage() {
       case "name":
         return (
           <User
-            avatarProps={{radius: "lg", src: user.profileImage}}
+            avatarProps={{ radius: "lg", src: user.profileImage }}
             description={user.email}
             name={cellValue}
           >
@@ -141,7 +139,7 @@ export default function EmployeePage() {
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly size="sm" variant="light">
-                  <MoreVertical className="text-default-300" /> 
+                  <MoreVertical className="text-default-300" />
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
@@ -183,7 +181,15 @@ export default function EmployeePage() {
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
-            className="w-full sm:max-w-[44%]"
+            className={{
+              mainWrapper: "w-full sm:max-w-[44%]",
+              input: [
+                "dark:bg-zinc-500",
+                "text-black/90 dark:text-white/90",
+                "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+              ],
+              innerWrapper: "bg-white/90 dark:bg-zinc-600",
+            }}
             placeholder="Search by name..."
             startContent={<Search />}
             value={filterValue}
@@ -298,72 +304,42 @@ export default function EmployeePage() {
 
   return (
     <>
-      {/* Pages offset setup */}
-      <div className="min-h-screen w-screen bg-gray-50">
-        <AnalyticsNavigation
-          Active="Permission"
-          />
-      <div className="flex flex-row">
-        <Vertical/>
-
-        <div className="flex flex-row mt-12 ml-[80px] mb-6">
-          <div className="flex flex-col">
-            <p className="text-inherit font-bold text-4xl align-bottom">Dashboard</p>
-
-            {/* Head text display forum */}
-            <div className="flex flex-row mt-6 ml-1">
-              <p className="text-inherit font-light text-md align-bottom hover:underline">Analytics</p>
-              <p className="text-inherit font-light text-md align-bottom ml-2">/</p>
-              <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">Employee list</p>
-            </div>
-          
-          {/* Employee list */}
-          <div className="w-[75vw] min-h-[300px] -ml-4 mt-8 bg-white shadow-md rounded-lg p-6">
-            <div className="flex flex-row">
-                <CornerLeftDown className="h-6 w-6 mt-3 mr-1 ml-2"/>
-                <p className="font-semibold text-2xl text-inherit ml-2">Employee list</p>
-            </div>
-            <div className="mt-4 ml-4">
-            <Table 
-              aria-label="Example static collection table"
-              color={"primary"}
-              selectionMode="multiple"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
-              closeOnSelect={false}
-              isHeaderSticky
-              sortDescriptor={sortDescriptor}
-              topContent={topContent}
-              topContentPlacement="outside"
-              onSortChange={setSortDescriptor}
-              classNames={{
-                wrapper: "max-h-[382px]",
-              }}
+      <div className="mt-4 ml-4">
+        <Table
+          aria-label="Example static collection table"
+          color={"primary"}
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          closeOnSelect={false}
+          isHeaderSticky
+          sortDescriptor={sortDescriptor}
+          topContent={topContent}
+          topContentPlacement="outside"
+          onSortChange={setSortDescriptor}
+          classNames={{
+            wrapper: "max-h-[382px]",
+          }}
+        >
+          <TableHeader columns={headerColumns}>
+            {(column) => (
+              <TableColumn
+                key={column.uid}
+                align={column.uid === "actions" ? "center" : "start"}
+                allowsSorting={column.sortable}
               >
-                <TableHeader columns={headerColumns}>
-                  {(column) => (
-                    <TableColumn
-                      key={column.uid}
-                      align={column.uid === "actions" ? "center" : "start"}
-                      allowsSorting={column.sortable}
-                    >
-                      {column.name}
-                    </TableColumn>
-                  )}
-                  </TableHeader>
-                  <TableBody emptyContent={"No users found"} items={sortedItems}>
-                    {(item) => (
-                      <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-            </div>
-          </div>
-          </div>
-        </div>
-        </div>
+                {column.name}
+              </TableColumn>
+            )}
+          </TableHeader>
+          <TableBody emptyContent={"No users found"} items={sortedItems}>
+            {(item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </>
   )

@@ -13,17 +13,15 @@ import {
   ListboxItem,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
-import Navigation from "@/components/Navigation";
 import {
   CameraOff,
   Camera as CameraIcon,
   Send,
   Delete,
   File,
-  CornerDownRight
 } from "react-feather";
 
-export function Snapshot() {
+export default function Snapshot() {
   const webcamRef = React.useRef(null);
   const canvasRef = React.useRef(null);
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
@@ -35,15 +33,25 @@ export function Snapshot() {
 
   /** handle other device that connect to hardware */
   const handleDevices = React.useCallback(
-    (mediaDevices) =>
-      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
+    (mediaDevices) => {
+      const videoDevices = mediaDevices.filter(({ kind }) => kind === "videoinput");
+      if (videoDevices.length === 0) {
+        setDevices([{
+          deviceId: 0,
+          label: 'camera not found'
+        }]);
+      } else {
+        setDevices(videoDevices);
+      }
+    
+    },
     [setDevices]
   );
 
   /** Web cam capture */
   const capture = React.useCallback(
     () => {
-      if (selectedKeys == Set([""])) setImage("")
+      if (selectedKeys == new Set([""])) setImage("")
       else {
         console.log("captured")
         const imageSrc = webcamRef.current.getScreenshot();
@@ -61,19 +69,16 @@ export function Snapshot() {
   })
   /** handle action open & close */
   const handleOnclose = React.useCallback(() => {
-    console.log(!open)
     if (open) {
       //Client cam
-      const tracks = webcamRef.current.stream.getTracks();
-      tracks.forEach((track) => track.stop());
+      webcamRef.current.video.pause();
       setOpen(false);
     }
     else {
       const openWebcam = async () => {
         try {
           //client cam
-          const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: deviceId, facingMode: "user" } });
-          webcamRef.current.stream = stream;
+          webcamRef.current.video.play();
           setOpen(true);
         } catch (error) {
           console.error('Error opening webcam:', error);
@@ -106,6 +111,7 @@ export function Snapshot() {
         setDeviceId(item.deviceId)
     }
   }, [selectedKeys])
+
 
   return (
     <>
@@ -145,11 +151,9 @@ export function Snapshot() {
                     selectedKeys={selectedKeys}
                     onSelectionChange={setSelectedKeys}>
                     {(item) => (
-                      item.length > 0 ?
                         <DropdownItem key={item.deviceId} color={"default"}>
                           {item.label}
-                        </DropdownItem>
-                        : <DropdownItem key={null}>camera not found</DropdownItem>
+                        </DropdownItem> 
                     )}
                   </DropdownMenu>
                 </Dropdown>
@@ -186,8 +190,8 @@ export function Snapshot() {
                     key="capture"
 
                     startContent={
-                      <div className="flex items-center bg-green-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                        <CameraIcon className=" text-green-800/80 w-5 h-5" />
+                      <div className="flex items-center bg-green-300/20 dark:bg-green-600/80 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
+                        <CameraIcon className=" text-green-800/80 w-5 h-5 dark:text-green-200/80" />
                       </div>
                     }
                   >
@@ -196,8 +200,8 @@ export function Snapshot() {
                   <ListboxItem
                     key="send"
                     startContent={
-                      <div className="flex items-center bg-yellow-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                        <Send className=" text-yellow-800/80 w-5 h-5" />
+                      <div className="flex items-center bg-yellow-300/20 dark:bg-yellow-500/80 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
+                        <Send className=" text-yellow-800/80 dark:text-yellow-200/80 w-5 h-5 -ml-0.5" />
                       </div>
                     }
                   >
@@ -206,8 +210,8 @@ export function Snapshot() {
                   <ListboxItem
                     key="clear"
                     startContent={
-                      <div className="flex items-center bg-purple-300/20 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
-                        <Delete className=" text-purple-800/80 w-5 h-5" />
+                      <div className="flex items-center bg-purple-300/20 dark:bg-purple-500/80 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
+                        <Delete className=" text-purple-800/80 dark:text-purple-200/80 w-5 h-5 -ml-0.5" />
                       </div>
                     }
                   >

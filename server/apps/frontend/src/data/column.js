@@ -25,6 +25,11 @@ export const role = [
     },
     {id: 2,
     name: 'C.M.',
-    },
-    
+    },   
 ]
+
+export const statusColorMap = {
+  active: "success",
+  paused: "danger",
+  vacation: "warning",
+};

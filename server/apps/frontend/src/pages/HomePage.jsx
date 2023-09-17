@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@nextui-org/react";
+import Switchthemebutton from "@/components/Button/SwitchTheme";
 
 export default function HomePage() {
+
   return (
     <>
       <Navigation 
@@ -10,7 +12,7 @@ export default function HomePage() {
         />
 
       {/* Background images */}
-      <div className="w-full min-h-full bg-gradient-to-br from-white to-blue-300 from-45% to-120%">
+      <div className="w-full min-h-full bg-gradient-to-r from-blue-100 to-blue-50 dark:from-zinc-900 dark:to-neutral-800 from-45% to-120% duration-150 ease-in dark:ease-out">
 
       {/* Main content */}
       <div className="flex flex-row">
@@ -31,6 +33,7 @@ export default function HomePage() {
             <Button color="success" href="#" radius="full" size="md">
               <p className="text-white"> Get Started </p>
             </Button>
+            <Switchthemebutton />
           </div>
         </div>
         {/* Right Content */}

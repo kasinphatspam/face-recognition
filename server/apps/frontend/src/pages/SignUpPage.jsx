@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
 import { Button, Checkbox, Input, Link as Nextlink } from "@nextui-org/react";
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 
 export default function Signuppage() {
@@ -11,22 +12,34 @@ export default function Signuppage() {
 	const [ firstname, setFirstname ] = React.useState(""); 
 	const [ lastname, setLastname ] = React.useState(""); 
 	const [ confirmpassword, setConfirmpassword] = React.useState("");
-    const [ error, setError ] = React.useState(false);
+    const [ error, setError ] = React.useState(0);
 
 	/** check email and password to identify user */
     const handleSubmit = async (event) => {
       event.preventDefault();
-      if (/\S+@\S+\.\S+/.test(email)) {
-        // Email is valid, do something
-        console.log("Valid email:", email);
-        setError(false);
-      } else if (password == confirmpassword) setError(false);
+      if (!(/\S+@\S+\.\S+/.test(email))) {
+        setError(1); // 1 : invaild email
+      } else if (password != confirmpassword) setError(2); // 2 : password didn't match
 		else {
-       	// Email is invalid or password didn't match, show error message
         setError(true);
       }
     }
     
+	if (error == 0) {
+
+	}
+	else {
+		if (error == 1) Swal.fire({
+			title: 'Error!',
+			text: 'invaild email',
+			icon: 'error',
+		})
+		else if (error == 2) Swal.fire({
+			title: 'Error!',
+			text: "password didn't match",
+			icon: 'error'
+		})
+	}
     const ForgetPassword = async (event) => {
       event.preventDefault();
       {/* ... */}

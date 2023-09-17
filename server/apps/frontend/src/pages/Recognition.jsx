@@ -1,20 +1,15 @@
 import React from "react";
 import {
   Tabs,
-  Tab
+  Tab,
+  Spinner
 } from "@nextui-org/react";
-import Webcam from "react-webcam";
 import Navigation from "@/components/Navigation";
 import {
-  CameraOff,
-  Camera as CameraIcon,
-  Send,
-  Delete,
-  File,
   CornerDownRight
 } from "react-feather";
-import { Realtime } from "./ReconitionSystem/Realtime";
-import { Snapshot } from "./ReconitionSystem/Snapshot";
+const Realtime = React.lazy(() => import('@/pages/ReconitionSystem/Realtime'));
+const Snapshot = React.lazy(() => import('@/pages/ReconitionSystem/Snapshot'));
 
 export default function Recognition() {
   const [selected, setSelected] = React.useState("photos");
@@ -36,14 +31,13 @@ export default function Recognition() {
           onSelectionChange={setSelected}
           className="mt-4 -mb-4 ml-8"
         >
-
           <Tab key="photos" title="Photos">
-            <React.Suspense fallback={<div>Loading...</div>}>
+            <React.Suspense fallback={<Spinner className="mt-[350px] ml-[350px]"/>}>
               <Snapshot />
             </React.Suspense>
           </Tab>
           <Tab key="videos" title="Videos">
-            <React.Suspense fallback={<div>Loading...</div>}>
+            <React.Suspense fallback={<Spinner className="mt-[350px] ml-[350px]"/>}>
               <Realtime />
             </React.Suspense>
           </Tab>
