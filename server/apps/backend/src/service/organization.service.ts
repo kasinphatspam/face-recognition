@@ -22,15 +22,13 @@ export class OrganizationService {
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
-    return await this.organizationRepository.getOrganizationById(
-      organizationId,
-    );
+    return this.organizationRepository.getOrganizationById(organizationId);
   }
 
   public async getCurrentOrganization(userId: number): Promise<Organization> {
-    const user = await this.organizationRepository.getOrganizationByUserId(
-      userId,
-    );
+    const user = await this.userRepository.getUserById(userId, [
+      'organization',
+    ]);
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -76,7 +74,7 @@ export class OrganizationService {
       organizationId,
     );
     if (!organization) throw new BadRequestException('Not found organization.');
-    return await this.organizationRepository.update(organizationId, body);
+    return this.organizationRepository.update(organizationId, body);
   }
 
   public async deleteOrganization(organizationId: number) {
@@ -100,7 +98,7 @@ export class OrganizationService {
       await this.roleService.forceDelete(organizationId, i.id);
     }
     // Delete the organization
-    return await this.organizationRepository.delete(organizationId);
+    return this.organizationRepository.delete(organizationId);
   }
 
   public async joinOrganizationWithPasscode(userId: number, passcode: string) {

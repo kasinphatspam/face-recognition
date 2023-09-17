@@ -49,7 +49,7 @@ export class RoleService {
   }
 
   public async findAll(organizationId: number) {
-    return await this.roleRepository.findAllByOrganizationId(organizationId);
+    return this.roleRepository.findAllByOrganizationId(organizationId);
   }
 
   public async delete(organizationId: number, roleId: number) {
@@ -65,12 +65,12 @@ export class RoleService {
       );
     }
     // Delete and return affected column
-    return await this.roleRepository.delete(organizationId, roleId);
+    return this.roleRepository.delete(organizationId, roleId);
   }
 
   public async forceDelete(organizationId: number, roleId: number) {
     // This function removes roles regardless of whether they are active or not.
     // Delete and return affected column
-    return await this.roleRepository.delete(organizationId, roleId);
+    return this.roleRepository.delete(organizationId, roleId);
   }
 }

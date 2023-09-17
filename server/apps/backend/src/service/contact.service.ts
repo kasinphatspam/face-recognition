@@ -24,14 +24,11 @@ export class ContactService {
   }
 
   public async getContactById(organizationId: number, contactId: number) {
-    return await this.contactRepository.getContactById(
-      organizationId,
-      contactId,
-    );
+    return this.contactRepository.getContactById(organizationId, contactId);
   }
 
   public async getAllContact(orgnaizationId: number) {
-    return await this.contactRepository.findAllByOrganizationId(orgnaizationId);
+    return this.contactRepository.findAllByOrganizationId(orgnaizationId);
   }
 
   public async encodeImage(

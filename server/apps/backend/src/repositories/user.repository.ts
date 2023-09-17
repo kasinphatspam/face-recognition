@@ -7,7 +7,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class UserRepository {
   public async getRawUserDataByEmail(email: string): Promise<User> {
-    return await connection
+    return connection
       .getRepository(User)
       .createQueryBuilder()
       .select([
@@ -27,11 +27,11 @@ export class UserRepository {
 
   public async getUserById(userId: number, relations: string[]): Promise<User> {
     if (!relations) {
-      return await connection
+      return connection
         .getRepository(User)
         .findOne({ relations: relations, where: { id: userId } });
     }
-    return await connection
+    return connection
       .getRepository(User)
       .findOne({ relations: ['organization', 'role'], where: { id: userId } });
   }
@@ -41,21 +41,21 @@ export class UserRepository {
     relations: string[],
   ): Promise<User> {
     if (!relations) {
-      return await connection
+      return connection
         .getRepository(User)
         .findOne({ relations: relations, where: { email: email } });
     }
-    return await connection
+    return connection
       .getRepository(User)
       .findOne({ relations: relations, where: { email: email } });
   }
 
   public async findAll(): Promise<User[]> {
-    return await connection.getRepository(User).find();
+    return connection.getRepository(User).find();
   }
 
   public async findAllByOrganizationId(organizationId: number) {
-    return await connection.getRepository(User).find({
+    return connection.getRepository(User).find({
       where: [{ organization: { id: organizationId } }],
     });
   }
@@ -64,7 +64,7 @@ export class UserRepository {
     organizationId: number,
     roleId: number,
   ): Promise<User[]> {
-    return await connection.getRepository(User).find({
+    return connection.getRepository(User).find({
       where: { organization: { id: organizationId }, role: { id: roleId } },
     });
   }
@@ -75,7 +75,7 @@ export class UserRepository {
     imagePath: string,
     date: Date,
   ) {
-    return await connection
+    return connection
       .createQueryBuilder()
       .insert()
       .into(User)
@@ -95,30 +95,30 @@ export class UserRepository {
   }
 
   public async update(userId: number, body: UpdateUserDto) {
-    return await connection.getRepository(User).update({ id: userId }, body);
+    return connection.getRepository(User).update({ id: userId }, body);
   }
 
   public async updateImage(userId: number, imagePath: string) {
-    return await connection
+    return connection
       .getRepository(User)
       .update({ id: userId }, { image: imagePath });
   }
 
   public async updateUserOrganization(userId: number, organizationId: number) {
-    return await connection.getRepository(User).save({
+    return connection.getRepository(User).save({
       id: userId,
       organization: { id: organizationId },
     });
   }
 
   public async updateUserRole(userId: number, roleId: number) {
-    return await connection.getRepository(User).save({
+    return connection.getRepository(User).save({
       id: userId,
       role: { id: roleId },
     });
   }
 
   public async delete(userId: number) {
-    return await connection.getRepository(User).delete({ id: userId });
+    return connection.getRepository(User).delete({ id: userId });
   }
 }

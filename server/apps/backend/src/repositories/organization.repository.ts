@@ -1,5 +1,5 @@
 import { connection } from '@/connection';
-import { Organization, User } from '@/entity';
+import { Organization } from '@/entity';
 import { UpdateOrganizationDto } from '@/utils/dtos/organization.dto';
 import { Injectable } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
@@ -9,20 +9,13 @@ export class OrganizationRepository {
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
-    return await connection.getRepository(Organization).findOneBy({
+    return connection.getRepository(Organization).findOneBy({
       id: organizationId,
     });
   }
 
-  public async getOrganizationByUserId(userId: number) {
-    return await connection.getRepository(User).findOne({
-      relations: ['organization'],
-      where: { id: userId },
-    });
-  }
-
   public async getOrganizationByPasscode(passcode: string) {
-    return await connection.getRepository(Organization).findOneBy({
+    return connection.getRepository(Organization).findOneBy({
       passcode: passcode,
     });
   }
@@ -50,7 +43,7 @@ export class OrganizationRepository {
   }
 
   public async update(organizationId: number, body: UpdateOrganizationDto) {
-    return await connection.getRepository(Organization).save({
+    return connection.getRepository(Organization).save({
       id: organizationId,
       name: body.name,
       passcode: body.passcode,
@@ -64,7 +57,7 @@ export class OrganizationRepository {
   }
 
   public async delete(organizationId: number) {
-    return await connection.getRepository(Organization).delete({
+    return connection.getRepository(Organization).delete({
       id: organizationId,
     });
   }

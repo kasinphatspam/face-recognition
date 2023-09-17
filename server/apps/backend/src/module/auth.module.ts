@@ -8,6 +8,7 @@ import { ImageService } from '@/service/image.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { UserRepository } from '@/repositories/user.repository';
+import { NotificationEmailService } from '@/service/notification.email.service';
 
 dotenv.config();
 
@@ -20,6 +21,12 @@ dotenv.config();
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, UserRepository, ImageService],
+  providers: [
+    AuthService,
+    UserService,
+    UserRepository,
+    ImageService,
+    NotificationEmailService,
+  ],
 })
 export class AuthModule {}

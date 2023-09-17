@@ -6,7 +6,7 @@ export class EmployeeService {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async findAll(organizationId: number) {
-    return await this.userRepository.findAllByOrganizationId(organizationId);
+    return this.userRepository.findAllByOrganizationId(organizationId);
   }
 
   public async delete(organizationId: number, userId: number) {

@@ -55,7 +55,7 @@ export class UserService {
           `${userId}.png`,
         )
       : this.imageService.defaultImagePath('users');
-    return await this.userRepository.updateImage(userId, imagePath);
+    return this.userRepository.updateImage(userId, imagePath);
   }
 
   public async delete(userId: number) {

@@ -11,6 +11,7 @@ import { Organization } from './organization.entity';
 import { Role } from './role.entity';
 import { History } from './history.entity';
 import { RequestJoin } from './request.join.entity';
+import { OTP } from './otp.entity';
 
 dotenv.config();
 @Entity('users')
@@ -83,6 +84,9 @@ export class User {
 
   @OneToMany(() => RequestJoin, (requestJoin) => requestJoin.user)
   public requestJoins: RequestJoin[];
+
+  @OneToMany(() => OTP, (otp) => otp.user)
+  public otp: OTP[];
 
   public getFullName(): string {
     return `${this.firstname} ${this.lastname}`;

@@ -178,7 +178,7 @@ export class OrganizationController {
   */
   @Get(':organizationId/employee/list/all')
   public async getAllEmployee(@Param('organizationId') organizationId: number) {
-    return await this.employeeService.findAll(organizationId);
+    return this.employeeService.findAll(organizationId);
   }
 
   /* 
@@ -222,7 +222,7 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('contactId') contactId: number,
   ) {
-    return await this.contactService.getContactById(organizationId, contactId);
+    return this.contactService.getContactById(organizationId, contactId);
   }
 
   /* 
@@ -239,7 +239,7 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Body() body: CreateNewContactDto,
   ) {
-    return await this.contactService.createNewContact(organizationId, body);
+    return this.contactService.createNewContact(organizationId, body);
   }
 
   /* 
@@ -276,10 +276,7 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Body() body: EncodeContactImageDto,
   ) {
-    return await this.contactService.recognitionImage(
-      organizationId,
-      body.image,
-    );
+    return this.contactService.recognitionImage(organizationId, body.image);
   }
 
   /* 
@@ -290,7 +287,7 @@ export class OrganizationController {
   */
   @Get(':organizationId/contact/list/all')
   public async getAllContact(@Param('organizationId') organizationId: number) {
-    return await this.contactService.getAllContact(organizationId);
+    return this.contactService.getAllContact(organizationId);
   }
 
   @Post(':organizationId/contact/import/excel')
@@ -311,7 +308,7 @@ export class OrganizationController {
   */
   @Get(':organizationId/role/list/all')
   public async getAllRole(@Param('organizationId') organizationId: number) {
-    return await this.roleService.findAll(organizationId);
+    return this.roleService.findAll(organizationId);
   }
 
   /* 
@@ -325,7 +322,7 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Body() body: CreateNewRoleDto,
   ) {
-    return await this.roleService.createNewRole(body.name, organizationId);
+    return this.roleService.createNewRole(body.name, organizationId);
   }
 
   /* 

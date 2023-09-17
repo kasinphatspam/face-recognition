@@ -5,17 +5,17 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class RoleRepository {
   public async getRoleById(roleId: number) {
-    return await connection.getRepository(Role).findOneBy({ id: roleId });
+    return connection.getRepository(Role).findOneBy({ id: roleId });
   }
 
   public async findAllByOrganizationId(organizationId: number) {
-    return await connection.getRepository(Role).find({
+    return connection.getRepository(Role).find({
       where: { organization: { id: organizationId } },
     });
   }
 
   public async createNewRole(organizationId: number, roleName: string) {
-    return await connection
+    return connection
       .getRepository(Role)
       .createQueryBuilder()
       .insert()
@@ -34,7 +34,7 @@ export class RoleRepository {
     roleId: number,
     roleName: string,
   ) {
-    return await connection
+    return connection
       .getRepository(Role)
       .update(
         { id: roleId, organization: { id: organizationId } },
@@ -43,7 +43,7 @@ export class RoleRepository {
   }
 
   public async delete(organizationId: number, roleId: number) {
-    return await connection
+    return connection
       .getRepository(Role)
       .delete({ id: roleId, organization: { id: organizationId } });
   }

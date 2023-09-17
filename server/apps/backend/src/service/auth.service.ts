@@ -16,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '@/service/user.service';
 import { ImageService } from '@/service/image.service';
 import { UserRepository } from '@/repositories/user.repository';
+import { NotificationEmailService } from './notification.email.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly imageService: ImageService,
     private readonly jwtService: JwtService,
+    private readonly notificationEmailService: NotificationEmailService,
   ) {}
 
   public async login(body: AuthLoginDto): Promise<string> {
@@ -75,7 +77,7 @@ export class AuthService {
       await this.userRepository.updateImage(newUser.raw.insertId, imagePath);
     }
 
-    return await this.userService.getUserByEmail(body.email);
+    return this.userService.getUserByEmail(body.email);
   }
 
   public async me(req: Request) {
@@ -102,6 +104,6 @@ export class AuthService {
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {
-    return body;
+    return this.notificationEmailService.notifyUserForForgotPassword(body);
   }
 }

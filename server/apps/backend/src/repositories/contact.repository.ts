@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class ContactRepository {
   public async getContactById(organizationId: number, contactId: number) {
-    return await connection.getRepository(Contact).findOneBy({
+    return connection.getRepository(Contact).findOneBy({
       id: contactId,
       organization: { id: organizationId },
     });
@@ -16,14 +16,14 @@ export class ContactRepository {
     organizationId: number,
     encodedId: string,
   ) {
-    return await connection.getRepository(Contact).findOneBy({
+    return connection.getRepository(Contact).findOneBy({
       encodedId: encodedId,
       id: organizationId,
     });
   }
 
   public async findAllByOrganizationId(orgnaizationId: number) {
-    return await connection.getRepository(Contact).find({
+    return connection.getRepository(Contact).find({
       where: [{ organization: { id: orgnaizationId } }],
     });
   }
@@ -32,7 +32,7 @@ export class ContactRepository {
     organizationId: number,
     body: CreateNewContactDto,
   ) {
-    return await connection
+    return connection
       .getRepository(Contact)
       .createQueryBuilder()
       .insert()
@@ -65,7 +65,7 @@ export class ContactRepository {
     contactId: number,
     encodedId: string,
   ) {
-    return await connection
+    return connection
       .getRepository(Contact)
       .createQueryBuilder()
       .update(Contact)
