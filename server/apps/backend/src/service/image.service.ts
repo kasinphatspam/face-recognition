@@ -1,5 +1,5 @@
+import { remove, write } from '@/utils/file.manager';
 import { Injectable } from '@nestjs/common';
-import { writeFileSync, unlinkSync } from 'fs';
 import * as path from 'path';
 
 export type Folder = 'users' | 'contact';
@@ -23,15 +23,13 @@ export class ImageService {
   ): string {
     const fullPath = path.join(this.folderPath, folderName, fileName);
     const buffer = Buffer.from(base64, 'base64');
-    writeFileSync(fullPath, buffer);
+    write(fullPath, buffer);
 
     return `${process.env.BACKEND_URL}/images/${folderName}/${fileName}`;
   }
 
   public delete(folderName: Folder, fileName: string): void {
     const fullPath = path.join(this.folderPath, folderName, fileName);
-    try {
-      unlinkSync(fullPath);
-    } catch (err) {}
+    remove(fullPath);
   }
 }

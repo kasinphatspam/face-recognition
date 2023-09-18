@@ -1,4 +1,4 @@
-import { connection } from '@/connection';
+import { connection } from '@/utils/connection';
 import { User } from '@/entity';
 import { AuthRegisterDto } from '@/utils/dtos/auth.dto';
 import { UpdateUserDto } from '@/utils/dtos/user.dto';

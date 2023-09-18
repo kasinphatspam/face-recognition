@@ -291,8 +291,8 @@ export class OrganizationController {
   }
 
   @Post(':organizationId/contact/import/excel')
-  public async importContactFromExcelFile() {
-    return;
+  public async importContactFromCSV() {
+    return this.contactService.importFromCSV();
   }
 
   @Post(':organizationId/contact/import/vtiger')

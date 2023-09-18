@@ -1,4 +1,4 @@
-import { connection } from '@/connection';
+import { connection } from '@/utils/connection';
 import { Role } from '@/entity';
 import { Injectable } from '@nestjs/common';
 

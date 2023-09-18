@@ -1,4 +1,4 @@
-import { connection } from '@/connection';
+import { connection } from '@/utils/connection';
 import { Contact } from '@/entity';
 import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
 import { Injectable } from '@nestjs/common';
