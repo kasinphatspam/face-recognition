@@ -46,7 +46,7 @@ export class AuthController {
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
     const user = await this.authService.register(body);
     return res.status(HttpStatus.OK).json({
-      message: `Create account id: ${user.id}is successfully.`,
+      message: `Create account id: ${user.id} is successfully.`,
       user: user,
     });
   }
