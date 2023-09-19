@@ -53,8 +53,9 @@ export default function Vertical({ role }) {
               <p className="ml-4 mt-[0.15rem] text-base text-gray-700 dark:text-white font-regular">Settings</p>
             </div>
           </Link>
-          <div className="mt-8 ml-6">
-            <Switchthemebutton />
+          <div className="mt-[21vh] flex mx-auto">
+            <div className="dark:text-white/80 text-black/40 text-md mt-0.5">theme</div>
+            <Switchthemebutton className="ml-4"/>
           </div>
         </div>
       </div>

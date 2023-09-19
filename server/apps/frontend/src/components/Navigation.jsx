@@ -15,6 +15,7 @@ import {
     Avatar, 
     Button,
     } from "@nextui-org/react";
+import Switchthemebutton from "./Button/SwitchTheme";
 
     {/* menu Item for small devices screen */}
     const menuItems = [
@@ -29,6 +30,7 @@ import {
       "Help & Feedback",
       "Log Out",
     ];
+
 
 export default function Navigation(props) {
 
@@ -54,7 +56,7 @@ export default function Navigation(props) {
 
     {/* Brand & logo */}
     <NavbarContent className="pr-3" justify="start">
-        {/* Logo */}
+        <img src="/logo_svg_color.svg" className="w-8 h-8"/>
         {/* ... */}
       <NavbarBrand>
         <p className="font-bold text-inherit">Face Prove</p>
@@ -84,14 +86,17 @@ export default function Navigation(props) {
     
     {/* Sign up or Logined parts */}
     <NavbarContent as="div" justify="end">
+        <NavbarItem>
+            <Switchthemebutton className="" size="sm"/>
+        </NavbarItem>
         <NavbarItem hidden={!StatusLogin}>
           <DropdownAvatar />
         </NavbarItem>
         <NavbarItem hidden={StatusLogin}>
-          <Button as={Link} color="primary" href="#" variant="light" className="mr-5">
+          <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
             Sign Up
           </Button>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="/login" variant="flat">
             Login
           </Button>
         </NavbarItem>
@@ -159,10 +164,10 @@ export function AnalyticsNavigation(props) {
           <DropdownAvatar />
         </NavbarItem>
         <NavbarItem hidden={StatusLogin}>
-          <Button as={Link} color="primary" href="#" variant="light" className="mr-5">
+          <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
             Sign Up
           </Button>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button as={Link} color="primary" href="/login" variant="flat">
             Login
           </Button>
         </NavbarItem>

@@ -148,6 +148,7 @@ export default function Snapshot() {
                     items={devices}
                     selectionMode="single"
                     disallowEmptySelection
+                    defaultSelectedKeys={0}
                     selectedKeys={selectedKeys}
                     onSelectionChange={setSelectedKeys}>
                     {(item) => (
