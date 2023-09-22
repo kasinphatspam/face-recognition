@@ -150,9 +150,9 @@ export default function Signuppage() {
 							endContent={
 								<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
 									{isVisible ? (
-										<EyeOff className="w-6 h-6 text-default-400 pointer-events-none" />
+										<EyeOff className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									) : (
-										<Eye className="w-6 h-6 text-default-400 pointer-events-none" />
+										<Eye className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									)}
 								</button>
 							}
@@ -163,7 +163,7 @@ export default function Signuppage() {
 						/>
 						<div className="flex flex-row">
 							<Checkbox isSelected={isSelected} onValueChange={setIsSelected} size="sm">I agree with</Checkbox>
-							<div className="ml-1 text-sm hover:underline duration-150 delay-150" onClick={onOpen}>privacy policy</div>
+							<div className="ml-1 text-sm hover:underline duration-150 delay-150 font-medium" onClick={onOpen}>privacy policy</div>
 						</div>
 					</div>
 

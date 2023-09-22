@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useParams } from 'react-router-dom'
-import AnalyticsNavigation from '@/components/Navigation'
+import { AnalyticsNavigation } from '@/components/Navigation'
 import Vertical from '@/components/Vertical';
 import { CornerLeftDown, User } from 'react-feather';
 import { Divider } from "@nextui-org/react";
