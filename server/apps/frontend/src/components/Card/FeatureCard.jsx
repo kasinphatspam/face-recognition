@@ -3,12 +3,12 @@ import { Card, CardHeader, CardBody } from "@nextui-org/react";
 export default function FeaturesCard({ head, desc }) {
     return (
         <>
-            <Card isBlurred shadow="none" className="min-w-[240px] max-w-[450px] border-small border-white/50 dark:border-white/20 bg-transparent/20 text-white">
+            <Card isBlurred shadow="none" className="min-w-[200px] overflow-hidden max-w-[500px] border-small border-white/50 dark:border-white/20 bg-transparent/20 text-white">
                 <CardHeader>
                     <div className="font-semibold ml-[8px] text-lg">{head}</div>
                 </CardHeader>
                 <CardBody>
-                    <div className="min-w-[240px] text-sm -mt-6">
+                    <div className="min-w-[150px] text-sm -mt-6">
                         {desc}
                     </div>
                 </CardBody>
