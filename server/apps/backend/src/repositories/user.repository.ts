@@ -73,7 +73,6 @@ export class UserRepository {
     body: AuthRegisterDto,
     password: string,
     imagePath: string,
-    date: Date,
   ) {
     return connection
       .createQueryBuilder()
@@ -87,7 +86,6 @@ export class UserRepository {
           lastname: body.lastname,
           gender: body.gender,
           personalId: body.personalId,
-          dob: date,
           image: imagePath,
         },
       ])

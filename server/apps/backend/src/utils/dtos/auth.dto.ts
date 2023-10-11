@@ -1,7 +1,5 @@
-import { Type } from 'class-transformer';
 import {
   IsBase64,
-  IsDate,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -54,11 +52,6 @@ class AuthRegisterDto {
   @MinLength(13)
   @MaxLength(13)
   public personalId: string;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  public dob: Date;
 
   @IsOptional()
   @IsNotEmpty()

@@ -56,16 +56,10 @@ export class AuthService {
       }
     }
 
-    const date = new Date(body.dob.toString());
     const password = await bcrypt.hash(body.password, 12);
     let imagePath = this.imageService.defaultImagePath('users');
 
-    const newUser = await this.userRepository.insert(
-      body,
-      password,
-      imagePath,
-      date,
-    );
+    const newUser = await this.userRepository.insert(body, password, imagePath);
 
     if (body.image) {
       imagePath = this.imageService.saveImageFromBase64(
