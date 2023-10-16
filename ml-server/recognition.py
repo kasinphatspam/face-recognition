@@ -8,6 +8,7 @@ import datetime
 import base64
 from PIL import Image
 import face_recognition
+import tensorflow as tf
 import time
 
 # Running
@@ -75,6 +76,13 @@ class FaceRecognition:
         img_file.close()
 
         face_image = face_recognition.load_image_file(f"data/{ts}.jpg")
+
+        # Detect liveness detection model
+        model = tf.keras.models.load_model("/face_spoof_model.h5")
+        predictions1 = model.predict(np.expand_dims(face_image, axis=0))
+        # Check model score
+        if predictions1[0][0] < 0.86:
+            return {"liveness" : False}
 
         if len(face_recognition.face_encodings(face_image)) <= 0:
             # Rotate the image to process
