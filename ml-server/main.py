@@ -1,76 +1,59 @@
-# Import necessary modules
-import recognition
-import file
+import os
+from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from flask import Flask, request
+from recognition import FaceRecognition
+from file import generate_random_filename, create_file
 
-# Load global variables from .env file
+app = Flask(__name__)
 load_dotenv()
 
-# Initialize the Flask app
-app = Flask(__name__)
 
-# Define a route for the root URL ("/")
 @app.route("/")
 def hello():
     return "Hello world!"
 
-# Define a route for checking the server status ("/status")
+
 @app.route("/status")
 def status():
-    # Test server response
-    response_dict = { "message": "Server connected" }
-    return response_dict
+    return jsonify({"message": "Server connected"})
 
-# Define a route for creating a package ("/create-package")
+
 @app.route("/create-package")
 def create_package():
-    # Generate a random package key
-    package_key = file.generate_random_filename(8)
-    
-    # Attempt to create a file package
-    if file.create_file(package_key):
-        response_dict = { "message": "File package has been created", "packageKey": package_key }
+    package_key = generate_random_filename(8)
+    if create_file(package_key):
+        return jsonify(
+            {"message": "File package has been created", "packageKey": package_key}
+        )
     else:
-        response_dict = { "message": "Failed to create the file package." }
-    
-    return response_dict
+        return jsonify({"message": "Failed to create the file package."})
 
-# Define a route for face recognition ("/face-recognition")
-@app.route("/face-recognition", methods=['GET', 'POST', 'PUT', 'DELETE'])
+
+@app.route("/face-recognition", methods=["POST"])
 def face_recognition_service():
     data = request.json
+    package_key = data["packageKey"]
+    image = data["imageBase64"]
+    result = FaceRecognition(package_key).recognition(image)
+    return jsonify(result)
 
-    if request.method == 'POST':
-        # Handle a POST request for face recognition
-        package_key = data['packageKey']
-        image = data['imageBase64']
-        result = recognition.run(package_key, image)
-        return result
 
-    # Return an error message for unsupported HTTP methods
-    return 'HTTP_METHOD_NOT_SUPPORTED'
-
-@app.route("/recognition/dataset/encode")
+@app.route("/recognition/dataset/encode", methods=["PUT"])
 def encode():
     data = request.json
-    if request.method == 'PUT':
-        # Handle a PUT request for encoding an image
-        package_key = data['packageKey']
-        image = data['imageBase64']
-        encoded_id = recognition.encode(package_key, image)
-        response_dict = { "encodedId": encoded_id }
-        return response_dict
+    package_key = data["packageKey"]
+    image = data["imageBase64"]
+    encoded_id = FaceRecognition(package_key).encode(image)
+    return jsonify({"encodedId": encoded_id})
 
-@app.route("/recognition/dataset/delete")
+
+@app.route("/recognition/dataset/delete", methods=["PUT"])
 def delete():
     data = request.json
-    if request.method == 'PUT':
-        # Handle a PUT request for encoding an image
-        package_key = data['packageKey']
-        encode_id = data['encodedId']
-        return recognition.delete(package_key, encode_id)
-    
-# Start the Flask app if this script is executed
+    package_key = data["packageKey"]
+    encode_id = data["encodedId"]
+    return jsonify(FaceRecognition(package_key).deleteimage(encode_id))
+
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=3002)
+    app.run(host="0.0.0.0", port=3002)
