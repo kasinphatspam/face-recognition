@@ -30,19 +30,44 @@ class FaceRecognition:
             return str(round(value, 2)) + "%"
 
     def delete_image(self, encode_id):
-        encoded_image = np.load(self.file_path_image, allow_pickle=True)
-        encoded_id = np.load(self.file_path_id, allow_pickle=True)
+        try:
+            existing_face_data = np.load(self.file_path, allow_pickle=True)
+            if (
+                "encodings" in existing_face_data.item()
+                and "ids" in existing_face_data.item()
+            ):
+                face_data = existing_face_data.item()
+            else:
+                return "Package (organization) is empty"
+        except (FileNotFoundError, ValueError):
+            return "Can't find the file package (organization)"
 
-        for i in range(len(encoded_id)):
-            if encoded_id[i] == encode_id:
+        encodings = face_data["encodings"]
+        ids = face_data["ids"]
+
+        for i in range(len(ids)):
+            if ids[i] == encode_id:
                 break
 
-        encoded_image = np.delete(encoded_image, i, axis=0)
-        encoded_id = np.delete(encoded_id, i, axis=0)
+        if i < len(ids):
+            # Delete the corresponding encoding and ID
+            encodings.pop(i)
+            ids.pop(i)
 
-        np.save(self.file_path_image, encoded_image)
-        np.save(self.file_path_id, encoded_id)
+            # Create a new package with the updated data
+            new_package = {"encodings": encodings, "ids": ids}
 
+            # Save the updated package back to the file
+            np.save(self.file_path, new_package)
+            return "Image deleted successfully"
+        else:
+            return "Encode ID not found in the package"
+
+
+import numpy as np
+
+
+class FaceRecognition:
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
         timestamp = int(time.time())
@@ -61,7 +86,6 @@ class FaceRecognition:
             return {"liveness": False}
 
         if not face_recognition.face_encodings(face_image):
-            # Rotate the image to process it from different angles
             for i in range(3):
                 img = Image.open(img_path)
                 img = img.rotate(90)
@@ -79,9 +103,12 @@ class FaceRecognition:
         face_encodings = face_recognition.face_encodings(face_image)
 
         try:
-            existing_face_data = np.load("./dataset/tester.npy", allow_pickle=True)
-            if existing_face_data.size > 0:
-                face_data = existing_face_data.tolist()
+            existing_face_data = np.load(self.file_path, allow_pickle=True)
+            if (
+                "encodings" in existing_face_data.item()
+                and "ids" in existing_face_data.item()
+            ):
+                face_data = existing_face_data.item()
             else:
                 face_data = {"encodings": [], "ids": []}
         except (FileNotFoundError, ValueError):
@@ -90,7 +117,7 @@ class FaceRecognition:
         face_data["encodings"].append(face_encodings[0].tolist())
         face_data["ids"].append(timestamp)
 
-        np.save("./dataset/tester.npy", face_data)
+        np.save(self.file_path, face_data)
 
         os.unlink(img_path)
         return {"encodedId": str(timestamp)}

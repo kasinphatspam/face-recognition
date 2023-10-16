@@ -52,7 +52,7 @@ def delete():
     data = request.json
     package_key = data["packageKey"]
     encode_id = data["encodedId"]
-    return jsonify(FaceRecognition(package_key).deleteimage(encode_id))
+    return jsonify(FaceRecognition(package_key).delete_image(encode_id))
 
 
 if __name__ == "__main__":
