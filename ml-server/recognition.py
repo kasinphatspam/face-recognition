@@ -63,11 +63,6 @@ class FaceRecognition:
         else:
             return "Encode ID not found in the package"
 
-
-import numpy as np
-
-
-class FaceRecognition:
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
         timestamp = int(time.time())
@@ -124,7 +119,7 @@ class FaceRecognition:
 
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file_size_id = os.path.getsize("./dataset/tester.npy")
+        file_size_id = os.path.getsize(self.file_path)
 
         if file_size_id == 0:
             print("ERROR in face-recognition system: dataset is empty.")
@@ -136,7 +131,7 @@ class FaceRecognition:
             }
 
         try:
-            face_data = np.load("./dataset/tester.npy", allow_pickle=True).item()
+            face_data = np.load(self.file_path, allow_pickle=True).item()
         except (FileNotFoundError, ValueError):
             print("ERROR: Unable to load face data.")
             return {
