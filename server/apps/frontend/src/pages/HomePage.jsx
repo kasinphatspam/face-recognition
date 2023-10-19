@@ -1,14 +1,24 @@
-import React from "react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@nextui-org/react";
 import { motion } from "framer-motion";
-import { textVariant, textVariant2, staggerContainer } from "@/utils/motion";
+import { textVariant, staggerContainer } from "@/utils/motion";
 import FeaturesCard from "@/components/Card/FeatureCard";
 import { TypingText, FooterText } from "@/components/CustomText";
 import { footerVariants } from "../utils/motion";
+import Pricing from "@/components/Pricing"
 
 export default function HomePage() {
+  const [ month, setMonth ] = useState(1);
+  const [ selectedMonth, setSelectedMonth] = useState(true);
 
+  const handleMonth = (value, base) => {
+    if (value === base) return null
+    else { 
+      setSelectedMonth(!value) 
+      setMonth(1 + 11 * value)
+    }
+  }
   return (
     <>
       <Navigation
@@ -52,7 +62,7 @@ export default function HomePage() {
 
             {/* Get started Button */}
             <div className="flex flex-row mt-8 -ml-4">
-              <Button color="success" href="#" radius="full" size="md">
+              <Button color="success" href="/signup" radius="full" size="md">
                 <p className="text-white font-medium"> Get Started </p>
               </Button>
             </div>
@@ -157,9 +167,42 @@ export default function HomePage() {
           />
         </div>
       </motion.div>
-
+      <motion.div className="flex flex-col bg-zinc-200 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: false, amount: 0.25 }}
+      >
+        <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Pricing Plans</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] font-medium text-black/40 dark:text-white/70 px-12">flexible pricing plans tailored to meet the unique needs of your organization, ensuring cost-effectiveness and scalability.</motion.div>
+        <div className="flex flex-row mx-auto mt-8 ring-2 dark:ring-zinc-600 ring-zinc-300 p-1 rounded-[0.9rem] mb-8">
+          <Button className="" variant={selectedMonth ? "solid" : "light"} onClick={() => handleMonth(selectedMonth,true)}>Monthly billing</Button>
+          <Button className="ml-2" variant={selectedMonth ? "light" : "solid"} onClick={() => handleMonth(selectedMonth,false)}> Yearly billing </Button>
+        </div>
+        <div className="grid grid-flow-col gap-8 relative mt-16 mb-32 mx-auto">
+          <Pricing 
+            session={'Startup'}
+            description={'All basic for starting a business'}
+            user={'24 users'}    
+            snapshot={true}    
+            server={'10GB'}
+            subscription={199}
+            month={month}
+          />
+          <Pricing 
+            session={'Enterprise'}
+            description={'addition feature for large enterprise'}
+            user={'100 users'}    
+            snapshot={false}    
+            server={'100GB'}
+            subscription={699}
+            month={month}
+            custom={"ring-2 ring-pink-600"}
+          />
+        </div>
+      </motion.div>
       {/** footer */}
-      <motion.div className="py-12 px-[17vw] grid grid-cols-4 bg-white/90 dark:bg-zinc-900 w-99vw h-[400px]"
+      <motion.div className="pt-12 px-[17vw] grid grid-cols-4 bg-white/90 dark:bg-zinc-900 w-99vw h-[300px]"
         variants={footerVariants}
         initial="hidden"
         whileInView="visible"
@@ -186,6 +229,9 @@ export default function HomePage() {
         {/** 3 */}
         <div className="flex flex-col">
           <div className="font-bold text-xl text-inherit">Product</div>
+          <FooterText title="Snapshot" path="/" />
+          <FooterText title="Realtime processing" path="/" />
+          <FooterText title="Employee management" path="/" />
         </div>
         {/** 4 */}
         <div className="flex flex-col">
