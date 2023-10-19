@@ -9,6 +9,7 @@ import { Request } from 'express';
 import {
   AuthForgotPasswordDto,
   AuthLoginDto,
+  AuthLoginResult,
   AuthRegisterDto,
 } from '@/utils/dtos/auth.dto';
 import { User } from '@/entity';
@@ -28,7 +29,7 @@ export class AuthService {
     private readonly notificationEmailService: NotificationEmailService,
   ) {}
 
-  public async login(body: AuthLoginDto): Promise<string> {
+  public async login(body: AuthLoginDto): Promise<AuthLoginResult> {
     const { email, password } = body;
     const user = await this.userService.getRawUserDataByEmail(email);
 
@@ -41,8 +42,11 @@ export class AuthService {
       throw new BadRequestException('Password Incorrect.');
 
     const jwt = await this.jwtService.signAsync({ id: user.id });
+    const result = new AuthLoginResult();
+    result.id = user.id;
+    result.jwt = jwt;
 
-    return jwt;
+    return result;
   }
 
   public async register(body: AuthRegisterDto): Promise<User> {

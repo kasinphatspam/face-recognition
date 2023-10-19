@@ -28,14 +28,14 @@ export class AuthController {
   */
   @Post('login')
   public async login(@Body() body: AuthLoginDto, @Res() res: Response) {
-    const jwt = await this.authService.login(body);
+    const result = await this.authService.login(body);
 
-    res.cookie('jwt', jwt, { httpOnly: true });
+    res.cookie('jwt', result.jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).json({
       message: `Login sucessfully.`,
+      id: result.id,
     });
   }
-
   /* 
     Service name:  Authentication Register
     Url: http://localhost:3001/auth/register

@@ -20,6 +20,11 @@ class AuthLoginDto {
   public password: string;
 }
 
+class AuthLoginResult {
+  public id: number;
+  public jwt: string;
+}
+
 class AuthRegisterDto {
   @IsEmail()
   @MaxLength(50)
@@ -65,4 +70,9 @@ class AuthForgotPasswordDto {
   public email: string;
 }
 
-export { AuthLoginDto, AuthRegisterDto, AuthForgotPasswordDto };
+export {
+  AuthLoginDto,
+  AuthLoginResult,
+  AuthRegisterDto,
+  AuthForgotPasswordDto,
+};
