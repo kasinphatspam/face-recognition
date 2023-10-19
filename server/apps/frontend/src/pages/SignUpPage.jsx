@@ -1,51 +1,101 @@
 import React from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
-import { Button, Checkbox, Input, Link as Nextlink } from "@nextui-org/react";
+import { Button, Checkbox, Input, ModalBody, Modal, ModalContent, ModalHeader, ModalFooter, useDisclosure, Link as Nextlink } from "@nextui-org/react";
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
+import Policy from "@/components/Policy";
+import useLocalStorage from "@/utils/useLocalstorage";
 
 export default function Signuppage() {
 
-    {/* variable for keeping register */}
-    const [ email, setEmail ] = React.useState("");
-    const [ password, setPassword ] = React.useState("");
-		const [ firstname, setFirstname ] = React.useState(""); 
-		const [ lastname, setLastname ] = React.useState(""); 
-		const [ confirmpassword, setConfirmpassword] = React.useState("");
-    const [ error, setError ] = React.useState(false);
+	{/* variable for keeping register */ }
+	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const [scrollBehavior, setScrollBehavior] = React.useState("inside");
+	const [language , setLanguage ] = useLocalStorage('lang','th')
+	const [email, setEmail] = React.useState("");
+	const [password, setPassword] = React.useState("");
+	const [isSelected, setIsSelected] = React.useState(false);
+	const [firstname, setFirstname] = React.useState("");
+	const [lastname, setLastname] = React.useState("");
+	const [confirmpassword, setConfirmpassword] = React.useState("");
+	const [error, setError] = React.useState(0);
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      if (/\S+@\S+\.\S+/.test(email)) {
-        // Email is valid, do something
-        console.log("Valid email:", email);
-        setError(false);
-      } else if (password == confirmpassword) {
-				console.log("password match.");
-				setError(false);
-			}	else {
-       	// Email is invalid or password didn't match, show error message
-        setError(true);
-      }
-    }
-    
-    const ForgetPassword = async (event) => {
-      event.preventDefault();
-      {/* ... */}
-    }
+	/** check email and password to identify user */
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		if (!(/\S+@\S+\.\S+/.test(email))) {
+			setError(1); // 1 : invaild email
+		} else if (password != confirmpassword) setError(2); // 2 : password didn't match
+		else if (!isSelected) setError(3) // 3 : please agree privacy policy
+		else {
+			setError(true);
+		}
+	}
 
-    {/* Password visibility */}
-    const [isVisible, setIsVisible] = React.useState(false);
-    const toggleVisibility = () => setIsVisible(!isVisible);
-  
+	if (error == 0) {
+
+	}
+	else {
+		if (error == 1) Swal.fire({
+			title: 'Error!',
+			text: 'Invaild email.',
+			icon: 'error',
+		})
+		else if (error == 2) Swal.fire({
+			title: 'Error!',
+			text: "Password didn't match.",
+			icon: 'error'
+		})
+		else if (error == 3) Swal.fire({
+			title: 'Error!',
+			text: "Please agree privacy policy first.",
+			icon: 'error'
+		})
+	}
+	const ForgetPassword = async (event) => {
+		event.preventDefault();
+		{/* ... */ }
+	}
+
+	{/* Password visibility */ }
+	const [isVisible, setIsVisible] = React.useState(false);
+	const toggleVisibility = () => setIsVisible(!isVisible);
+
 	return (
 		<>
+			{/** Modal */}
+			<Modal
+					isOpen={isOpen}
+					onOpenChange={onOpenChange}
+					scrollBehavior={scrollBehavior}
+				>
+					<ModalContent>
+						{(onClose) => (
+							<>
+								<ModalHeader className="flex flex-col gap-1 mt-4">
+									Privacy Policy
+								</ModalHeader>
+								<ModalBody>
+									<Policy lang={language} />
+								</ModalBody>
+								<ModalFooter>
+									<Button color="foreground" size="sm" className="mr-4 mt-1" variant="bordered" onPress={() => {language == "th" ? setLanguage("en") : setLanguage("th")}}>
+										{language} 
+									</Button>
+									<Button color="primary" variant="shadow" onPress={onClose}>
+									Close
+									</Button>
+								</ModalFooter>
+							</>
+						)}
+					</ModalContent>
+				</Modal>
 			{/* Page offset */}
 			<div className="pt-8 pl-10 bg-gray-50 w-screen min-h-screen">
 				{/* Button menu */}
 				<Link to="/" className="w-[28px] h-[28px]">
 					<ArrowLeft />
 				</Link>
-
 				{/* Main content */}
 				<div className="flex flex-col items-center mt-[35px] ml-[45vw] -translate-x-1/2 bg-white rounded-md max-w-[600px] drop-shadow-md">
 					{/* Head content */}
@@ -57,14 +107,14 @@ export default function Signuppage() {
 
 					{/* input Email & Password*/}
 					<div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 mt-10">
-					<Input
+						<Input
 							isRequired
 							type="text"
 							label="FirstName"
 							variant="bordered"
 							onChange={(e) => setFirstname(e.target.value)}
 						/>
-					<Input
+						<Input
 							isRequired
 							type="text"
 							label="LastName"
@@ -84,9 +134,9 @@ export default function Signuppage() {
 							endContent={
 								<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
 									{isVisible ? (
-										<EyeOff className="w-6 h-6 text-default-400 pointer-events-none" />
+										<EyeOff className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									) : (
-										<Eye className="w-6 h-6 text-default-400 pointer-events-none" />
+										<Eye className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									)}
 								</button>
 							}
@@ -100,9 +150,9 @@ export default function Signuppage() {
 							endContent={
 								<button className="focus:outline-none" type="button" onClick={toggleVisibility}>
 									{isVisible ? (
-										<EyeOff className="w-6 h-6 text-default-400 pointer-events-none" />
+										<EyeOff className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									) : (
-										<Eye className="w-6 h-6 text-default-400 pointer-events-none" />
+										<Eye className="w-6 h-6 sm:w-4 sm:h-4 text-default-400 pointer-events-none" />
 									)}
 								</button>
 							}
@@ -111,7 +161,10 @@ export default function Signuppage() {
 							variant="bordered"
 							onChange={(e) => setConfirmpassword(e.target.value)}
 						/>
-						<Checkbox size="sm">I agree with privacy policy</Checkbox>
+						<div className="flex flex-row">
+							<Checkbox isSelected={isSelected} onValueChange={setIsSelected} size="sm">I agree with</Checkbox>
+							<div className="ml-1 text-sm hover:underline duration-150 delay-150 font-medium" onClick={onOpen}>privacy policy</div>
+						</div>
 					</div>
 
 					{/* Sumbit button */}

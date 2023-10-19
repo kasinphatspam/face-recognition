@@ -41,9 +41,9 @@ export default function Loginpage() {
         </Link>
 
           {/* Main content */}
-          <div className="flex flex-col items-center mt-[35px] ml-[45vw] -translate-x-1/2 bg-white rounded-md max-w-[600px] drop-shadow-md">
+          <div className="flex flex-col items-center mt-[35px] ml-[45vw] max-sm:ml-0 max-sm:mx-[7vw] max-sm:translate-x-0 -translate-x-1/2 bg-white rounded-md max-w-[600px] drop-shadow-md">
               {/* Head content */}  
-              <div className="mt-10 min-w-[450px] max-w-[500px]">
+              <div className="mt-10 max-sm:pl-16 min-w-[450px] max-w-[500px]">
                 {/* Text */}
                 <p className="text-inherit font-bold text-[30px] text-blue-600"> Login </p>
                 <p className="text-inherit font-light text-[12px] text-gray-500"> Please login or sign up before using our website. </p>
@@ -64,9 +64,9 @@ export default function Loginpage() {
                   endContent={
                     <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                       {isVisible ? (
-                        <EyeOff className="w-6 h-6 text-default-400 pointer-events-none" />
+                        <EyeOff className="w-6 h-6 max-sm:w-4 max-sm:h-4 text-default-400 pointer-events-none" />
                       ) : (
-                        <Eye className="w-6 h-6 text-default-400 pointer-events-none" />
+                        <Eye className="w-6 h-6 max-sm:w-4 max-sm:h-4 text-default-400 pointer-events-none" />
                       )}
                     </button>
                   }
@@ -83,7 +83,7 @@ export default function Loginpage() {
               </div>
 
               {/* sign up */}
-              <div className="flex flex-row justify-start w-[420px] mb-8">
+              <div className="flex flex-row justify-start w-[420px] mb-8 pl-16">
                 <p className="text-sm font-medium"> Don't have an account?</p>
                 <Nextlink className="text-sm ml-1 font-medium" href="/signup"> sign up </Nextlink>
               </div>
