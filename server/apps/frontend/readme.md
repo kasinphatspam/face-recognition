@@ -1,4 +1,4 @@
-## Installation issue 
+## Installation issue frontend
 
 ```bash
 yarn set version stable
