@@ -9,6 +9,7 @@ server/apps/backend/.env
 server/apps/backend/dist/
 server/apps/backend/node_modules/
 server/apps/frontend/node_modules/
+server/apps/frontend/.yarn/
 server/apps/backend/images/**/*.png
 !server/apps/backend/images/**/default.png
 server/.env
