@@ -1,7 +1,7 @@
 import { useState } from "react";
  
 /** useLocalStorage: useState dynamic to localstorage */
-const useLocalStorage = (key, defaultValue) => {
+const useLocalStorage = (key: string, defaultValue: unknown) => {
     // Create state variable to store
     // localStorage value in state
     const [localStorageValue, setLocalStorageValue] = useState(() => {

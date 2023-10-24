@@ -16,6 +16,8 @@ import {
   Button,
 } from "@nextui-org/react";
 import Switchthemebutton from "./Button/SwitchTheme";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 {/* menu Item for small devices screen */ }
 const menuItems = [
@@ -31,13 +33,9 @@ const menuItems = [
   "Log Out",
 ];
 
-
 export default function Navigation(props) {
-
+  const { user } = useAuth()
   {/* variables Status  */ }
-  const [StatusLogin, setStatusLogin] = React.useState(false);
-  const [UserDetail, setUserDetail] = React.useState(null);
-
   const Active = props.Active
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -91,10 +89,12 @@ export default function Navigation(props) {
         <NavbarItem>
           <Switchthemebutton className="" size="sm" />
         </NavbarItem>
-        <NavbarItem hidden={!StatusLogin}>
-          <DropdownAvatar />
+        <NavbarItem hidden={!user}>
+          <DropdownAvatar
+            user={user}
+          />
         </NavbarItem>
-        <NavbarItem hidden={StatusLogin}>
+        <NavbarItem hidden={user}>
           <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
             Sign Up
           </Button>
@@ -126,14 +126,11 @@ export default function Navigation(props) {
 }
 
 export function AnalyticsNavigation(props) {
+  const { user } = useAuth() 
   {/* variables Status */ }
-  const [StatusLogin, setStatusLogin] = React.useState(true);
-  const [UserDetail, setUserDetail] = React.useState(null);
-
   const Active = props.Active
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  console.log(StatusLogin)
   return (
     <>
       <Navbar
@@ -163,10 +160,10 @@ export function AnalyticsNavigation(props) {
         </NavbarContent>
         {/* Sign up or Logined parts */}
         <NavbarContent as="div" justify="end">
-          <NavbarItem hidden={!StatusLogin}>
+          <NavbarItem hidden={!user}>
             <DropdownAvatar />
           </NavbarItem>
-          <NavbarItem hidden={StatusLogin}>
+          <NavbarItem hidden={user}>
             <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
               Sign Up
             </Button>
@@ -199,6 +196,8 @@ export function AnalyticsNavigation(props) {
 }
 
 export function DropdownAvatar() {
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -209,14 +208,22 @@ export function DropdownAvatar() {
           color="secondary"
           name="Jason Hughes"
           size="sm"
-          src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+          src={user?.image || "https://i.pravatar.cc/150?u=a042581f4e29026704d"}
 
         />
       </DropdownTrigger>
-      <DropdownMenu aria-label="Profile Actions" variant="flat">
+      <DropdownMenu aria-label="Profile Actions" variant="flat"
+        onAction={async (key) => {
+          if (key === 'logout') {
+              await logout();
+              navigate('/')
+            }
+          }
+        }  
+      >
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">zoey@example.com</p>
+          <p className="font-semibold">{user?.email ?? ""}</p>
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>
         <DropdownItem key="team_settings">Team Settings</DropdownItem>

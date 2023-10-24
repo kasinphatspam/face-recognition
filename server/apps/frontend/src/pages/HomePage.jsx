@@ -19,6 +19,7 @@ export default function HomePage() {
       setMonth(1 + 11 * value)
     }
   }
+
   return (
     <>
       <Navigation

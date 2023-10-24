@@ -17,6 +17,10 @@ async function bootstrap() {
       parameterLimit: 50000,
     }),
   );
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   await app.listen(process.env.BACKEND_SERVER_PORT);
 }

@@ -10,9 +10,10 @@ server/apps/backend/dist/
 server/apps/backend/node_modules/
 server/apps/frontend/node_modules/
 server/apps/frontend/.yarn/
+server/apps/frontend/.env
 server/apps/backend/images/**/*.png
 !server/apps/backend/images/**/default.png
 server/.env
-server/turbo.json
+server/.yarn/cache/
 server/node_modules/
 .DS_Store
