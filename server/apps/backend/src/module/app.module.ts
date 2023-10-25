@@ -8,6 +8,8 @@ import * as dotenv from 'dotenv';
 import entities from '@/entity';
 import { OrganizationModule } from '@/module/organization.module';
 import { ImageModule } from '@/module/image.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from '@/service/task.service';
 
 dotenv.config();
 @Module({
@@ -24,12 +26,13 @@ dotenv.config();
         synchronize: true,
       }),
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UserModule,
     OrganizationModule,
     ImageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TasksService],
 })
 export class AppModule {}
