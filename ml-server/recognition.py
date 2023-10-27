@@ -38,9 +38,11 @@ class FaceRecognition:
             ):
                 face_data = existing_face_data.item()
             else:
-                return "Package (organization) is empty"
+                return {"statusCode":-1,
+                    "description":"Package (organization) is empty",}
         except (FileNotFoundError, ValueError):
-            return "Can't find the file package (organization)"
+            return {"statusCode":-1,
+                    "desceiption":"Can't find the file package (organization)",}
 
         encodings = face_data["encodings"]
         ids = face_data["ids"]
@@ -59,9 +61,11 @@ class FaceRecognition:
 
             # Save the updated package back to the file
             np.save(self.file_path, new_package)
-            return "Image deleted successfully"
+            return {"statusCode":1,
+                    "description": "Image deleted successfully",}
         else:
-            return "Encode ID not found in the package"
+            return {"statusCode":1,
+                    "description":"Encode ID not found in the package"}
 
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
@@ -73,12 +77,14 @@ class FaceRecognition:
 
         face_image = face_recognition.load_image_file(img_path)
 
+        # Liveness Detection
         model = keras.models.load_model("face_spoof_model.h5")
         predictions = model.predict(np.expand_dims(face_image, axis=0))
 
         if predictions[0][0] < 0.86:
-            os.unlink(img_path)
-            return {"liveness": False}
+            liveness = False
+        else:
+            liveness = True
 
         if not face_recognition.face_encodings(face_image):
             for i in range(3):
@@ -91,7 +97,12 @@ class FaceRecognition:
                 if not face_recognition.face_encodings(face_image):
                     if i == 2:
                         os.unlink(img_path)
-                        return -1
+                        return{
+                            "id": "FACE_NOT_FOUND",
+                            "statusCode": -1,
+                            "accuracy": 0,
+                            "checkedTime": timestamp,
+                        }
                 else:
                     break
 
@@ -115,11 +126,15 @@ class FaceRecognition:
         np.save(self.file_path, face_data)
 
         os.unlink(img_path)
-        return {"encodedId": str(timestamp)}
+
+        return {"encodedId": str(timestamp),
+                "statusCode":1,
+                "Liveness": liveness,}
 
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         file_size_id = os.path.getsize(self.file_path)
+
 
         if file_size_id == 0:
             print("ERROR in face-recognition system: dataset is empty.")
@@ -150,6 +165,15 @@ class FaceRecognition:
 
         face_image = face_recognition.load_image_file(img_path)
 
+        # Liveness Detection
+        model = keras.models.load_model("face_spoof_model.h5")
+        predictions = model.predict(np.expand_dims(face_image, axis=0))
+
+        if predictions[0][0] < 0.86:
+            liveness = False
+        else:
+            liveness = True
+
         if not face_recognition.face_encodings(face_image):
             for i in range(3):
                 img = Image.open(img_path)
@@ -165,7 +189,7 @@ class FaceRecognition:
                             {
                                 "id": "FACE_NOT_FOUND",
                                 "statusCode": -1,
-                                "accuracy": "0",
+                                "accuracy": 0,
                                 "checkedTime": timestamp,
                             }
                         )
@@ -209,6 +233,7 @@ class FaceRecognition:
                             "statusCode": 1,
                             "accuracy": percentage,
                             "checkedTime": timestamp,
+                            "liveness":liveness,
                         }
                     )
                     return {
@@ -216,6 +241,7 @@ class FaceRecognition:
                         "statusCode": 1,
                         "accuracy": percentage,
                         "checkedTime": timestamp,
+                        "liveness":liveness,
                     }
 
         print(
@@ -224,6 +250,7 @@ class FaceRecognition:
                 "statusCode": 0,
                 "accuracy": 0,
                 "checkedTime": timestamp,
+                "liveness":liveness,
             }
         )
         return {
@@ -231,4 +258,5 @@ class FaceRecognition:
             "statusCode": 0,
             "accuracy": 0,
             "checkedTime": timestamp,
+            "liveness":liveness,
         }
