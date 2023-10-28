@@ -11,14 +11,26 @@ def generate_random_filename(length):
 
 
 def check_unique_filename(filename, directory="dataset/"):
-    directory_list = os.listdir(directory)
-    return filename + ".npy" not in directory_list
+    # Combine directory and filename to get the full file path
+    file_path = os.path.join(directory, filename)
 
-
-def create_file(filename, directory="dataset/"):
-    if check_unique_filename(filename, directory):
-        face_data = {"encodings": [], "ids": []}
-        np.save(os.path.join(directory, f"{filename}.npy"), face_data)
-        return True
+    # Check if the file exists
+    if os.path.exists(file_path):
+        return 1 # File name already exist
     else:
-        return create_file(generate_random_filename(8), directory)
+        return 0 # File name doesnt exist
+
+
+def create_file(directory="dataset/"):
+    while True:
+        filename_random = generate_random_filename(10)
+        if check_unique_filename(filename_random, directory) == 1:
+            pass
+        else:
+            face_data = {"encodings": [], "ids": []}
+            np.save(os.path.join(directory, f"{filename_random}.npy"), face_data)
+            return{
+                "organizationID":filename_random,
+                "statusCode":1,
+            }
+    
