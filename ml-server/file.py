@@ -30,7 +30,7 @@ def create_file(directory="dataset/"):
             face_data = {"encodings": [], "ids": []}
             np.save(os.path.join(directory, f"{filename_random}.npy"), face_data)
             return{
-                "oganizationId":filename_random,
+                "organizationID":filename_random,
                 "statusCode":1,
             }
     

@@ -64,7 +64,7 @@ class FaceRecognition:
             return {"statusCode":1,
                     "description": "Image deleted successfully",}
         else:
-            return {"statusCode":1,
+            return {"statusCode":-1,
                     "description":"Encode ID not found in the package"}
 
     def encode(self, encoded_data):
