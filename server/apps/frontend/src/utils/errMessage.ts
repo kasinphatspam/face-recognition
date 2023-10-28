@@ -1,17 +1,13 @@
 
 
-export function message(code: number): string {
-    let text = ""
-    switch (code) {
-        case 400:
-            text = "You have entered an invalid username or password."
-            break;
-        case 500:
-            text = "Server not responding, check out later."
-            break;
-        default:
-            text = "Too many requested"
-            break;
+export function messageCode(code: number): string {
+    const map = {
+        "This email already exists." : "This email already exists.",
+        "This personalId already exists." : "This personal identify number already exists.",
+        "Password Incorrect." : "The email address or password you entered is invalid.",
+        "Not found" : "The email address or password you entered is invalid.",
+        "Internal server error" : "Server not responding, check out later."
     }
-    return text
+
+    return map[code] ?? "Too many Request!."
 }

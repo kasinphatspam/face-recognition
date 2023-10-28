@@ -4,9 +4,10 @@ import { Button, Checkbox, Input, ModalBody, Modal, ModalContent, ModalHeader, M
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 import Policy from "@/components/Policy";
+import Switchthemebutton from "@/components/Button/SwitchTheme";
 import useLocalStorage from "@/utils/useLocalstorage";
 import { useAuth } from "@/contexts/AuthContext";
-import { message } from "../utils/errMessage";
+import { messageCode } from "../utils/errMessage";
 
 function alerterror(message) {
   Swal.fire({
@@ -22,26 +23,57 @@ export default function Signuppage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [language, setLanguage] = useLocalStorage('lang', 'th')
+  const [errorData, setErrorData] = useState({})
   const [formData, setFormData] = useState({});
   const [isSelected, setIsSelected] = useState(false);
 
-  /** check email and password to identify user */
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const { email, password, firstname, lastname, confirmpassword, personalId } = formData;
+  // collect error varibles
+  const handleError = (errorType) => {
+    setErrorData({ ...errorData, [errorType]: true})
+    return;
+  }
+
+  // check information in form is valid
+  const checkForm = () => {
+    const { email, password, confirmpassword, personalId } = formData;
+    let error = false;
     if (!(/\S+@\S+\.\S+/.test(email))) {
-      alerterror('Invaild email.')
-    } else if (password.length < 8) {
-      alerterror('password too short! (at least 8 characters).')
+      // invalid email
+      handleError("Email")
+      error = true
+    } 
+    if (password.length < 8) {
+      // Password too short!
+      handleError("Password")
+      error = true
     }
-    else if (personalId.length !== 13) {
-      alerterror('wrong personal identify number.')
+    if (personalId.length !== 13) {
+      // wrong personal number
+      handleError("PersonalNumber")
+      error = true
+    } 
+    if (password != confirmpassword) {
+      // password didn't match
+      handleError("Match")
+      error = true
     }
-    else if (password != confirmpassword)
-      alerterror("Password didn't match.")
-    else if (!isSelected)
-      alerterror("Please agree privacy policy first.")
-    else {
+    if (!isSelected) {
+      // unchecck privacy
+      alerterror("please check privacy policy box")
+      error = true
+    }
+    return error
+  }
+
+  /** handle sumbit button */
+  const handleSubmit = async (event) => {
+    // reset error data
+    event.preventDefault();
+    
+    setErrorData({})
+    const { email, password, firstname, lastname, personalId } = formData;
+
+    if (!checkForm()) {
       try {
         await useSignup.mutateAsync({ email, password, firstname, lastname, personalId })
         await Swal.fire({
@@ -52,7 +84,7 @@ export default function Signuppage() {
         navigate('/login');
       }
       catch (err) {
-        alerterror(message(err.response.data.statusCode))
+        alerterror(messageCode(err.response.data.message))
         useSignup.reset()
       }
     }
@@ -96,15 +128,18 @@ export default function Signuppage() {
         </ModalContent>
       </Modal>
       {/* Page offset */}
-      <div className="pt-4 pl-10 max-md:pl-5 bg-gray-50 w-screen min-h-screen">
+      <div className="pt-4 pl-10 pb-[45px] max-md:pl-5 bg-gray-50 dark:bg-zinc-800 w-screen min-h-screen">
         {/* Button menu */}
-        <div className="absolute mt-8">
+        <div className="absolute mt-8 flex flex-row">
           <Link to="/" className="w-[28px] h-[28px]">
             <ArrowLeft />
           </Link>
+          <div className="ml-4">
+            <Switchthemebutton />
+          </div>
         </div>
         {/* Main content */}
-        <div className="flex flex-col items-center mt-[35px] ml-[45vw] max-md:ml-0 max-md:mx-[7vw] -translate-x-1/2 bg-white rounded-md max-w-[600px] drop-shadow-md">
+        <div className="flex flex-col items-center mt-[35px] mx-auto bg-white dark:bg-zinc-700/60 rounded-md max-w-[600px] drop-shadow-md">
           {/* Head content */}
           <div className="mt-16 min-w-[450px] max-w-[500px]">
             {/* Text */}
@@ -140,6 +175,8 @@ export default function Signuppage() {
               size="sm"
               label="Email"
               variant="bordered"
+              isInvalid={errorData['Email']}
+              errorMessage={errorData['Email'] && "Please enter a valid email"}
               onChange={handleChange}
             />
             <Input
@@ -150,6 +187,8 @@ export default function Signuppage() {
               size="sm"
               label="Personal Identification Number"
               variant="bordered"
+              isInvalid={errorData['PersonalNumber']}
+              errorMessage={errorData['PersonalNumber'] && "Please enter a valid personal identify number"}
               onChange={handleChange}
             />
             <Input
@@ -168,6 +207,7 @@ export default function Signuppage() {
               label="Password"
               name="password"
               variant="bordered"
+              isInvalid={errorData['Match']}
               onChange={handleChange}
             />
             <Input
@@ -185,6 +225,8 @@ export default function Signuppage() {
               type={isVisible ? "text" : "password"}
               label="Comfirm password"
               name="confirmpassword"
+              isInvalid={errorData['Match']}
+              errorMessage={errorData['Match'] && "Please double your password and confirm password"}
               variant="bordered"
               onChange={handleChange}
             />

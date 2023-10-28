@@ -91,7 +91,6 @@ export default function Navigation(props) {
         </NavbarItem>
         <NavbarItem hidden={!user}>
           <DropdownAvatar
-            user={user}
           />
         </NavbarItem>
         <NavbarItem hidden={user}>
@@ -197,7 +196,7 @@ export function AnalyticsNavigation(props) {
 
 export function DropdownAvatar() {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, useLogout } = useAuth()
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -215,7 +214,7 @@ export function DropdownAvatar() {
       <DropdownMenu aria-label="Profile Actions" variant="flat"
         onAction={async (key) => {
           if (key === 'logout') {
-              await logout();
+              await useLogout();
               navigate('/')
             }
           }
