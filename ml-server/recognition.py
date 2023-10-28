@@ -97,16 +97,26 @@ class FaceRecognition:
                 if not face_recognition.face_encodings(face_image):
                     if i == 2:
                         os.unlink(img_path)
+                        print("Face not found")
                         return{
-                            "id": "FACE_NOT_FOUND",
                             "statusCode": -1,
-                            "accuracy": 0,
                             "checkedTime": timestamp,
+                            "message":"FACE_NOT_FOUND"
                         }
                 else:
                     break
 
         face_encodings = face_recognition.face_encodings(face_image)
+
+        if os.path.exists(self.file_path):
+            pass
+        else:
+            print("ERROR: Oganization not found")
+            return {
+                "statusCode":-1,
+                "checkedTime": timestamp,
+                "message": "Oganization not found",
+            }
 
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
@@ -134,26 +144,33 @@ class FaceRecognition:
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         file_size_id = os.path.getsize(self.file_path)
-
-
-        if file_size_id == 0:
-            print("ERROR in face-recognition system: dataset is empty.")
+        if os.path.exists(file_size_id):
+            file_size = os.path.getsize(file_size_id)
+            if file_size == 0:
+                print("ERROR: Dataset is empty.")
+                return {
+                    "statusCode": -1,
+                    "checkedTime": timestamp,
+                    "message": "Dataset is empty",
+                }
+            else:
+                pass
+        else:
+            print("ERROR: Oganization not found")
             return {
-                "id": "ERROR",
-                "statusCode": -1,
-                "accuracy": 0,
+                "statusCode":-1,
                 "checkedTime": timestamp,
+                "message": "Oganization not found",
             }
 
         try:
             face_data = np.load(self.file_path, allow_pickle=True).item()
         except (FileNotFoundError, ValueError):
-            print("ERROR: Unable to load face data.")
+            print("ERROR: Unable to load organization.")
             return {
-                "id": "ERROR",
                 "statusCode": -1,
-                "accuracy": 0,
                 "checkedTime": timestamp,
+                "message": "Unable to load organization",
             }
 
         decoded_data = base64.b64decode(encoded_data)
@@ -185,19 +202,11 @@ class FaceRecognition:
                 if not face_recognition.face_encodings(face_image):
                     if i == 2:
                         os.unlink(img_path)
-                        print(
-                            {
-                                "id": "FACE_NOT_FOUND",
-                                "statusCode": -1,
-                                "accuracy": 0,
-                                "checkedTime": timestamp,
-                            }
-                        )
+                        print("Not found face in image")
                         return {
-                            "id": "FACE_NOT_FOUND",
                             "statusCode": -1,
-                            "accuracy": 0,
                             "checkedTime": timestamp,
+                            "message": "FACE_NOT_FOUND"
                         }
                 else:
                     break
@@ -227,15 +236,7 @@ class FaceRecognition:
                 )
                 percentage = float(confidence.replace("%", ""))
                 if percentage > 80:
-                    print(
-                        {
-                            "id": str(id),
-                            "statusCode": 1,
-                            "accuracy": percentage,
-                            "checkedTime": timestamp,
-                            "liveness":liveness,
-                        }
-                    )
+                    print("Success")
                     return {
                         "id": str(id),
                         "statusCode": 1,
@@ -244,19 +245,9 @@ class FaceRecognition:
                         "liveness":liveness,
                     }
 
-        print(
-            {
-                "id": "UNKNOWN_CUSTOMER",
-                "statusCode": 0,
-                "accuracy": 0,
-                "checkedTime": timestamp,
-                "liveness":liveness,
-            }
-        )
+        print("Unknown face")
         return {
-            "id": "UNKNOWN_CUSTOMER",
             "statusCode": 0,
-            "accuracy": 0,
             "checkedTime": timestamp,
             "liveness":liveness,
         }

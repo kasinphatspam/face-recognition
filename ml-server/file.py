@@ -20,6 +20,21 @@ def check_unique_filename(filename, directory="dataset/"):
     else:
         return 0 # File name doesnt exist
 
+def delete_file(filename, directory="dataset/"):
+    file_path = os.path.join(directory, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return {
+            "statusCode":1,
+            "message":filename,
+        }
+    else:
+        return {
+            "statusCode":-1,
+            "message":"Oganization not found"
+        }
+
 
 def create_file(directory="dataset/"):
     while True:
