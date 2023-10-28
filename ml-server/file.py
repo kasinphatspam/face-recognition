@@ -20,7 +20,8 @@ def check_unique_filename(filename, directory="dataset/"):
     else:
         return 0 # File name doesnt exist
 
-def delete_file(filename, directory="dataset/"):
+def delete_file(filename):
+    directory="dataset/"
     file_path = os.path.join(directory, filename)
 
     if os.path.exists(file_path):
@@ -36,7 +37,8 @@ def delete_file(filename, directory="dataset/"):
         }
 
 
-def create_file(directory="dataset/"):
+def create_file():
+    directory="dataset/"
     while True:
         filename_random = generate_random_filename(10)
         if check_unique_filename(filename_random, directory) == 1:

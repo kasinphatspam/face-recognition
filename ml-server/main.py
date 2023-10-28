@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from recognition import FaceRecognition
-from file import generate_random_filename, create_file
+from file import generate_random_filename, create_file, delete_file
 
 app = Flask(__name__)
 load_dotenv()
@@ -18,15 +18,17 @@ def status():
     return jsonify({"message": "Server connected"})
 
 
-@app.route("/create-package")
+@app.route("/dataset-file", methods=["POST"])
 def create_package():
-    package_key = generate_random_filename(8)
-    if create_file(package_key):
-        return jsonify(
-            {"message": "File package has been created", "packageKey": package_key}
-        )
-    else:
-        return jsonify({"message": "Failed to create the file package."})
+    packageId = create_file()
+    return jsonify(packageId)
+
+@app.route("/dataset-file", methods=["DELETE"])
+def delete_package():
+    data = request.json
+    package_key = data["packageKey"]
+    status = delete_file(package_key)
+    return jsonify(status)
 
 
 @app.route("/face-recognition", methods=["POST"])
@@ -38,7 +40,7 @@ def face_recognition_service():
     return jsonify(result)
 
 
-@app.route("/recognition/dataset/encode", methods=["PUT"])
+@app.route("/face-recognition", methods=["PUT"])
 def encode():
     data = request.json
     package_key = data["packageKey"]
@@ -47,7 +49,7 @@ def encode():
     return jsonify({"encodedId": encoded_id})
 
 
-@app.route("/recognition/dataset/delete", methods=["PUT"])
+@app.route("/face-recognition", methods=["DELETE"])
 def delete():
     data = request.json
     package_key = data["packageKey"]
