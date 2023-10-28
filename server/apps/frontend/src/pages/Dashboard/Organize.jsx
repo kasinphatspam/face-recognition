@@ -4,8 +4,10 @@ import { Popover, PopoverTrigger, PopoverContent, Button, Divider, Card } from "
 import Vertical from "@/components/Vertical"
 import { CornerLeftDown, UserPlus } from "react-feather"
 import OrganizeCard from "@/components/Card/OrganizeCard"
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function OrganizationService() {
+  const { organize } = useAuth()
   const Request = [
     {
       name: 'John Doe',
@@ -13,10 +15,10 @@ export default function OrganizationService() {
     }
   ]
 
-  const handleAction = ((user, action) => {
-    if (action == 'approve') console.log('approve' + user)
-    else if (action == 'decline') console.log('decline' + user)
-  })
+  const handleAction = (user, action) => {
+    if (action === 'approve') console.log('approve :' + user)
+    else if (action === 'decline') console.log('decline :' + user)
+  }
   return (
     <>
       {/* Pages offset setup */}
@@ -57,7 +59,7 @@ export default function OrganizationService() {
                         <div className="relative p-4 pt-6">
                           <div className="font-semibold text-lg w-[420px] max-h-[600px] overflow-auto mb-4">Request to join</div>
                           {Request.map((item, index) => (
-                            <div className="w-[450px] h-[64px] bg-white/90 dark:bg-black/80 pt-3 pl-4 rounded-md drop-shadow-md dark:drop-shadow-none" key={index}>
+                            <div className="w-[450px] h-[64px] bg-white/90 dark:bg-zinc-950/50 pt-3 pl-4 rounded-md drop-shadow-md dark:drop-shadow-none" key={index}>
                               <div className="flex flex-row">
                                 <div className="flex flex-col">
                                   <div className="font-medium">{item.name}</div>
@@ -67,8 +69,8 @@ export default function OrganizationService() {
                                   </div>
                                 </div>
                                 <div className="ml-6 mt-[4px] flex flex-row w-[130px]">
-                                  <Button onclick={handleAction(item.name, 'approve')} className="ml-2 text-white" size="sm" radius="lg" color="success" variant="shadow">Approve</Button>
-                                  <Button onclick={handleAction(item.name, 'decline')} className="ml-3" size="sm" radius="lg" color="danger">Decline</Button>
+                                  <Button onclick={() => (handleAction(item.name, 'approve'))} className="ml-2 text-white" size="sm" radius="lg" color="success" variant="shadow">Approve</Button>
+                                  <Button onclick={() => (handleAction(item.name, 'decline'))} className="ml-3" size="sm" radius="lg" color="danger">Decline</Button>
                                 </div>
                               </div>
                             </div>
@@ -81,98 +83,7 @@ export default function OrganizationService() {
                 </div>
                 <div className="flex flex-col">
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 gap-y-7 mt-8 ml-8">
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-                    <div>
-                      <OrganizeCard
-                        name="example"
-                        employee="24"
-                        description="example organize productive . . . . . . ."
-                      />
-                    </div>
-
+                    { (organize == null || organize?.length == 0) ? <div className="mx-auto mt-12 dark:text-zinc-100">There is no participate organization.</div> : <></> }
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { message } from "@/utils/errMessage";
+import { messageCode } from "@/utils/errMessage";
 import Switchthemebutton from "../components/Button/SwitchTheme";
 
 export default function Loginpage() {
@@ -32,7 +32,7 @@ export default function Loginpage() {
         Swal.fire({
           icon: 'error',
           title: 'Login failed!',
-          text: `${message(err.response.data.statusCode)}`,
+          text: `${messageCode(err.response.data.message)}`,
         });
         useLogin.reset()
       }

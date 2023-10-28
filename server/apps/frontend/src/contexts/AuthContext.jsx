@@ -1,16 +1,26 @@
 import { createContext, useContext } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { login, register } from '@/api/post';
-import { getUser, Logout } from "@/api/get"
+import { getUser, logout, organize } from "@/api/get"
 import { queryClient } from '@/main';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const { data: user, refetch } = useQuery({ 
+    const { data: user, refetch: fetchUser, error: userError } = useQuery({ 
         queryKey: ["user"],
         queryFn: getUser,
+        onError: () => {
+            queryClient.setQueriesData(["user"], null)
+            return;
+        },
     })
+
+    const { data: organize } = useQuery({
+        enabled: !!user?.id, 
+        queryKey: ["organize", user?.id],
+        queryFn: () => organize(user.id),
+    }) 
 
     const useLogin = useMutation({
         mutationKey: ["login"],
@@ -18,7 +28,7 @@ export const AuthProvider = ({ children }) => {
             await login({email, password})
         },
         onSuccess: () => {
-            refetch()
+            fetchUser()
         },
     })
 
@@ -28,12 +38,12 @@ export const AuthProvider = ({ children }) => {
             await register({email, password, firstname, lastname, personalId })
         },
         onSuccess: () => { 
-            refetch() 
+            fetchUser() 
         }
     })
 
-    const logout = async () => {
-        const response = await Logout()
+    const useLogout = async () => {
+        const response = await logout()
         if (response.status === 200) {
             queryClient.setQueriesData(['user'], null);
             return;
@@ -42,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user , useLogin, useSignup, logout }}
+            value={{ user, organize, useLogin, useSignup, useLogout }}
         >
             {children}
         </AuthContext.Provider>
