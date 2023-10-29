@@ -21,24 +21,30 @@ def check_unique_filename(filename, directory="dataset/"):
         return 0 # File name doesnt exist
 
 def delete_file(filename):
-    directory="dataset/"
-    file_path = os.path.join(directory, filename)
+    directory = "dataset/"
+    file_path = os.path.join(directory, f"{filename}.npy")
 
     if os.path.exists(file_path):
         os.remove(file_path)
         return {
-            "statusCode":1,
-            "message":filename,
+            "statusCode": 1,
+            "message": filename,
         }
     else:
         return {
-            "statusCode":-1,
-            "message":"Oganization not found"
+            "statusCode": -1,
+            "message": "Organization not found"
         }
 
 
+
 def create_file():
-    directory="dataset/"
+    directory = "./dataset/"
+    
+    # Create directory if it doesn't exist
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     while True:
         filename_random = generate_random_filename(10)
         if check_unique_filename(filename_random, directory) == 1:
@@ -46,8 +52,9 @@ def create_file():
         else:
             face_data = {"encodings": [], "ids": []}
             np.save(os.path.join(directory, f"{filename_random}.npy"), face_data)
-            return{
-                "organizationID":filename_random,
-                "statusCode":1,
+            return {
+                "organizationID": filename_random,
+                "statusCode": 1,
             }
+
     
