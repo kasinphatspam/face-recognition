@@ -39,18 +39,20 @@ class FaceRecognition:
                 face_data = existing_face_data.item()
             else:
                 return {"statusCode":-1,
-                    "description":"Package (organization) is empty",}
+                    "message":"Organization is empty",}
         except (FileNotFoundError, ValueError):
             return {"statusCode":-1,
-                    "desceiption":"Can't find the file package (organization)",}
+                    "message":"not found",}
 
         encodings = face_data["encodings"]
         ids = face_data["ids"]
 
+        
+
         for i in range(len(ids)):
             if ids[i] == encode_id:
                 break
-
+        
         if i < len(ids):
             # Delete the corresponding encoding and ID
             encodings.pop(i)
@@ -62,10 +64,10 @@ class FaceRecognition:
             # Save the updated package back to the file
             np.save(self.file_path, new_package)
             return {"statusCode":1,
-                    "description": "Image deleted successfully",}
+                    "message": "Image deleted successfully",}
         else:
             return {"statusCode":-1,
-                    "description":"Encode ID not found in the package"}
+                    "message":"Encode ID not found in the package"}
 
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
@@ -76,10 +78,11 @@ class FaceRecognition:
             img_file.write(decoded_data)
 
         face_image = face_recognition.load_image_file(img_path)
-
+        
+        resize_face_image = cv2.resize(face_image,(224,224))
         # Liveness Detection
-        model = keras.models.load_model("face_spoof_model.h5")
-        predictions = model.predict(np.expand_dims(face_image, axis=0))
+        model = keras.models.load_model("ml-server/face_spoof_model.h5")
+        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
 
         if predictions[0][0] < 0.86:
             liveness = False
@@ -117,6 +120,7 @@ class FaceRecognition:
                 "checkedTime": timestamp,
                 "message": "Oganization not found",
             }
+        
 
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
@@ -126,9 +130,14 @@ class FaceRecognition:
             ):
                 face_data = existing_face_data.item()
             else:
-                face_data = {"encodings": [], "ids": []}
+                pass
         except (FileNotFoundError, ValueError):
-            face_data = {"encodings": [], "ids": []}
+            print("ERROR: Unable to load organization.")
+            return {
+                "statusCode": -1,
+                "checkedTime": timestamp,
+                "message": "Unable to load organization",
+            }
 
         face_data["encodings"].append(face_encodings[0].tolist())
         face_data["ids"].append(timestamp)
@@ -139,13 +148,12 @@ class FaceRecognition:
 
         return {"encodedId": str(timestamp),
                 "statusCode":1,
-                "Liveness": liveness,}
+                "liveness": liveness,}
 
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file_size_id = os.path.getsize(self.file_path)
-        if os.path.exists(file_size_id):
-            file_size = os.path.getsize(file_size_id)
+        if os.path.exists(self.file_path):
+            file_size = os.path.getsize(self.file_path)
             if file_size == 0:
                 print("ERROR: Dataset is empty.")
                 return {
@@ -181,10 +189,10 @@ class FaceRecognition:
             img_file.write(decoded_data)
 
         face_image = face_recognition.load_image_file(img_path)
-
+        resize_face_image = cv2.resize(face_image,(224,224))
         # Liveness Detection
-        model = keras.models.load_model("face_spoof_model.h5")
-        predictions = model.predict(np.expand_dims(face_image, axis=0))
+        model = keras.models.load_model("ml-server/face_spoof_model.h5")
+        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
 
         if predictions[0][0] < 0.86:
             liveness = False
@@ -220,8 +228,6 @@ class FaceRecognition:
         face_encodings = face_recognition.face_encodings(
             rgb_small_frame, face_locations
         )
-
-        os.unlink(img_path)
 
         face_ids = []
         for face_encoding in face_encodings:
