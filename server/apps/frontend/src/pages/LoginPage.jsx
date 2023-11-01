@@ -32,7 +32,7 @@ export default function Loginpage() {
         Swal.fire({
           icon: 'error',
           title: 'Login failed!',
-          text: `${messageCode(err.response.data.message)}`,
+          text: `${messageCode(err.response?.data?.message ?? err.message)}`,
         });
         useLogin.reset()
       }

@@ -71,7 +71,7 @@ export default function HomePage() {
           {/* Right Content */}
           <div className="flex flex-col pb-16">
             {/* Images */}
-            <img src="/Faceillus.svg" className="w-[550px] max-sm:w-[350px] min-w-[220px] mx-auto mt-[25vh] max-sm:mt-4" />
+            <img src="/Faceillus.svg" loading="lazy" className="w-[550px] max-sm:w-[350px] min-w-[220px] mx-auto mt-[25vh] max-sm:mt-4" />
           </div>
         </div>
       </div>
@@ -121,14 +121,15 @@ export default function HomePage() {
         <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[80px] font-medium text-black/40 dark:text-white/70 px-12">Our application effortlessly adapts to multiple platforms, providing a native experience on mobile devices and a user-friendly website for desktop users</motion.div>
         <img
           src="/Mockup.svg"
+          loading="lazy"
           className="mx-auto my-4 w-[80vw] h-[700px] bg-cover max-sm:h-[400px] max-sm:w-screen"
           alt="device picture"
         />
         <div className="flex mx-auto items-center font-medium text-black/40 dark:text-white/70 px-12 pb-24 text-medium">
           currently support mobile devices on version
-          <img src="/google-play.svg" className="w-5 h-5 px-1" />
+          <img src="/google-play.svg" loading="lazy" className="w-5 h-5 px-1" />
           7.0+
-          <img src="/apple.svg" className="w-5 h-5 px-1" />
+          <img src="/apple.svg" loading="lazy" className="w-5 h-5 px-1" />
           ios 14+
         </div>
       </motion.div>
@@ -144,6 +145,7 @@ export default function HomePage() {
         <div className="relative">
           <img
             src=""
+            loading="lazy"
             className="relative mx-auto my-16 w-[80vw] h-[400px] bg-cover"
             alt="page picture"
           />
@@ -163,6 +165,7 @@ export default function HomePage() {
         <div className="ml-[8vw]">
           <img
             src=""
+            loading="lazy"
             className="relative mx-auto my-16 w-[40vw] h-[400px] bg-cover"
             alt="page picture"
           />
@@ -212,7 +215,7 @@ export default function HomePage() {
         {/** 1 */}
         <div>
           <div className="flex flex-row">
-            <img src="/logo_svg_color.svg" className="w-8 h-8 mt-0.5" />
+            <img src="/logo_svg_color.svg" loading="lazy" className="w-8 h-8 mt-0.5" />
             <p className="font-bold text-xl mt-[1px] ml-2 text-inherit">Face Prove</p>
           </div>
           <div className="mt-24 ml-2 text-black/30 dark:text-white/70 text-md font-semibold">@2024 Faceprove.</div>

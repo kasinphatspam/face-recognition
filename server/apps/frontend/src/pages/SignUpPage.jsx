@@ -30,7 +30,7 @@ export default function Signuppage() {
   // collect error varibles
   const handleError = (errorType) => {
     setErrorData({ ...errorData, [errorType]: true})
-    return;
+    return true;
   }
 
   // check information in form is valid
@@ -39,23 +39,19 @@ export default function Signuppage() {
     let error = false;
     if (!(/\S+@\S+\.\S+/.test(email))) {
       // invalid email
-      handleError("Email")
-      error = true
+      error = handleError("Email")
     } 
     if (password.length < 8) {
       // Password too short!
-      handleError("Password")
-      error = true
+      error = handleError("Password")
     }
     if (personalId.length !== 13) {
       // wrong personal number
-      handleError("PersonalNumber")
-      error = true
+      error = handleError("PersonalNumber")
     } 
     if (password != confirmpassword) {
       // password didn't match
-      handleError("Match")
-      error = true
+      error = handleError("Match")
     }
     if (!isSelected) {
       // unchecck privacy
@@ -69,8 +65,8 @@ export default function Signuppage() {
   const handleSubmit = async (event) => {
     // reset error data
     event.preventDefault();
-    
     setErrorData({})
+
     const { email, password, firstname, lastname, personalId } = formData;
 
     if (!checkForm()) {
@@ -84,7 +80,7 @@ export default function Signuppage() {
         navigate('/login');
       }
       catch (err) {
-        alerterror(messageCode(err.response.data.message))
+        alerterror(messageCode(err.response?.data?.message ?? err.message))
         useSignup.reset()
       }
     }
@@ -100,11 +96,12 @@ export default function Signuppage() {
 
   return (
     <>
-      {/** Modal */}
+      {/** Policy Modal */}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior={scrollBehavior}
+        onValueChange={setScrollBehavior}
       >
         <ModalContent>
           {(onClose) => (
@@ -129,8 +126,9 @@ export default function Signuppage() {
       </Modal>
       {/* Page offset */}
       <div className="pt-4 pl-10 pb-[45px] max-md:pl-5 bg-gray-50 dark:bg-zinc-800 w-screen min-h-screen">
-        {/* Button menu */}
+        {/* Button menu warpper */}
         <div className="absolute mt-8 flex flex-row">
+          {/* Back button */}
           <Link to="/" className="w-[28px] h-[28px]">
             <ArrowLeft />
           </Link>
@@ -230,6 +228,8 @@ export default function Signuppage() {
               variant="bordered"
               onChange={handleChange}
             />
+
+            {/* Policy */}
             <div className="flex flex-row">
               <Checkbox isSelected={isSelected} onValueChange={setIsSelected} size="sm">I agree with</Checkbox>
               <div className="ml-1 text-sm hover:underline duration-150 delay-150 font-medium" onClick={onOpen}>privacy policy</div>
@@ -241,7 +241,7 @@ export default function Signuppage() {
             <Button disabled={useSignup.status === "pending"} color={useSignup.status === "pending" ? "default" : "primary"} variant="shadow" onClick={handleSubmit} className="w-[120px]"> Sign up </Button>
           </div>
 
-          {/* sign up */}
+          {/* sign up? */}
           <div className="flex flex-row justify-start w-[420px] mb-8">
             <p className="text-sm font-medium"> You already have an account?</p>
             <Nextlink className="text-sm ml-1 font-medium" href="/login"> Login </Nextlink>

@@ -3,7 +3,6 @@ import { useState } from "react";
 /** useLocalStorage: useState dynamic to localstorage */
 const useLocalStorage = (key: string, defaultValue: unknown) => {
     // Create state variable to store
-    // localStorage value in state
     const [localStorageValue, setLocalStorageValue] = useState(() => {
         try {
             const value = localStorage.getItem(key)             
@@ -22,8 +21,8 @@ const useLocalStorage = (key: string, defaultValue: unknown) => {
     })
  
     /** this method update our localStorage and our state */
-    const setLocalStorageStateValue = (valueOrFn) => {
-        let newValue;
+    const setLocalStorageStateValue = (valueOrFn: unknown) => {
+        let newValue: unknown;
         if (typeof valueOrFn === 'function') {
             const fn = valueOrFn;
             newValue = fn(localStorageValue)
