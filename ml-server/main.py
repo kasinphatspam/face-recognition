@@ -46,7 +46,7 @@ def delete_package():
 @app.route("/face-recognition", methods=["POST"])
 def face_recognition_service():
     data = request.json
-    package_key = data["organizationID"]
+    package_key = data["f"]
     image = data["imageBase64"]
     result = FaceRecognition(package_key).recognition(image)
     return jsonify(result)
