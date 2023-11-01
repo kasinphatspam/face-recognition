@@ -194,7 +194,7 @@ class FaceRecognition:
         model = keras.models.load_model("ml-server/face_spoof_model.h5")
         predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
 
-        if predictions[0][0] < 0.86:
+        if predictions[0][0] < 0.95: # Liveness Adjust
             liveness = False
         else:
             liveness = True
