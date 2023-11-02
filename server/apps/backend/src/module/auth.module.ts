@@ -8,7 +8,9 @@ import { ImageService } from '@/service/image.service';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { UserRepository } from '@/repositories/user.repository';
+import { OTPService } from '@/service/otp.service';
 import { NotificationEmailService } from '@/service/notification.email.service';
+import { OTPRepository } from '@/repositories/otp.repository';
 
 dotenv.config();
 
@@ -26,6 +28,8 @@ dotenv.config();
     UserService,
     UserRepository,
     ImageService,
+    OTPService,
+    OTPRepository,
     NotificationEmailService,
   ],
 })
