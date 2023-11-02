@@ -11,7 +11,7 @@ export class TasksService {
     const otp = await this.otpRepository.findAll();
     console.log(otp);
     for (const i of otp) {
-      if (i.expireTime > new Date()) {
+      if (i.expireTime < new Date()) {
         this.otpRepository.delete(i.id);
       }
     }
