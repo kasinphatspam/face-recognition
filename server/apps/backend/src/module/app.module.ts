@@ -9,7 +9,7 @@ import entities from '@/entity';
 import { OrganizationModule } from '@/module/organization.module';
 import { ImageModule } from '@/module/image.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksService } from '@/service/task.service';
+import { TaskModule } from './task.module';
 
 dotenv.config();
 @Module({
@@ -31,8 +31,9 @@ dotenv.config();
     UserModule,
     OrganizationModule,
     ImageModule,
+    TaskModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TasksService],
+  providers: [AppService],
 })
 export class AppModule {}

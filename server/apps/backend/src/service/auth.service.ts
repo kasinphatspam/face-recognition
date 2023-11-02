@@ -18,7 +18,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '@/service/user.service';
 import { ImageService } from '@/service/image.service';
 import { UserRepository } from '@/repositories/user.repository';
-import { NotificationEmailService } from './notification.email.service';
+import { OTPService } from './otp.service';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly imageService: ImageService,
     private readonly jwtService: JwtService,
-    private readonly notificationEmailService: NotificationEmailService,
+    private readonly otpService: OTPService,
   ) {}
 
   public async login(body: AuthLoginDto): Promise<AuthLoginResult> {
@@ -111,6 +111,11 @@ export class AuthService {
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {
-    return this.notificationEmailService.notifyUserForForgotPassword(body);
+    const user = await this.userRepository.getUserByEmail(body.email, null);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return this.otpService.send(user.id, 'forgot password');
   }
 }

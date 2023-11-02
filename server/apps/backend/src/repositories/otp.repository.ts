@@ -4,7 +4,12 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class OTPRepository {
-  public async insert(topic: string, user: User) {
+  public async insert(topic: string, user: User, code: string) {
+    let date = new Date();
+    date.setMinutes(date.getMinutes() + 30);
+    date = date;
+    date = new Date(date);
+
     connection
       .getRepository(OTP)
       .createQueryBuilder()
@@ -12,9 +17,9 @@ export class OTPRepository {
       .into(OTP)
       .values([
         {
-          code: 'generate code',
+          code: code,
           topic: topic,
-          expireTime: new Date(),
+          expireTime: date,
           user: user,
         },
       ])
@@ -28,7 +33,7 @@ export class OTPRepository {
 
   public async findAllByUserId(userId: number) {
     return connection.getRepository(OTP).find({
-      relations: ['users'],
+      relations: ['user'],
       where: { user: { id: userId } },
     });
   }
