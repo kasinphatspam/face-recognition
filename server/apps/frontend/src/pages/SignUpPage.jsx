@@ -8,14 +8,8 @@ import Switchthemebutton from "@/components/Button/SwitchTheme";
 import useLocalStorage from "@/utils/useLocalstorage";
 import { useAuth } from "@/contexts/AuthContext";
 import { messageCode } from "../utils/errMessage";
+import { toast } from 'react-toastify';
 
-function alerterror(message) {
-  Swal.fire({
-    title: 'Error!',
-    text: message,
-    icon: 'error',
-  })
-}
 export default function Signuppage() {
 
   const { useSignup } = useAuth()
@@ -28,36 +22,27 @@ export default function Signuppage() {
   const [isSelected, setIsSelected] = useState(false);
 
   // collect error varibles
-  const handleError = (errorType) => {
-    setErrorData({ ...errorData, [errorType]: true})
-    return true;
+  const handleError = (errorType , error , old) => {
+    setErrorData({ ...errorData, [errorType]: error})
+    if(error && errorType === "policy") {
+      toast.error("please check privacy policy first.", { containerId: "main"})
+    } else if (errorType === "policy") {
+      toast.error("please check your form", { containerId: "main"})
+    }
+    return old === true ? true : error;
   }
 
   // check information in form is valid
   const checkForm = () => {
     const { email, password, confirmpassword, personalId } = formData;
     let error = false;
-    if (!(/\S+@\S+\.\S+/.test(email))) {
-      // invalid email
-      error = handleError("Email")
-    } 
-    if (password.length < 8) {
-      // Password too short!
-      error = handleError("Password")
-    }
-    if (personalId.length !== 13) {
-      // wrong personal number
-      error = handleError("PersonalNumber")
-    } 
-    if (password != confirmpassword) {
-      // password didn't match
-      error = handleError("Match")
-    }
-    if (!isSelected) {
-      // unchecck privacy
-      alerterror("please check privacy policy box")
-      error = true
-    }
+    // check handleError("name", "function" , "error")
+    error = handleError("Email", (/\S+@\S+\.\S+/.test(email)), error)
+    error = handleError("Password", (!password || password?.length < 8), error)
+    error = handleError("PersonalNumber", (!personalId || personalId?.length !== 13), error)
+    error = handleError("Match", (!confirmpassword || password != confirmpassword), error)
+    error = handleError("policy", (!isSelected), error)
+
     return error
   }
 
@@ -65,22 +50,31 @@ export default function Signuppage() {
   const handleSubmit = async (event) => {
     // reset error data
     event.preventDefault();
-    setErrorData({})
-
     const { email, password, firstname, lastname, personalId } = formData;
 
     if (!checkForm()) {
+      const id = toast.loading("Please wait .." , { containerId: "main"});
       try {
         await useSignup.mutateAsync({ email, password, firstname, lastname, personalId })
-        await Swal.fire({
-          icon: 'success',
-          title: 'Login successful!',
-          text: `register successfully, ${email}`,
+        toast.update(id, {
+          render: "Sign up successfully!",
+          type: "success",
+          isLoading: false,
+          containerId: "main",
+          closeButton: true,
+          autoClose: 3000
         })
         navigate('/login');
       }
       catch (err) {
-        alerterror(messageCode(err.response?.data?.message ?? err.message))
+        toast.update(id, {
+          render:  `${messageCode(err.response?.data?.message ?? err.message)}`,
+          type: "error",
+          isLoading: false,
+          containerId: "main",
+          closeButton: true,
+          autoClose: 3000
+        })
         useSignup.reset()
       }
     }

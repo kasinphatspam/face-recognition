@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
 import { Button, Input, Link as Nextlink } from "@nextui-org/react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { messageCode } from "@/utils/errMessage";
 import Switchthemebutton from "../components/Button/SwitchTheme";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Loginpage() {
 
@@ -19,29 +21,32 @@ export default function Loginpage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (/\S+@\S+\.\S+/.test(email)) {
+      const id = toast.loading("Please wait .." , { containerId: "main"})
       try {
         await useLogin.mutateAsync({ email, password })
-        await Swal.fire({
-          icon: 'success',
-          title: 'Login successful!',
-          text: `Welcome back, ${email}`,
+        toast.update(id, {
+          render: "Login successfully!",
+          type: "success",
+          isLoading: false,
+          containerId: "main",
+          closeButton: true,
+          autoClose: 3000
         })
         navigate('/dashboard');
       }
       catch (err) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Login failed!',
-          text: `${messageCode(err.response?.data?.message ?? err.message)}`,
-        });
+        toast.update(id, {
+          render:  `${messageCode(err.response?.data?.message ?? err.message)}`,
+          type: "error",
+          isLoading: false,
+          containerId: "main",
+          closeButton: true,
+          autoClose: 3000
+        })
         useLogin.reset()
       }
     } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Login failed!',
-        text: 'Please check your email and password and try again.',
-      });
+      toast.error("Please check your email and password and try again.")
       return;
     }
   }

@@ -8,7 +8,7 @@ export function messageCode(code: string): string {
         "Not found" : "The email address or password you entered is invalid.",
         "Internal server error" : "Server not responding, check out later.",
         //AxiosError
-        "NetworkError" : "request timeout, please check your connection"
+        "Network Error" : "request timeout, please check your connection"
     }
     return map[code] ?? code
     

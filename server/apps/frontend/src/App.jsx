@@ -1,6 +1,6 @@
 import { NextUIProvider } from "@nextui-org/react";
-import { lazy } from "react";
-import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const HomePage = lazy(() => import("@/pages/Homepage"));
@@ -28,7 +28,17 @@ export const App = () => {
   return (
     <NextUIProvider>
       <AuthProvider>
-        <RouterProvider router={router}/>
+        <Suspense fallback={
+        <>
+          <div className="-z-10 bg-zinc-700 w-screen h-screen">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <img src="/loading.svg" className="w-16 h-16" />
+            </div> 
+          </div>
+        </>
+        }>
+          <RouterProvider router={router}/>
+        </Suspense>
       </AuthProvider>
     </NextUIProvider>
   );
