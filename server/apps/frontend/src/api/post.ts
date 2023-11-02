@@ -23,3 +23,7 @@ export type register = {
 export async function register(data: register): Promise<Response> {
   return await fetch.post('/auth/register', data)
 }
+
+export async function passCode(userId: number, passcode: string): Promise<Response> {
+  return await fetch.post(`/organization/user/${userId}/join/${passcode}`)
+}

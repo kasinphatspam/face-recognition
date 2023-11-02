@@ -2,6 +2,7 @@
 export function messageCode(code: string): string {
     
     const map: { [key: string]: string } = {
+        // Backend error message
         "This email already exists." : "This email already exists.",
         "This personalId already exists." : "This personal identify number already exists.",
         "Password Incorrect." : "The email address or password you entered is invalid.",

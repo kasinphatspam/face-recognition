@@ -31,8 +31,9 @@ export const App = () => {
         <Suspense fallback={
         <>
           <div className="-z-10 bg-zinc-700 w-screen h-screen">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <img src="/loading.svg" className="w-16 h-16" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
+              <p className="text-white/90 font-medium">Loading data</p>
+              <img src="/loading.svg" className="w-16 h-16 ml-7" />
             </div> 
           </div>
         </>
