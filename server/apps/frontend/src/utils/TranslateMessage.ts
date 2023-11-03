@@ -1,4 +1,3 @@
-import React from "react";
 
 export function Translate(message: string): string {
   const map = {

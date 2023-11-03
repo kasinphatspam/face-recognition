@@ -9863,7 +9863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-tailwindcss@npm:^0.5.4":
+"prettier-plugin-tailwindcss@npm:^0.5.6":
   version: 0.5.6
   resolution: "prettier-plugin-tailwindcss@npm:0.5.6"
   peerDependencies:
@@ -10226,6 +10226,18 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: b317c3763f37a89621bbafd0e6e2d068e7876790a5ae77f497adfd6ba9334ceea138c8a0b7d907bae0f79c765cb24e8b2ca2b8033b4144c0bce28571a3658921
+  languageName: node
+  linkType: hard
+
+"react-toastify@npm:^9.1.3":
+  version: 9.1.3
+  resolution: "react-toastify@npm:9.1.3"
+  dependencies:
+    clsx: ^1.1.1
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: e8bd92c5cbf831b43a042644ab9bc69abe6ceb3ce91ba71f5cd2d8b6a2c9885ca52770e1f1ba64c5632607f6df962db344a26c7fba57606faf5aa0e7bfc8535f
   languageName: node
   linkType: hard
 
@@ -12027,11 +12039,12 @@ __metadata:
     framer-motion: ^10.16.0
     postcss: ^8.4.26
     prettier: ^3.0.3
-    prettier-plugin-tailwindcss: ^0.5.4
+    prettier-plugin-tailwindcss: ^0.5.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-feather: ^2.0.10
     react-router-dom: ^6.14.2
+    react-toastify: ^9.1.3
     react-webcam: ^7.1.1
     sweetalert2: ^11.7.28
     tailwindcss: ^3.3.3

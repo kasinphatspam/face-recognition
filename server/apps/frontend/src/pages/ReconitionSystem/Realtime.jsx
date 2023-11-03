@@ -119,7 +119,7 @@ export default function Realtime() {
 
   /** Send image base64 type to ml server */
   const handleSendtoserver = React.useCallback(() => {
-    /** . . . .  */
+    // TODO: send data to server
   })
   /** handle action open & close */
   const handleOnclose = React.useCallback(() => {

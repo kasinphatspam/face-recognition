@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Loginpage() {
 
-  const { useLogin } = useAuth()
+  const { useLogin , fetchOrg , organize } = useAuth()
   const navigate = useNavigate();
   {/* variable for keeping register */ }
   const [email, setEmail] = useState("");
@@ -32,7 +32,12 @@ export default function Loginpage() {
           closeButton: true,
           autoClose: 3000
         })
-        navigate('/dashboard');
+        await fetchOrg()
+        if ( organize == null) {
+          navigate('/new')
+        } else { 
+          navigate('/dashboard'); 
+        }
       }
       catch (err) {
         toast.update(id, {

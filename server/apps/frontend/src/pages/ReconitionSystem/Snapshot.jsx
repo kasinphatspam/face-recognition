@@ -65,7 +65,7 @@ export default function Snapshot() {
 
   /** Send image base64 type to ml server */
   const handleSendtoserver = React.useCallback(() => {
-    /** . . . .  */
+    // TODO: send data
   })
   /** handle action open & close */
   const handleOnclose = React.useCallback(() => {

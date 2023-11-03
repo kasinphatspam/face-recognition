@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
         },
     })
 
-    const { data: organize } = useQuery({
+    const { data: organize, refetch: fetchOrg } = useQuery({
         enabled: !!user?.id, 
         queryKey: ["organize", user?.id],
         queryFn: () => organize(user.id),
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, organize, useLogin, useSignup, useLogout }}
+            value={{ user, organize, fetchOrg, useLogin, useSignup, useLogout }}
         >
             {children}
         </AuthContext.Provider>
