@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Organization } from './organization.entity';
 import { User } from './user.entity';
+import { RecognitionImageResponseDto } from '@/utils/dtos/contact.dto';
 
 @Entity('history')
 class History {
@@ -27,6 +28,8 @@ class History {
     default: () => 'CURRENT_TIMESTAMP',
   })
   public detectedTime: Date;
+
+  public result: RecognitionImageResponseDto;
 }
 
 export { History };

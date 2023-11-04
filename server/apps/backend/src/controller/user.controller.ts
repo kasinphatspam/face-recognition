@@ -20,34 +20,16 @@ export class UserController {
     private readonly organizationService: OrganizationService,
   ) {}
 
-  /* 
-    Service name:  Get list of user
-    Url: http://localhost:3001/user/list/all
-    Method: GET
-    Body: {}
-  */
   @Get('list/all')
   public findAll() {
     return this.userService.findAll();
   }
 
-  /* 
-    Service name:  Get user by id
-    Url: http://localhost:3001/user/:userId
-    Method: GET
-    Body: {}
-  */
   @Get(':userId')
   public getUserById(@Param('userId') userId: number) {
     return this.userService.getUserById(userId);
   }
 
-  /* 
-    Service name:  Update user info with user id
-    Url: http://localhost:3001/user/:userId
-    Method: PUT
-    Body: {}
-  */
   @Put(':userId')
   public async update(
     @Param('userId') userId: number,
@@ -60,12 +42,6 @@ export class UserController {
     });
   }
 
-  /* 
-    Service name:  Update user profile with user id
-    Url: http://localhost:3001/user/:userId/image
-    Method: PUT
-    Body: {}
-  */
   @Put(':userId/image')
   public async updateImage(
     @Param('userId') userId: number,
@@ -78,12 +54,6 @@ export class UserController {
     });
   }
 
-  /* 
-    Service name:  Delete user account
-    Url: http://localhost:3001/user/:userId
-    Method: DELETE
-    Body: {}
-  */
   @Delete(':userId')
   public async delete(@Param('userId') userId: number, @Res() res: Response) {
     await this.userService.delete(userId);
@@ -92,12 +62,6 @@ export class UserController {
     });
   }
 
-  /* 
-    Service name:  Get current organization
-    Url: http://localhost:3001/user/:userId/organization
-    Method: GET
-    Body: {}
-  */
   @Get(':userId/organization')
   public async getCurrentOrganization(
     @Param('userId') userId: number,

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@/entity';
 import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
 import { ImageService } from './image.service';
@@ -12,17 +12,15 @@ export class UserService {
   ) {}
 
   public async findAll(): Promise<User[]> {
-    const user = await this.userRepository.findAll();
-    if (!user) {
-      throw new BadRequestException('Not found');
-    }
-    return user;
+    return this.userRepository.findAll();
   }
 
   public async getUserById(userId: number): Promise<User> {
     const user = await this.userRepository.getUserById(userId, null);
     if (!user) {
-      throw new BadRequestException('Not found');
+      throw new NotFoundException(
+        `user id: ${userId} was not found in the database.`,
+      );
     }
     return user;
   }
@@ -30,7 +28,9 @@ export class UserService {
   public async getUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.getUserByEmail(email, null);
     if (!user) {
-      throw new BadRequestException('Not found');
+      throw new NotFoundException(
+        `user email: ${email} was not found in the database.`,
+      );
     }
     return user;
   }
@@ -38,7 +38,9 @@ export class UserService {
   public async getRawUserDataByEmail(email: string): Promise<User> {
     const user = await this.userRepository.getRawUserDataByEmail(email);
     if (!user) {
-      throw new BadRequestException('Not found');
+      throw new NotFoundException(
+        `user email: ${email} was not found in the database.`,
+      );
     }
     return user;
   }

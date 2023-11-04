@@ -10,6 +10,7 @@ import { OrganizationModule } from '@/module/organization.module';
 import { ImageModule } from '@/module/image.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 dotenv.config();
 @Module({
@@ -26,6 +27,7 @@ dotenv.config();
         synchronize: true,
       }),
     }),
+    CacheModule.register({ isGlobal: true }),
     ScheduleModule.forRoot(),
     AuthModule,
     UserModule,

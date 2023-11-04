@@ -13,6 +13,7 @@ import { UserRepository } from '@/repositories/user.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { ContactRepository } from '@/repositories/contact.repository';
 import { RoleRepository } from '@/repositories/role.repository';
+import { HistoryRepository } from '@/repositories/history.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature(entities)],
@@ -28,6 +29,7 @@ import { RoleRepository } from '@/repositories/role.repository';
     ContactService,
     ContactRepository,
     RecognitionApiService,
+    HistoryRepository,
   ],
   controllers: [OrganizationController],
 })

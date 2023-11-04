@@ -5,13 +5,17 @@ import { ContactRepository } from '@/repositories/contact.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { readCSV } from '@/utils/file.manager';
 import * as path from 'path';
+import { HistoryRepository } from '@/repositories/history.repository';
+import { UserService } from './user.service';
 
 @Injectable()
 export class ContactService {
   constructor(
+    private readonly userService: UserService,
     private readonly recognitionApiService: RecognitionApiService,
     private readonly contactRepository: ContactRepository,
     private readonly organizationRepository: OrganizationRepository,
+    private readonly historyRepository: HistoryRepository,
   ) {}
 
   public readonly folderPath = path.join(__dirname, '../../images');
@@ -40,9 +44,10 @@ export class ContactService {
     contactId: number,
     base64: string,
   ) {
-    const packageKey = (
-      await this.organizationRepository.getOrganizationById(organizationId)
-    ).packageKey;
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+    const packageKey = organization.packageKey;
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
       base64,
@@ -57,14 +62,21 @@ export class ContactService {
     return encodeId;
   }
 
-  public async recognitionImage(organizationId: number, base64: string) {
-    const packageKey = (
-      await this.organizationRepository.getOrganizationById(organizationId)
-    ).packageKey;
+  public async recognitionImage(
+    organizationId: number,
+    userId,
+    base64: string,
+  ) {
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+    const packageKey = organization.packageKey;
+    const user = await this.userService.getUserById(userId);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
     );
+    await this.historyRepository.insert(organization, user, resultObj);
     const contact = await this.contactRepository.getContactByEncodedId(
       organizationId,
       resultObj.id,
