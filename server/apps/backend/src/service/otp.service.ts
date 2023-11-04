@@ -46,15 +46,19 @@ export class OTPService {
     return this.otpRepository.insert(topic, user, String(code));
   }
 
-  public async verify(userId: number, topic: string, code: string) {
+  public async verify(
+    userId: number,
+    topic: string,
+    code: string,
+  ): Promise<boolean> {
     const previousOTP = await this.otpRepository.findAllByUserId(userId);
 
     for (const i of previousOTP) {
       if (i.topic == topic && i.user.id == userId && i.code == code) {
         await this.otpRepository.delete(i.id);
-        return 1;
+        return true;
       }
     }
-    return 0;
+    return false;
   }
 }

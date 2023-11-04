@@ -25,6 +25,25 @@ export class UserRepository {
       .getRawOne();
   }
 
+  public async getRawUserDataById(id: number): Promise<User> {
+    return connection
+      .getRepository(User)
+      .createQueryBuilder()
+      .select([
+        'id',
+        'email',
+        'firstname',
+        'lastname',
+        'gender',
+        'personalId',
+        'dob',
+        'image',
+      ])
+      .addSelect('password')
+      .where('id = :id', { id: id })
+      .getRawOne();
+  }
+
   public async getUserById(userId: number, relations: string[]): Promise<User> {
     if (!relations) {
       return connection
@@ -113,6 +132,13 @@ export class UserRepository {
     return connection.getRepository(User).save({
       id: userId,
       role: { id: roleId },
+    });
+  }
+
+  public async updateUserPassword(userId: number, password: string) {
+    return connection.getRepository(User).save({
+      id: userId,
+      password: password,
     });
   }
 

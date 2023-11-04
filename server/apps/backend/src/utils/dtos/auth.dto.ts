@@ -70,9 +70,48 @@ class AuthForgotPasswordDto {
   public email: string;
 }
 
+class AuthVerifyResetPassword {
+  @MinLength(6)
+  @MaxLength(6)
+  public code: string;
+
+  @IsEmail()
+  @MaxLength(50)
+  public email: string;
+}
+
+class AuthChangePasswordWithConfirmation {
+  public id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @MaxLength(30)
+  public oldPassword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @MaxLength(30)
+  public password: string;
+}
+
+class AuthChangePasswordWithOutConfirmation {
+  public id: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6)
+  @MaxLength(30)
+  public password: string;
+}
+
 export {
   AuthLoginDto,
   AuthLoginResult,
   AuthRegisterDto,
   AuthForgotPasswordDto,
+  AuthVerifyResetPassword,
+  AuthChangePasswordWithConfirmation,
+  AuthChangePasswordWithOutConfirmation,
 };

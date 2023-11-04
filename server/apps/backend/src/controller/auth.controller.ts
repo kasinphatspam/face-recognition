@@ -10,9 +10,12 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
+  AuthChangePasswordWithConfirmation,
+  AuthChangePasswordWithOutConfirmation,
   AuthForgotPasswordDto,
   AuthLoginDto,
   AuthRegisterDto,
+  AuthVerifyResetPassword,
 } from '@/utils/dtos/auth.dto';
 import { AuthService } from '@/service/auth.service';
 
@@ -26,7 +29,7 @@ export class AuthController {
 
     res.cookie('jwt', result.jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).json({
-      message: `Login sucessfully.`,
+      message: `login sucessfully.`,
       id: result.id,
     });
   }
@@ -35,7 +38,7 @@ export class AuthController {
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
     const user = await this.authService.register(body);
     return res.status(HttpStatus.OK).json({
-      message: `Create account id: ${user.id} is successfully.`,
+      message: `create account id: ${user.id} is successfully.`,
       user: user,
     });
   }
@@ -50,7 +53,7 @@ export class AuthController {
   public async logout(@Res() res: Response) {
     res.clearCookie('jwt');
 
-    return res.status(HttpStatus.OK).json({ msg: 'logout success' });
+    return res.status(HttpStatus.OK).json({ msg: 'logout successfully' });
   }
 
   @Put('forgot-password')
@@ -59,21 +62,41 @@ export class AuthController {
     @Res() res: Response,
   ) {
     await this.authService.forgotPassword(body);
-    return res.status(HttpStatus.OK).json({ message: 'Forgot password' });
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: `send verification code to ${body.email}` });
   }
 
   @Post('forgot-password/verify')
-  public async verifyForgotPasswordRequest() {
-    return;
+  public async verifyForgotPasswordRequest(
+    @Body() body: AuthVerifyResetPassword,
+    @Res() res: Response,
+  ) {
+    await this.authService.verify(body);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'reset password request was accepted' });
   }
 
   @Put('change-password/wc')
-  public async changePasswordWithConfirmation() {
-    return;
+  public async changePasswordWithConfirmation(
+    @Body() body: AuthChangePasswordWithConfirmation,
+    @Res() res: Response,
+  ) {
+    await this.authService.changePassword(body);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'reset password successfully' });
   }
 
   @Put('change-password/woc')
-  public async changePasswordWithoutConfirmation() {
-    return;
+  public async changePasswordWithoutConfirmation(
+    @Body() body: AuthChangePasswordWithOutConfirmation,
+    @Res() res: Response,
+  ) {
+    await this.authService.changePasswordWithOutConfirmation(body);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'reset password successfully' });
   }
 }

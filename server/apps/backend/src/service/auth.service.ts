@@ -2,16 +2,20 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import {
+  AuthChangePasswordWithConfirmation,
+  AuthChangePasswordWithOutConfirmation,
   AuthForgotPasswordDto,
   AuthLoginDto,
   AuthLoginResult,
   AuthRegisterDto,
+  AuthVerifyResetPassword,
 } from '@/utils/dtos/auth.dto';
 import { User } from '@/entity';
 import * as bcrypt from 'bcrypt';
@@ -101,12 +105,49 @@ export class AuthService {
     }
   }
 
+  public async changePassword(body: AuthChangePasswordWithConfirmation) {
+    const user = await this.userService.getRawUserDataById(body.id);
+
+    if (!(await bcrypt.compare(body.oldPassword, user.password)))
+      throw new BadRequestException(
+        'username or password you entered incorrect.',
+      );
+
+    const password = await bcrypt.hash(body.password, 12);
+    await this.userRepository.updateUserPassword(body.id, password);
+  }
+
+  public async changePasswordWithOutConfirmation(
+    body: AuthChangePasswordWithOutConfirmation,
+  ) {
+    const password = await bcrypt.hash(body.password, 12);
+    await this.userRepository.updateUserPassword(body.id, password);
+  }
+
   public async forgotPassword(body: AuthForgotPasswordDto) {
     const user = await this.userRepository.getUserByEmail(body.email, null);
 
     if (!user) {
       throw new NotFoundException();
     }
-    return this.otpService.send(user.id, 'forgot password');
+    await this.otpService.send(user.id, 'forgot password');
+  }
+
+  public async verify(body: AuthVerifyResetPassword) {
+    const user = await this.userRepository.getUserByEmail(body.email, null);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    const result = await this.otpService.verify(
+      user.id,
+      'forgot password',
+      body.code,
+    );
+
+    if (!result) {
+      throw new NotAcceptableException('verify code is incorrect.');
+    }
   }
 }
