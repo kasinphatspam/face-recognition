@@ -70,6 +70,7 @@ Pygments==2.14.0
 pyrsistent==0.19.3
 pyserial==3.5
 python-dateutil==2.8.2
+python-dotenv==1.0.0
 python-json-logger==2.0.4
 PyYAML==6.0
 pyzmq==25.0.0
@@ -95,5 +96,6 @@ wcwidth==0.2.6
 webcolors==1.12
 webencodings==0.5.1
 websocket-client==1.5.0
+websockets==12.0
 Werkzeug==3.0.1
 widgetsnbextension==4.0.5
