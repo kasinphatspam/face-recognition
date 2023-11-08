@@ -63,13 +63,7 @@ export class UserController {
   }
 
   @Get(':userId/organization')
-  public async getCurrentOrganization(
-    @Param('userId') userId: number,
-    @Res() res: Response,
-  ) {
-    const organization = await this.organizationService.getCurrentOrganization(
-      userId,
-    );
-    return res.status(HttpStatus.OK).json({ organization });
+  public async getCurrentOrganization(@Param('userId') userId: number) {
+    return await this.organizationService.getCurrentOrganization(userId);
   }
 }
