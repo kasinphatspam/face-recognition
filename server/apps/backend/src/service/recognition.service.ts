@@ -1,19 +1,17 @@
-import * as dotenv from 'dotenv';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import {
   CreatePackageResponseDto,
   EncodeImageResponseDto,
   RecognitionImageResponseDto,
 } from '@/utils/dtos/contact.dto';
-import axios from 'axios';
-import { ContactService } from './contact.service';
+import { Contact } from '@/entity';
 
-dotenv.config();
-export class RecognitionApiService {
-  constructor(private readonly contactService: ContactService) {}
-
+@Injectable()
+export class RecognitionService {
   public async createPackage() {
-    const response = await axios.get(
-      `${process.env.ML_SERVER_URL}/create-package`,
+    const response = await axios.post(
+      `${process.env.ML_SERVER_URL}/dataset-file`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -34,19 +32,14 @@ export class RecognitionApiService {
   public async encodeImage(
     packageKey: string,
     image: string,
-    organizationId: number,
-    contactId: number,
+    contact: Contact,
   ): Promise<string> {
-    const contactProperty = await this.contactService.getContactById(
-      organizationId,
-      contactId,
-    );
     const response = await axios.put(
-      `${process.env.ML_SERVER_URL}/face-recognition/dataset/encode`,
+      `${process.env.ML_SERVER_URL}/face-recognition`,
       {
         packageKey: packageKey,
         imageBase64: image,
-        encodedId: contactProperty.encodedId,
+        encodedId: contact.encodedId,
       },
       {
         headers: {
@@ -68,7 +61,7 @@ export class RecognitionApiService {
 
   public async deleteEncodeImage(packageKey: string, encodedId: string) {
     const response = await axios.put(
-      `http://${process.env.ML_SERVER_URL}/face-recognition/dataset/delete`,
+      `${process.env.ML_SERVER_URL}/face-recognition/dataset/delete`,
       {
         packageKey: packageKey,
         encodedId: encodedId,
@@ -89,8 +82,9 @@ export class RecognitionApiService {
   }
 
   public async recognitionImage(packageKey: string, image: string) {
+    console.log(`${packageKey}`);
     const response = await axios.post(
-      `http://${process.env.ML_SERVER_URL}/face-recognition`,
+      `${process.env.ML_SERVER_URL}/face-recognition`,
       {
         packageKey: packageKey,
         imageBase64: image,

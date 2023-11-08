@@ -75,6 +75,7 @@ export class UserRepository {
 
   public async findAllByOrganizationId(organizationId: number) {
     return connection.getRepository(User).find({
+      relations: ['organization'],
       where: [{ organization: { id: organizationId } }],
     });
   }

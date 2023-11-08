@@ -180,6 +180,7 @@ export class OrganizationController {
     @Body() body: EncodeContactImageDto,
     @Res() res: Response,
   ) {
+    console.log('***********');
     const encodedId = await this.contactService.encodeImage(
       organizationId,
       contactId,

@@ -101,6 +101,10 @@ class EncodeImageResponseDto {
   @IsString()
   @MaxLength(100)
   public encodedId: string;
+
+  public statusCode: string;
+
+  public liveness: boolean;
 }
 
 class RecognitionImageResponseDto {

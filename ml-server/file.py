@@ -53,7 +53,7 @@ def create_file():
             face_data = {"encodings": [], "ids": []}
             np.save(os.path.join(directory, f"{filename_random}.npy"), face_data)
             return {
-                "organizationID": filename_random,
+                "packageKey": filename_random,
                 "statusCode": 1,
             }
 

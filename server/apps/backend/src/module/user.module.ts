@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from '@/entity';
 import { RoleService } from '@/service/role.service';
 import { OrganizationService } from '@/service/organization.service';
-import { RecognitionApiService } from '@/service/recognition.api.service';
+import { RecognitionService } from '@/service/recognition.service';
 import { ImageService } from '@/service/image.service';
 import { UserRepository } from '@/repositories/user.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
@@ -20,7 +20,7 @@ import { RoleRepository } from '@/repositories/role.repository';
     OrganizationRepository,
     RoleService,
     RoleRepository,
-    RecognitionApiService,
+    RecognitionService,
     ImageService,
   ],
   controllers: [UserController],

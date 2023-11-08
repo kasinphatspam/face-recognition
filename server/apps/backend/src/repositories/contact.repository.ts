@@ -5,20 +5,23 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ContactRepository {
-  public async getContactById(organizationId: number, contactId: number) {
-    return connection.getRepository(Contact).findOneBy({
-      id: contactId,
-      organization: { id: organizationId },
+  public async getContactById(
+    organizationId: number,
+    contactId: number,
+  ): Promise<Contact> {
+    return connection.getRepository(Contact).findOne({
+      relations: ['organization'],
+      where: [{ id: contactId, organization: { id: organizationId } }],
     });
   }
 
   public async getContactByEncodedId(
     organizationId: number,
     encodedId: string,
-  ) {
-    return connection.getRepository(Contact).findOneBy({
-      encodedId: encodedId,
-      id: organizationId,
+  ): Promise<Contact> {
+    return connection.getRepository(Contact).findOne({
+      relations: ['organization'],
+      where: [{ encodedId: encodedId, organization: { id: organizationId } }],
     });
   }
 
@@ -67,13 +70,9 @@ export class ContactRepository {
   ) {
     return connection
       .getRepository(Contact)
-      .createQueryBuilder()
-      .update(Contact)
-      .set({ encodedId: encodedId })
-      .where('organizationId = :organizationId AND contactId = :contactId', {
-        organizationId: organizationId,
-        contactId: contactId,
-      })
-      .execute();
+      .update(
+        { id: contactId, organization: { id: organizationId } },
+        { encodedId: encodedId },
+      );
   }
 }

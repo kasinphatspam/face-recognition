@@ -5,7 +5,7 @@ import {
   UpdateOrganizationDto,
 } from '@/utils/dtos/organization.dto';
 import { RoleService } from '@/service/role.service';
-import { RecognitionApiService } from '@/service/recognition.api.service';
+import { RecognitionService } from '@/service/recognition.service';
 import { InsertResult } from 'typeorm';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { UserRepository } from '@/repositories/user.repository';
@@ -13,7 +13,7 @@ import { UserRepository } from '@/repositories/user.repository';
 @Injectable()
 export class OrganizationService {
   constructor(
-    private readonly recognitionApiService: RecognitionApiService,
+    private readonly recognitionApiService: RecognitionService,
     private readonly roleService: RoleService,
     private readonly organizationRepository: OrganizationRepository,
     private readonly userRepository: UserRepository,

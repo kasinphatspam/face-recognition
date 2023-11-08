@@ -81,7 +81,7 @@ class FaceRecognition:
         
         resize_face_image = cv2.resize(face_image,(224,224))
         # Liveness Detection
-        model = keras.models.load_model("ml-server/face_spoof_model.h5")
+        model = keras.models.load_model("face_spoof_model.h5")
         predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
 
         if predictions[0][0] < 0.86:
@@ -114,7 +114,7 @@ class FaceRecognition:
         if os.path.exists(self.file_path):
             pass
         else:
-            print("ERROR: Oganization not found")
+            print("ERROR: Organization not found")
             return {
                 "statusCode":-1,
                 "checkedTime": timestamp,
@@ -191,7 +191,7 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(img_path)
         resize_face_image = cv2.resize(face_image,(224,224))
         # Liveness Detection
-        model = keras.models.load_model("ml-server/face_spoof_model.h5")
+        model = keras.models.load_model("face_spoof_model.h5")
         predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
 
         if predictions[0][0] < 0.95: # Liveness Adjust

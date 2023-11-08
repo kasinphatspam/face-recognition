@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
-import { RecognitionApiService } from '@/service/recognition.api.service';
+import { RecognitionService } from '@/service/recognition.service';
 import { ContactRepository } from '@/repositories/contact.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { readCSV } from '@/utils/file.manager';
@@ -12,10 +12,10 @@ import { UserService } from './user.service';
 export class ContactService {
   constructor(
     private readonly userService: UserService,
-    private readonly recognitionApiService: RecognitionApiService,
     private readonly contactRepository: ContactRepository,
     private readonly organizationRepository: OrganizationRepository,
     private readonly historyRepository: HistoryRepository,
+    private readonly recognitionApiService: RecognitionService,
   ) {}
 
   public readonly folderPath = path.join(__dirname, '../../images');
@@ -35,6 +35,17 @@ export class ContactService {
     return this.contactRepository.getContactById(organizationId, contactId);
   }
 
+  public async getContactByEncodedId(
+    organizationId: number,
+    encodedId: string,
+  ) {
+    console.log(organizationId, encodedId);
+    return this.contactRepository.getContactByEncodedId(
+      organizationId,
+      encodedId,
+    );
+  }
+
   public async getAllContact(orgnaizationId: number) {
     return this.contactRepository.findAllByOrganizationId(orgnaizationId);
   }
@@ -48,11 +59,21 @@ export class ContactService {
       organizationId,
     );
     const packageKey = organization.packageKey;
+    const contactProperty = await this.getContactById(
+      organization.id,
+      contactId,
+    );
+
+    if (!contactProperty) {
+      throw new NotFoundException(
+        'system cannot query contact data for encoding service',
+      );
+    }
+
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
       base64,
-      organizationId,
-      contactId,
+      contactProperty,
     );
     await this.contactRepository.updateContactEncodeId(
       organizationId,
@@ -67,6 +88,7 @@ export class ContactService {
     userId,
     base64: string,
   ) {
+    console.log('pam pam');
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
@@ -77,10 +99,28 @@ export class ContactService {
       base64,
     );
     await this.historyRepository.insert(organization, user, resultObj);
-    const contact = await this.contactRepository.getContactByEncodedId(
+    if (!resultObj.id) {
+      const object = {
+        checkedTime: resultObj.checkedTime,
+        accuracy: resultObj.accuracy,
+        statusCode: resultObj.statusCode,
+      };
+      return object;
+    }
+    console.log(resultObj.id);
+    const contact = await this.getContactByEncodedId(
       organizationId,
       resultObj.id,
     );
+    if (!contact) {
+      const object = {
+        checkedTime: resultObj.checkedTime,
+        error: "contact's face is conflict",
+        accuracy: resultObj.accuracy,
+        statusCode: resultObj.statusCode,
+      };
+      return object;
+    }
     const object = {
       checkedTime: resultObj.checkedTime,
       accuracy: resultObj.accuracy,

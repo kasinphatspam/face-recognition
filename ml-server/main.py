@@ -32,7 +32,7 @@ def create_package():
 @app.route("/dataset-file", methods=["DELETE"])
 def delete_package():
     data = request.json
-    package_key = data["organizationID"]
+    package_key = data["packageKey"]
     status = delete_file(package_key)
     return jsonify(status)
 
@@ -46,7 +46,7 @@ def delete_package():
 @app.route("/face-recognition", methods=["POST"])
 def face_recognition_service():
     data = request.json
-    package_key = data["f"]
+    package_key = data["packageKey"]
     image = data["imageBase64"]
     result = FaceRecognition(package_key).recognition(image)
     return jsonify(result)
@@ -59,10 +59,10 @@ def face_recognition_service():
 @app.route("/face-recognition", methods=["PUT"])
 def encode():
     data = request.json
-    package_key = data["organizationID"]
+    package_key = data["packageKey"]
     image = data["imageBase64"]
     encoded_id = FaceRecognition(package_key).encode(image)
-    return jsonify({"encodedID": encoded_id})
+    return jsonify(encoded_id)
 
 #TEST
 #1. PASS Success
@@ -72,8 +72,8 @@ def encode():
 @app.route("/face-recognition", methods=["DELETE"])
 def delete():
     data = request.json
-    package_key = data["organizationID"]
-    encode_id = data["encodedID"]
+    package_key = data["packageKey"]
+    encode_id = data["encodedId"]
     return jsonify(FaceRecognition(package_key).delete_image(encode_id))
 
 #TEST

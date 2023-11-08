@@ -53,7 +53,7 @@ class Organization {
   @Column({
     nullable: true,
     default: '',
-    length: 8,
+    length: 10,
   })
   public packageKey: string;
 
