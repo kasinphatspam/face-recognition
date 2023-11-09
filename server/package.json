@@ -8,7 +8,9 @@
     ],
     "scripts": {
         "dev": "turbo run dev",
-        "build": "turbo run build",
+        "install:backend": "cd apps/backend && yarn install",
+        "install:frontend": "cd apps/frontend && yarn install",
+        "allin": "yarn install:backend & yarn install:frontend",
         "start": "turbo run start:prod",
         "dev:frontend": "yarn dev --filter=frontend",
         "dev:backend": "yarn dev --filter=backend"
@@ -16,5 +18,9 @@
     "devDependencies": {
         "turbo": "^1.10.12"
     },
-    "packageManager": "yarn@3.6.4"
+    "packageManager": "yarn@3.6.4",
+    "dependencies": {
+        "date-fns": "^2.30.0",
+        "react-day-picker": "^8.9.1"
+    }
 }

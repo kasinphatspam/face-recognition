@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
 import { Button, Checkbox, Input, ModalBody, Modal, ModalContent, ModalHeader, ModalFooter, useDisclosure, Link as Nextlink } from "@nextui-org/react";
-import Swal from 'sweetalert2';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Policy from "@/components/Policy";
 import Switchthemebutton from "@/components/Button/SwitchTheme";
 import useLocalStorage from "@/utils/useLocalstorage";
@@ -13,6 +12,7 @@ import { toast } from 'react-toastify';
 export default function Signuppage() {
 
   const { useSignup } = useAuth()
+  const navigate = useNavigate();
   {/* variable for keeping register */ }
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
@@ -23,11 +23,8 @@ export default function Signuppage() {
 
   // collect error varibles
   const handleError = (errorType , error , old) => {
-    setErrorData({ ...errorData, [errorType]: error})
-    if(error && errorType === "policy") {
-      toast.error("please check privacy policy first.", { containerId: "main"})
-    } else if (errorType === "policy") {
-      toast.error("please check your form", { containerId: "main"})
+    if (error) {
+      setErrorData({ ...errorData, [errorType]: error})
     }
     return old === true ? true : error;
   }
@@ -37,12 +34,18 @@ export default function Signuppage() {
     const { email, password, confirmpassword, personalId } = formData;
     let error = false;
     // check handleError("name", "function" , "error")
-    error = handleError("Email", (/\S+@\S+\.\S+/.test(email)), error)
+    error = handleError("Email", (email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)), error)
     error = handleError("Password", (!password || password?.length < 8), error)
     error = handleError("PersonalNumber", (!personalId || personalId?.length !== 13), error)
     error = handleError("Match", (!confirmpassword || password != confirmpassword), error)
-    error = handleError("policy", (!isSelected), error)
-
+    error = handleError("Policy", (!isSelected), error)
+    if (error) {
+      if (errorData['Policy']) 
+        toast.error("Please check policy first", {containerId: "main"})
+      else {
+        toast.error("your information was wrong", {containerId: "main"})
+      }
+    }
     return error
   }
 
@@ -51,7 +54,6 @@ export default function Signuppage() {
     // reset error data
     event.preventDefault();
     const { email, password, firstname, lastname, personalId } = formData;
-
     if (!checkForm()) {
       const id = toast.loading("Please wait .." , { containerId: "main"});
       try {
@@ -83,6 +85,7 @@ export default function Signuppage() {
   const handleChange = (event) => {
     event.preventDefault()
     setFormData({ ...formData, [event.target.name]: event.target.value })
+    setErrorData({});
   }
   {/* Password visibility */ }
   const [isVisible, setIsVisible] = useState(false);
@@ -225,7 +228,7 @@ export default function Signuppage() {
 
             {/* Policy */}
             <div className="flex flex-row">
-              <Checkbox isSelected={isSelected} onValueChange={setIsSelected} size="sm">I agree with</Checkbox>
+              <Checkbox isSelected={isSelected} onValueChange={() => setIsSelected(!isSelected)} size="sm">I agree with</Checkbox>
               <div className="ml-1 text-sm hover:underline duration-150 delay-150 font-medium" onClick={onOpen}>privacy policy</div>
             </div>
           </div>

@@ -7,13 +7,13 @@ import OrganizeCard from "@/components/Card/OrganizeCard"
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function OrganizationService() {
-  const { organize } = useAuth()
-  const Request = [
-    {
-      name: 'John Doe',
-      Organize: 'Example',
-    }
-  ]
+  const { organizeData } = useAuth()
+  const Request = [{
+    'name': 'John Doe',
+    'Organize': 'example',
+  }]
+  let mapOrganize = []
+  mapOrganize[0] = organizeData
 
   const handleAction = (user, action) => {
     if (action === 'approve') console.log('approve :' + user)
@@ -41,14 +41,14 @@ export default function OrganizationService() {
               </div>
 
               {/* Organize list */}
-              <div className="w-[75vw] min-h-[300px] -ml-4 mt-8 bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
+              <div className="w-[70vw] min-h-[300px] -ml-4 mt-8 bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
                 <div className="relative flex flex-row">
                   <div className="flex flex-col">
                     <div className="flex flex-row">
                       <CornerLeftDown className="h-6 w-6 mt-3 mr-1 ml-2" />
                       <p className="font-semibold text-2xl text-inherit ml-2">Organization group</p>
                     </div>
-                    <p className="font-light text-sm text-black/40 dark:text-gray-400 ml-12">There are list of organization group</p>
+                    <p className="font-light text-sm text-black/40 dark:text-gray-400 mx-auto">There are list of organization group</p>
                   </div>
                   <div className="absolute right-4 top-4">
                     <Popover placement="left-start">
@@ -83,7 +83,18 @@ export default function OrganizationService() {
                 </div>
                 <div className="flex flex-col">
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 gap-y-7 mt-8 ml-8">
-                    { (organize == null || organize?.length == 0) ? <div className="mx-auto mt-12 dark:text-zinc-100">There is no participate organization.</div> : <></> }
+                    { (organizeData == null || organizeData?.length == 0) ? <div className="mx-auto mt-12 dark:text-zinc-100">There is no participate organization.</div> : <></> }
+                    {
+                      organizeData != null ?
+                      mapOrganize?.map((item, index) => (
+                        <OrganizeCard
+                          key={index}
+                          name={item.name}
+                          description={item.description || "simple decoration on organization..."}
+                          image={item.image}
+                        />
+                      )): <></>
+                    }
                   </div>
                 </div>
               </div>

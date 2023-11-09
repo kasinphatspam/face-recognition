@@ -14,14 +14,19 @@ export default function Switchthemebutton(props) {
     } = useSwitch(props);
     const [theme, setTheme] = useLocalStorage('theme', 'light')
 
+    if (theme === 'light') {
+        document.documentElement.classList.remove('dark')
+    }
+    else {
+         document.documentElement.classList.add('dark')
+    }
     React.useEffect(() => {
-        if (theme === 'dark') document.documentElement.classList.add('dark')
-        else document.documentElement.classList.remove('dark')
-    }, [theme])
-
-    React.useEffect(() => {
-        if (isSelected) setTheme('light')
-        else setTheme('dark')
+        if (isSelected){ 
+            setTheme("light")
+        }
+        else {
+            setTheme("dark")
+        }
     }, [isSelected])
 
     return (

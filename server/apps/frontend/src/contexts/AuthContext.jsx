@@ -1,45 +1,51 @@
 import { createContext, useContext } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { login, register } from '@/api/post';
-import { getUser, logout, organize } from "@/api/get"
+import { getUser, logout, organize as organizeFn } from "@/api/get"
 import { queryClient } from '@/main';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const { data: user, refetch: fetchUser, error: userError } = useQuery({ 
+    const { data: user, refetch: fetchUser } = useQuery({ 
         queryKey: ["user"],
-        queryFn: getUser,
+        queryFn: async () => {
+            return getUser()
+        },
+       onError: () => {
+            queryClient.setQueriesData(["user"], null)
+            return;
+        },
+    })
+
+    const { data: organizeData, refetch: fetchOrg } = useQuery({
+        enabled: !!user?.id, 
+        queryKey: ["organize", user?.id],
+        queryFn: async () => {
+            return organizeFn(user.id)
+        },
+        onError: () => {
+            queryClient.setQueriesData(["organize", user?.id], null)
+            return;
+        },
+    }) 
+
+    const useLogin = useMutation({
+        mutationKey: ["login"],
+        mutationFn: async ({ email, password }) => {
+            return login({email, password})
+        },
         onError: () => {
             queryClient.setQueriesData(["user"], null)
             return;
         },
     })
 
-    const { data: organize, refetch: fetchOrg } = useQuery({
-        enabled: !!user?.id, 
-        queryKey: ["organize", user?.id],
-        queryFn: () => organize(user.id),
-    }) 
-
-    const useLogin = useMutation({
-        mutationKey: ["login"],
-        mutationFn: async ({ email, password }) => {
-            await login({email, password})
-        },
-        onSuccess: () => {
-            fetchUser()
-        },
-    })
-
     const useSignup = useMutation({
         mutationKey:["signup"],
         mutationFn: async ({ email, password, firstname, lastname, personalId }) => {
-            await register({email, password, firstname, lastname, personalId })
+            return register({email, password, firstname, lastname, personalId })
         },
-        onSuccess: () => { 
-            fetchUser() 
-        }
     })
 
     const useLogout = async () => {
@@ -52,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, organize, fetchOrg, useLogin, useSignup, useLogout }}
+            value={{ user, organizeData, fetchOrg, fetchUser, useLogin, useSignup, useLogout }}
         >
             {children}
         </AuthContext.Provider>

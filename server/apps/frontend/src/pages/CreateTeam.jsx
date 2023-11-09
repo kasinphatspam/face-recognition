@@ -4,15 +4,19 @@ import useVerification from "@/utils/Verification";
 import { Button, Divider } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { passCode } from "@/api/post";
 import { toast } from "react-toastify";
 import { createNewOrg } from "@/api/post";
 import { messageCode } from "../utils/errMessage";
+import { useNavigate } from "react-router-dom";
+
 export default function CreateTeam() {
   const displayCode = useRef(false);
+  const toastCreate = useRef(null);
   const idCode = useRef(null);
-  const { user } = useAuth();
+  const { user, fetchOrg } = useAuth();
+  const navigate = useNavigate()
   const [createData, setCreateData] = useState({});
   const { code, inputStates, handleChange, handleKeyDown } = useVerification(6);
 
@@ -21,6 +25,34 @@ export default function CreateTeam() {
     mutationFn: async (name) => {
       await createNewOrg(user?.id, {name});
     },
+    onMutate: () => {
+      const idCreate = toast.loading("Please wait ...", { containerId: "main" });
+      toastCreate.current = idCreate;
+    },
+    onSuccess: () => {
+      toast.update(toastCreate.current, {
+        render: "create organization successfully",
+        type: "success",
+        isLoading: false,
+        containerId: "main",
+        closeButton: true,
+        autoClose: 3000,
+      });
+      navigate('/dashboard');
+    },
+    onError: (err) => {
+      toast.update(toastCreate.current, {
+        render: `${messageCode(
+          err.message
+        )}`,
+        type: "error",
+        isLoading: false,
+        containerId: "main",
+        closeButton: true,
+        autoClose: 3000,
+      });
+      createOrg.reset();
+    },
   });
 
   const codeData = useMutation({
@@ -28,7 +60,7 @@ export default function CreateTeam() {
     mutationFn: async (code) => {
       await passCode(user.id, code);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.update(idCode.current, {
         render: "organize was found. Waiting response from admin",
         type: "success",
@@ -37,6 +69,8 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 3000,
       });
+      await fetchOrg();
+      navigate('/dashboard');
     },
     onError: (err) => {
       toast.update(idCode.current, {
@@ -49,6 +83,7 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 2000,
       });
+      codeData.reset();
     }
   });
 
@@ -76,31 +111,9 @@ export default function CreateTeam() {
     setCreateData({ ...createData, [event.target.name]: event.target.value });
   };
 
-  const handleOnSubmit = async (event) => {
+  const handleOnSubmit = (event) => {
     event.preventDefault();
-    const idCreate = toast.loading("Please wait ...", { containerId: "main" });
-    try {
-      await createOrg.mutateAsync(createData["name"]);
-      if (createOrg.isSuccess) {
-        toast.update(idCreate, {
-          render: "organize was found. Waiting response from admin",
-          type: "success",
-          isLoading: false,
-          containerId: "main",
-          closeButton: true,
-          autoClose: 3000,
-        });
-      }
-    } catch (err) {
-      toast.update(idCreate, {
-        render: `${messageCode(err.response?.data?.message ?? err.message)}`,
-        type: "error",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 2000,
-      });
-    }
+    createOrg.mutate(createData["name"]);
   };
 
   return (
@@ -129,7 +142,7 @@ export default function CreateTeam() {
                     key={ii}
                     type="text"
                     value={state.digit}
-                    className="code-digit w-8 h-10 mr-1.5 ml-1.5 py-1.5 pl-3 ring-1 ring-inset drop-shadow-sm rounded-md text-gray-900 ring-gray-300 focus:ring-2 focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6 placeholder:text-gray-300"
+                    className="code-digit w-10 h-12 mx-2 py-1 pl-3.5 ring-1 ring-inset drop-shadow-sm rounded-md text-gray-900 dark:text-white ring-gray-300 focus:ring-2 font-semibold focus:outline-none focus:ring-indigo-600 sm:text-lg sm:leading-6 placeholder:text-gray-300"
                     onChange={(e) => handleChange(e, ii)}
                     onKeyDown={handleKeyDown}
                   />

@@ -19,7 +19,9 @@ import Switchthemebutton from "./Button/SwitchTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-{/* menu Item for small devices screen */ }
+{
+  /* menu Item for small devices screen */
+}
 const menuItems = [
   "Profile",
   "Dashboard",
@@ -34,9 +36,11 @@ const menuItems = [
 ];
 
 export default function Navigation(props) {
-  const { user } = useAuth()
-  {/* variables Status  */ }
-  const Active = props.Active
+  const { user } = useAuth();
+  {
+    /* variables Status  */
+  }
+  const Active = props.Active;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -49,18 +53,20 @@ export default function Navigation(props) {
       {/** ------------------------------------------------- */}
       {/* Tabs for small devices */}
       <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        />
       </NavbarContent>
 
       {/* Brand & logo */}
       <NavbarContent className="pr-3" justify="start">
-      <NavbarBrand>
-            <Link href="/">
-              <img src="/logo_svg_color.svg" className="w-8 h-8" />
-              {/* ... */}
-              <p className="font-bold px-4">Face Prove</p>
-            </Link>
-          </NavbarBrand>
+        <NavbarBrand>
+          <Link href="/">
+            <img src="/logo_svg_color.svg" className="w-8 h-8" />
+            {/* ... */}
+            <p className="font-bold px-4">Face Prove</p>
+          </Link>
+        </NavbarBrand>
       </NavbarContent>
 
       {/** ------------------------------------------------- */}
@@ -72,7 +78,11 @@ export default function Navigation(props) {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={Active == "Customers" ? true : false}>
-          <Link href="#" aria-current="page" color={Active == "Customers" ? "secondary" : "foreground"}>
+          <Link
+            href="#"
+            aria-current="page"
+            color={Active == "Customers" ? "secondary" : "foreground"}
+          >
             Customers
           </Link>
         </NavbarItem>
@@ -83,18 +93,22 @@ export default function Navigation(props) {
         </NavbarItem>
       </NavbarContent>
 
-
       {/* Sign up or Logined parts */}
       <NavbarContent as="div" justify="end">
         <NavbarItem>
           <Switchthemebutton className="" size="sm" />
         </NavbarItem>
         <NavbarItem hidden={!user}>
-          <DropdownAvatar
-          />
+          <DropdownAvatar />
         </NavbarItem>
         <NavbarItem hidden={user}>
-          <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
+          <Button
+            as={Link}
+            color="primary"
+            href="/signup"
+            variant="light"
+            className="mr-5"
+          >
             Sign Up
           </Button>
           <Button as={Link} color="primary" href="/login" variant="flat">
@@ -110,7 +124,11 @@ export default function Navigation(props) {
             <Link
               className="w-full"
               color={
-                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
+                index === 2
+                  ? "warning"
+                  : index === menuItems.length - 1
+                  ? "danger"
+                  : "foreground"
               }
               href="#"
               size="lg"
@@ -125,9 +143,11 @@ export default function Navigation(props) {
 }
 
 export function AnalyticsNavigation(props) {
-  const { user } = useAuth() 
-  {/* variables Status */ }
-  const Active = props.Active
+  const { user } = useAuth();
+  {
+    /* variables Status */
+  }
+  const Active = props.Active;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -139,7 +159,9 @@ export function AnalyticsNavigation(props) {
       >
         {/* Tabs for small devices */}
         <NavbarContent className="sm:hidden" justify="start">
-          <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          />
         </NavbarContent>
 
         {/* Brand & logo */}
@@ -154,16 +176,23 @@ export function AnalyticsNavigation(props) {
         </NavbarContent>
 
         {/* Tabs for medium devices or desktop */}
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-
-        </NavbarContent>
+        <NavbarContent
+          className="hidden sm:flex gap-4"
+          justify="center"
+        ></NavbarContent>
         {/* Sign up or Logined parts */}
         <NavbarContent as="div" justify="end">
           <NavbarItem hidden={!user}>
             <DropdownAvatar />
           </NavbarItem>
           <NavbarItem hidden={user}>
-            <Button as={Link} color="primary" href="/signup" variant="light" className="mr-5">
+            <Button
+              as={Link}
+              color="primary"
+              href="/signup"
+              variant="light"
+              className="mr-5"
+            >
               Sign Up
             </Button>
             <Button as={Link} color="primary" href="/login" variant="flat">
@@ -179,7 +208,11 @@ export function AnalyticsNavigation(props) {
               <Link
                 className="w-full"
                 color={
-                  index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
+                  index === 2
+                    ? "warning"
+                    : index === menuItems.length - 1
+                    ? "danger"
+                    : "foreground"
                 }
                 href="#"
                 size="lg"
@@ -195,8 +228,8 @@ export function AnalyticsNavigation(props) {
 }
 
 export function DropdownAvatar() {
-  const navigate = useNavigate()
-  const { user, useLogout } = useAuth()
+  const navigate = useNavigate();
+  const { user, organizeData, useLogout } = useAuth();
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -208,32 +241,53 @@ export function DropdownAvatar() {
           name="Jason Hughes"
           size="sm"
           src={user?.image || "https://i.pravatar.cc/150?u=a042581f4e29026704d"}
-
         />
       </DropdownTrigger>
-      <DropdownMenu aria-label="Profile Actions" variant="flat"
-        onAction={async (key) => {
-          if (key === 'logout') {
+      {!!organizeData ? (
+        <DropdownMenu
+          aria-label="Profile Actions"
+          variant="flat"
+          onAction={async (key) => {
+            if (key === "logout") {
               await useLogout();
-              navigate('/')
+              navigate("/");
             }
-          }
-        }  
-      >
-        <DropdownItem key="profile" className="h-14 gap-2">
-          <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">{user?.email ?? ""}</p>
-        </DropdownItem>
-        <DropdownItem key="settings">My Settings</DropdownItem>
-        <DropdownItem key="team_settings">Team Settings</DropdownItem>
-        <DropdownItem key="analytics">Analytics</DropdownItem>
-        <DropdownItem key="system">System</DropdownItem>
-        <DropdownItem key="configurations">Configurations</DropdownItem>
-        <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-        <DropdownItem key="logout" color="danger">
-          Log Out
-        </DropdownItem>
-      </DropdownMenu>
+          }}
+        >
+          <DropdownItem key="profile" className="h-14 gap-2">
+            <p className="font-semibold">Signed in as</p>
+            <p className="font-semibold">{user?.email ?? ""}</p>
+          </DropdownItem>
+          <DropdownItem key="settings">My Settings</DropdownItem>
+          <DropdownItem key="team_settings">Dashboard</DropdownItem>
+          <DropdownItem key="team_settings">Team Settings</DropdownItem>
+          <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+          <DropdownItem key="logout" color="danger">
+            Log Out
+          </DropdownItem>
+        </DropdownMenu>
+      ) : (
+        <DropdownMenu
+          aria-label="Profile Actions"
+          variant="flat"
+          onAction={async (key) => {
+            if (key === "logout") {
+              await useLogout();
+              navigate("/");
+            }
+          }}
+        >
+          <DropdownItem key="profile" className="h-14 gap-2">
+            <p className="font-semibold">Signed in as</p>
+            <p className="font-semibold">{user?.email ?? ""}</p>
+          </DropdownItem>
+          <DropdownItem key="settings">My Settings</DropdownItem>
+          <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+          <DropdownItem key="logout" color="danger">
+            Log Out
+          </DropdownItem>
+        </DropdownMenu>
+      )}
     </Dropdown>
   );
 }
