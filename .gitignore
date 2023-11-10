@@ -9,6 +9,7 @@ server/apps/backend/.env
 server/apps/backend/dist/
 server/apps/backend/node_modules/
 server/apps/frontend/node_modules/
+server/apps/backend/.yarn/
 server/apps/frontend/.yarn/
 server/apps/frontend/.env
 server/apps/backend/images/**/*.png
