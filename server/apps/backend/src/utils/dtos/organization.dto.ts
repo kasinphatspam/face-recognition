@@ -2,6 +2,7 @@ import {
   IsBoolean,
   IsDate,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -13,6 +14,11 @@ class CreateOrganizationDto {
   @IsString()
   @MaxLength(30)
   public name: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  public planId: number;
 }
 
 class UpdateOrganizationDto {

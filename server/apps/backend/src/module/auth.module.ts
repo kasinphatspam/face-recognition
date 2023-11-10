@@ -32,5 +32,6 @@ dotenv.config();
     OTPRepository,
     NotificationEmailService,
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

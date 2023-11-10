@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,6 +8,7 @@ import {
   Post,
   Put,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ContactService } from '@/service/contact.service';
@@ -24,7 +24,7 @@ import {
   UpdateOrganizationDto,
 } from '@/utils/dtos/organization.dto';
 import { CreateNewRoleDto, EditRoleDto } from '@/utils/dtos/role.dto';
-
+import { AuthGuard } from '@/utils/guards/auth.guard';
 @Controller('organization')
 export class OrganizationController {
   constructor(
@@ -35,6 +35,7 @@ export class OrganizationController {
   ) {}
 
   @Get(':organizationId')
+  @UseGuards(AuthGuard)
   public async getOrganizationById(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -42,13 +43,12 @@ export class OrganizationController {
     const organization = await this.organizationService.getOrganizationById(
       organizationId,
     );
-    if (!organization) {
-      throw new BadRequestException('Not found organization.');
-    }
-    return res.status(HttpStatus.OK).json({ organization });
+
+    return res.status(HttpStatus.OK).json(organization);
   }
 
   @Post('/user/:userId')
+  @UseGuards(AuthGuard)
   public async createNewOrganization(
     @Param('userId') userId: number,
     @Body() body: CreateOrganizationDto,
@@ -100,21 +100,6 @@ export class OrganizationController {
     });
   }
 
-  @Get(':organizationId/passcode')
-  public async getOrganizationPasscode(
-    @Param('organizationId') organizationId: number,
-    @Res() res: Response,
-  ) {
-    const organization = await this.organizationService.getOrganizationById(
-      organizationId,
-    );
-
-    if (!organization) {
-      throw new BadRequestException('Not found organization.');
-    }
-    return res.status(HttpStatus.OK).json({ passcode: organization.passcode });
-  }
-
   @Put(':organizationId/passcode')
   public async generateNewPasscode(
     @Param('organizationId') organizationId: number,
@@ -129,8 +114,12 @@ export class OrganizationController {
   }
 
   @Get(':organizationId/employee/list/all')
-  public async getAllEmployee(@Param('organizationId') organizationId: number) {
-    return this.employeeService.findAll(organizationId);
+  public async getAllEmployee(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    const users = await this.employeeService.findAll(organizationId);
+    return res.status(HttpStatus.OK).json(users);
   }
 
   @Delete(':organizationId/employee/:userId')
@@ -146,31 +135,49 @@ export class OrganizationController {
   }
 
   @Put(':organizationId/vtiger')
-  public async linkWithVtiger(@Param('organizationId') organizationId: number) {
-    return organizationId;
+  public async linkWithVtiger(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    return res.status(HttpStatus.OK).json(organizationId);
   }
 
   @Post(':organizationId/vtiger')
   public async importDataFromVtiger(
     @Param('organizationId') organizationId: number,
+    @Res() res: Response,
   ) {
-    return organizationId;
+    return res.status(HttpStatus.OK).json(organizationId);
   }
 
   @Get(':organizationId/contact/:contactId')
   public async getContactById(
     @Param('organizationId') organizationId: number,
     @Param('contactId') contactId: number,
+    @Res() res: Response,
   ) {
-    return this.contactService.getContactById(organizationId, contactId);
+    const contact = await this.contactService.getContactById(
+      organizationId,
+      contactId,
+    );
+
+    return res.status(HttpStatus.OK).json(contact);
   }
 
   @Post(':organizationId/contact')
   public async createNewContact(
     @Param('organizationId') organizationId: number,
     @Body() body: CreateNewContactDto,
+    @Res() res: Response,
   ) {
-    return this.contactService.createNewContact(organizationId, body);
+    const contactId = await this.contactService.createNewContact(
+      organizationId,
+      body,
+    );
+
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: `Create contact ID: ${contactId} successfully` });
   }
 
   @Put(':organizationId/contact/:contactId/encode')
@@ -196,40 +203,60 @@ export class OrganizationController {
     @Param('organizationId') organizationId: number,
     @Param('userId') userId: number,
     @Body() body: EncodeContactImageDto,
+    @Res() res: Response,
   ) {
-    return this.contactService.recognitionImage(
+    const data = await this.contactService.recognitionImage(
       organizationId,
       userId,
       body.image,
     );
+
+    return res.status(HttpStatus.OK).json(data);
   }
 
   @Get(':organizationId/contact/list/all')
-  public async getAllContact(@Param('organizationId') organizationId: number) {
-    return this.contactService.getAllContact(organizationId);
+  public async getAllContact(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    const contacts = await this.contactService.getAllContact(organizationId);
+    return res.status(HttpStatus.OK).json(contacts);
   }
 
   @Post(':organizationId/contact/import/excel')
-  public async importContactFromCSV() {
-    return this.contactService.importFromCSV();
+  public async importContactFromCSV(@Res() res: Response) {
+    const csv = await this.contactService.importFromCSV();
+    return res.status(HttpStatus.OK).json(csv);
   }
 
   @Post(':organizationId/contact/import/vtiger')
-  public async importContactFromVtigerAPI() {
-    return;
+  public async importContactFromVtigerAPI(@Res() res: Response) {
+    return res.status(HttpStatus.OK).json({});
   }
 
   @Get(':organizationId/role/list/all')
-  public async getAllRole(@Param('organizationId') organizationId: number) {
-    return this.roleService.findAll(organizationId);
+  public async getAllRole(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    const roles = await this.roleService.findAll(organizationId);
+    return res.status(HttpStatus.OK).json(roles);
   }
 
   @Post(':organizationId/role')
   public async createNewRole(
     @Param('organizationId') organizationId: number,
     @Body() body: CreateNewRoleDto,
+    @Res() res: Response,
   ) {
-    return this.roleService.createNewRole(body.name, organizationId);
+    const roleId = await this.roleService.createNewRole(
+      body.name,
+      organizationId,
+    );
+
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: `Create role ID: ${roleId} successfully` });
   }
 
   @Put(':organizationId/role/:roleId')
@@ -259,15 +286,19 @@ export class OrganizationController {
   }
 
   @Put(':organizationId/role/permission')
-  public async editRolePermission() {
-    return;
+  public async editRolePermission(@Res() res: Response) {
+    return res.status(HttpStatus.OK).json({});
   }
 
   @Delete(':organizationId/role/:roleId')
   public async deleteRole(
     @Param('organizationId') organizationId: number,
     @Param('roleId') roleId: number,
+    @Res() res: Response,
   ) {
-    return this.roleService.delete(organizationId, roleId);
+    await this.roleService.delete(organizationId, roleId);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: `Delete role ID: ${roleId} successfully` });
   }
 }

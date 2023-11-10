@@ -10,9 +10,11 @@ import { ImageService } from '@/service/image.service';
 import { UserRepository } from '@/repositories/user.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { RoleRepository } from '@/repositories/role.repository';
+import { AuthModule } from '@/module/auth.module';
+import { PlanRepository } from '@/repositories/plan.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature(entities)],
+  imports: [TypeOrmModule.forFeature(entities), AuthModule],
   providers: [
     UserService,
     UserRepository,
@@ -22,6 +24,7 @@ import { RoleRepository } from '@/repositories/role.repository';
     RoleRepository,
     RecognitionService,
     ImageService,
+    PlanRepository,
   ],
   controllers: [UserController],
 })

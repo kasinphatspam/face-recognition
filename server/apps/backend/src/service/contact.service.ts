@@ -23,7 +23,7 @@ export class ContactService {
   public async createNewContact(
     organizationId: number,
     body: CreateNewContactDto,
-  ) {
+  ): Promise<number> {
     const contact = await this.contactRepository.createNewContact(
       organizationId,
       body,
@@ -85,7 +85,7 @@ export class ContactService {
 
   public async recognitionImage(
     organizationId: number,
-    userId,
+    userId: number,
     base64: string,
   ) {
     console.log('pam pam');

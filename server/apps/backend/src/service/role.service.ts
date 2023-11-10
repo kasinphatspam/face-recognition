@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  Injectable,
+} from '@nestjs/common';
 import { UserRepository } from '@/repositories/user.repository';
 import { RoleRepository } from '@/repositories/role.repository';
 
@@ -30,7 +34,7 @@ export class RoleService {
     const relations = ['organization', 'role'];
     const user = await this.userRepository.getUserById(userId, relations);
     if (!user) {
-      throw new BadRequestException('Not found user');
+      throw new NotFoundException('User not found');
     }
     if (user.organization.id !== organizationId) {
       throw new BadRequestException(

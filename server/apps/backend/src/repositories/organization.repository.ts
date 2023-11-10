@@ -1,5 +1,5 @@
 import { connection } from '@/utils/connection';
-import { Organization } from '@/entity';
+import { Organization, Plan } from '@/entity';
 import { UpdateOrganizationDto } from '@/utils/dtos/organization.dto';
 import { Injectable } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
@@ -25,6 +25,7 @@ export class OrganizationRepository {
     passcode: string,
     date: Date,
     packageKey: string,
+    plan: Plan,
   ): Promise<InsertResult> {
     return connection
       .getRepository(Organization)
@@ -37,6 +38,7 @@ export class OrganizationRepository {
           passcode: passcode,
           codeCreatedTime: date,
           packageKey: packageKey,
+          plan: plan,
         },
       ])
       .execute();

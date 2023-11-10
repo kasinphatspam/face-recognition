@@ -18,9 +18,7 @@ export class UserService {
   public async getUserById(userId: number): Promise<User> {
     const user = await this.userRepository.getUserById(userId, null);
     if (!user) {
-      throw new NotFoundException(
-        `user id: ${userId} was not found in the database.`,
-      );
+      throw new NotFoundException('User not found');
     }
     return user;
   }
@@ -28,9 +26,7 @@ export class UserService {
   public async getRawUserDataById(id: number): Promise<User> {
     const user = await this.userRepository.getRawUserDataById(id);
     if (!user) {
-      throw new NotFoundException(
-        `user id: ${id} was not found in the database.`,
-      );
+      throw new NotFoundException('User not found');
     }
     return user;
   }
@@ -38,9 +34,7 @@ export class UserService {
   public async getUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.getUserByEmail(email, null);
     if (!user) {
-      throw new NotFoundException(
-        `user email: ${email} was not found in the database.`,
-      );
+      throw new NotFoundException('User not found');
     }
     return user;
   }
@@ -48,9 +42,7 @@ export class UserService {
   public async getRawUserDataByEmail(email: string): Promise<User> {
     const user = await this.userRepository.getRawUserDataByEmail(email);
     if (!user) {
-      throw new NotFoundException(
-        `user email: ${email} was not found in the database.`,
-      );
+      throw new NotFoundException('User not found');
     }
     return user;
   }
