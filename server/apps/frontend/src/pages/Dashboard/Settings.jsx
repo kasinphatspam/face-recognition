@@ -3,7 +3,7 @@ import { AnalyticsNavigation } from "@/components/Navigation";
 import Vertical from "@/components/Vertical";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
-import { Input, Button, Select, SelectItem, Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Input, Button, Select, SelectItem } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/api/put";
 
@@ -184,7 +184,7 @@ export default function Settings() {
                     </Select>
                     <p className="mt-2 ml-4 text-white/40 text-sm">date of birth</p>
                     <div className="flex flex-row">
-                      <Autocomplete
+                      <Input
                         className="ml-3 w-1/4 my-4"
                         type="number"
                         label="day"
@@ -193,7 +193,7 @@ export default function Settings() {
                         placeholder={dateData.day || ""}
                         onChange={(e) => handleDayChange(e)}
                         >
-                        </Autocomplete>
+                        </Input>
                       <Input
                         className="ml-3 w-1/3 my-4"
                         type="text"
