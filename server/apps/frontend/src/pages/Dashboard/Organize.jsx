@@ -1,6 +1,6 @@
 import React from "react"
 import { AnalyticsNavigation } from "@/components/Navigation"
-import { Popover, PopoverTrigger, PopoverContent, Button, Divider, Card } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import Vertical from "@/components/Vertical"
 import { CornerLeftDown, UserPlus } from "react-feather"
 import OrganizeCard from "@/components/Card/OrganizeCard"
@@ -89,6 +89,7 @@ export default function OrganizationService() {
                       mapOrganize?.map((item, index) => (
                         <OrganizeCard
                           key={index}
+                          id={item.id}
                           name={item.name}
                           description={item.description || "simple decoration on organization..."}
                           image={item.image}
