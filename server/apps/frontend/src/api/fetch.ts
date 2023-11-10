@@ -7,7 +7,7 @@ declare var process : {
 }
 
 export const fetch = axios.create({
-  baseURL: process.env.VITE_BACKEND_URL || 'http://localhost:3001',
+  baseURL: 'https://api.pphamster.com',
   withCredentials: true,
 });
 
