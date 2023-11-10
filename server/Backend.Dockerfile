@@ -4,12 +4,9 @@ WORKDIR /build
 COPY /apps/backend/package.json yarn.lock ./
 
 RUN yarn install
+RUN yarn remove bcrypt
+RUN yarn add bcrypt
 
-
-FROM node:lts-alpine AS builder
-
-WORKDIR /build
-COPY --from=prepare /build/node_modules ./node_modules
 COPY /apps/backend/. .
 
 RUN yarn build

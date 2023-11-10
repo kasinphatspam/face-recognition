@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
-const Analytics = lazy(() => import("@/pages/DashBoard/Analytics"));
+const Analytics = lazy(() => import("@/pages/Dashboard/Analytics"));
 const Loginpage = lazy(() => import("@/pages/LoginPage"));
 const Signuppage = lazy(() => import("@/pages/SignUpPage"));
 const Profile = lazy(() => import("@/pages/Dashboard/ProfilePage"));
