@@ -7,6 +7,7 @@ ml-server/encodedid.npy
 ml-server/dataset/
 server/apps/backend/.env
 server/apps/backend/dist/
+server/apps/frontend/dist/
 server/apps/backend/node_modules/
 server/apps/frontend/node_modules/
 server/apps/backend/.yarn/
