@@ -16,7 +16,6 @@ import {
   User,
   Pagination,
 } from "@nextui-org/react";
-import { columns, statusOptions, role } from "@/data/column";
 import { capitalize } from "@/utils/capitalize";
 import { Search, ChevronDown, Plus, MoreVertical } from "react-feather";
 
@@ -26,16 +25,31 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
+const columns = [
+  {name: "ID", uid: "id", sortable: true},
+  {name: "NAME", uid: "name", sortable: true},
+  {name: "EMAIL", uid: "email"},
+  {name: "STATUS", uid: "status", sortable: true},
+  {name: "ACTIONS", uid: "actions"},
+];
 
-export default function Employeecomponent() {
+const statusOptions = [
+  {name: "Active", uid: "active"},
+  {name: "Paused", uid: "paused"},
+  {name: "Vacation", uid: "vacation"},
+];
+
+
+const INITIAL_VISIBLE_COLUMNS = ["name", "id", "email", "actions"];
+
+export default function Employeecomponent({data}) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
+    column: "id",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
@@ -51,20 +65,19 @@ export default function Employeecomponent() {
 
   /** Set filtered Item by user input (dependent on data pool) */
   const filteredItems = React.useMemo(() => {
-    let filteredRole = [...role];
+    let filteredData = [...data];
     if (hasSearchFilter) {
-      filteredRole = filteredRole.filter((item) =>
-        item.name.toLowerCase().includes(filterValue.toLowerCase()),
-      );
+      filteredData = filteredData.filter((item) => 
+        (item.firstname + item.lastname).toLowerCase().includes(filterValue.toLowerCase())
+      )
     }
     if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-      filteredRole = filteredRole.filter((item) =>
+      filteredData = filteredData.filter((item) =>
         Array.from(statusFilter).includes(item.status),
       );
     }
-
-    return filteredRole;
-  }, [role, filterValue, statusFilter]);
+    return filteredData;
+  }, [data, filterValue, statusFilter]);
 
   /** function pages location */
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -113,8 +126,8 @@ export default function Employeecomponent() {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.profileImage }}
-            description={user.email}
+            avatarProps={{ radius: "lg", src: user.image }}
+            description={user.firstname + " " + user.lastname}
             name={cellValue}
           >
             {user.email}
@@ -178,17 +191,31 @@ export default function Employeecomponent() {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
+        <p className="font-semibold ml-4 text-3xl">All employees</p>
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
-            className={{
-              mainWrapper: "w-full sm:max-w-[44%]",
+            size="xs"
+            classNames={{
+              label: "text-black/50 dark:text-white/90",
               input: [
-                "dark:bg-zinc-500",
+                "bg-transparent",
                 "text-black/90 dark:text-white/90",
                 "placeholder:text-default-700/50 dark:placeholder:text-white/60",
               ],
-              innerWrapper: "bg-white/90 dark:bg-zinc-600",
+              innerWrapper: "bg-transparent",
+              inputWrapper: [
+                "shadow-xl",
+                "bg-default-200/50",
+                "dark:bg-default/60",
+                "backdrop-blur-xl",
+                "backdrop-saturate-200",
+                "hover:bg-default-200/70",
+                "dark:hover:bg-default/70",
+                "group-data-[focused=true]:bg-default-200/50",
+                "dark:group-data-[focused=true]:bg-default/60",
+                "!cursor-text",
+              ],
             }}
             placeholder="Search by name..."
             startContent={<Search />}
@@ -245,7 +272,7 @@ export default function Employeecomponent() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {role.length} Users</span>
+          <span className="text-default-400 text-small">Total {data.length} Users</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -265,7 +292,7 @@ export default function Employeecomponent() {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    role.length,
+    data.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -315,6 +342,7 @@ export default function Employeecomponent() {
           isHeaderSticky
           sortDescriptor={sortDescriptor}
           topContent={topContent}
+          bottomContent={bottomContent}
           topContentPlacement="outside"
           onSortChange={setSortDescriptor}
           classNames={{

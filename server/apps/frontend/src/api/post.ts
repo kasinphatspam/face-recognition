@@ -1,9 +1,9 @@
 import { AxiosResponse } from "axios";
 import { fetch } from "./fetch";
-import { Login, Register, CreateOrg } from "./types"
+import { Login, Register, CreateOrg, ImageRecognition } from "./types"
 
 export async function login(data: Login): Promise<AxiosResponse> {
-  return await fetch.post('auth/login', data)
+  return fetch.post('auth/login', data)
 }
 
 export async function register(data: Register): Promise<AxiosResponse> {
@@ -11,9 +11,13 @@ export async function register(data: Register): Promise<AxiosResponse> {
 }
 
 export async function passCode(userId: number, passcode: string): Promise<AxiosResponse> {
-  return await fetch.post(`/organization/user/${userId}/join/${passcode}`)
+  return fetch.post(`/organization/user/${userId}/join/${passcode}`)
 }
 
 export async function createNewOrg(userId: number, data: CreateOrg): Promise<AxiosResponse> {
-  return await fetch.post(`/organization/user/${userId}`, data)
+  return fetch.post(`/organization/user/${userId}`, data)
+}
+
+export async function postImageRecognition(userId: number, orgId: number, data: ImageRecognition): Promise<AxiosResponse> {
+  return fetch.post(`/organization/${orgId}/user/${userId}/contact/encode/recognition`, data);
 }

@@ -61,6 +61,7 @@ export default function Loginpage() {
         closeButton: true,
         autoClose: 3000,
       });
+      loginToast.currentUser = null;
       if (organizeData) {
         navigate("/dashboard");
       } else if (organizeData == null) {

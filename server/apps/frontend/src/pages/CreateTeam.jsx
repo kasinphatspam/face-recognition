@@ -38,6 +38,7 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 3000,
       });
+      toastCreate.current = null;
       navigate('/dashboard');
     },
     onError: (err) => {
@@ -51,6 +52,7 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 3000,
       });
+      toastCreate.current = null;
       createOrg.reset();
     },
   });
@@ -69,6 +71,7 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 3000,
       });
+      idCode.current = null;
       await fetchOrg();
       navigate('/dashboard');
     },
@@ -83,6 +86,7 @@ export default function CreateTeam() {
         closeButton: true,
         autoClose: 2000,
       });
+      idCode.current = null;
       codeData.reset();
     }
   });
@@ -135,7 +139,7 @@ export default function CreateTeam() {
               Enter the session code provided by the admin to join a
               organization
             </p>
-            <div className="ml-[32%] mt-6">
+            <div className="ml-[25.6%] mt-6">
               {inputStates.map((state, ii) => {
                 return (
                   <input
