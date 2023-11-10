@@ -8,7 +8,7 @@ app = Flask(__name__)
 load_dotenv()
 
 #TEST
-#1. success PASS
+#1. PASS Success
 @app.route("/")
 def hello():
     return "Hello world!"
@@ -38,8 +38,8 @@ def delete_package():
 
 #TEST
 #1. PASS Success
-#2. Dataset is empty
-#3. Organization not found
+#2. PASS Dataset is empty
+#3. PASS Organization not found
 #4. Unable to load organization
 #5. Face not found in image
 #6. Unknown face
@@ -54,7 +54,7 @@ def face_recognition_service():
 #TEST
 #1. PASS Success
 #2. Face not found in image
-#3. Organization not found
+#3. PASS Organization not found
 #4. Unable to load organization
 @app.route("/face-recognition", methods=["PUT"])
 def encode():
@@ -66,8 +66,8 @@ def encode():
 
 #TEST
 #1. PASS Success
-#2. Organization is empty
-#3. Organization not found
+#2. PASS Organization is empty
+#3. PASS Organization not found
 #4. Encode id not found in organization
 @app.route("/face-recognition", methods=["DELETE"])
 def delete():

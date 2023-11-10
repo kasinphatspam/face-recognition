@@ -9,13 +9,13 @@ import face_recognition
 import time
 from tensorflow import keras
 
-
+# if boom, fix self.load_and_compare_files and self.calculate_face_confidence, add @staticmethod and self. to Facerecognition
 class FaceRecognition:
     def __init__(self, package_key):
         self.package_key = package_key
         self.file_path = f"dataset/{package_key}.npy"
+        self.organ_empty = "dataset/empty_organization_for_check_empty.npy"
 
-    @staticmethod
     def calculate_face_confidence(face_distance, face_match_threshold=0.6):
         range_val = 1.0 - face_match_threshold
         linear_val = (1.0 - face_distance) / (range_val * 2.0)
@@ -29,31 +29,46 @@ class FaceRecognition:
             ) * 100
             return str(round(value, 2)) + "%"
 
+    # return 1 = it's the same file
+    # return 0 = it's diffrent file
+    # return -1 = File not found
+    def load_and_compare_files(self,file1, file2):
+        try:
+            data1 = np.load(file1, allow_pickle=True).item()
+            data2 = np.load(file2, allow_pickle=True).item()
+            if data1 == data2:
+                return 1
+            else:
+                return 0
+        except FileNotFoundError:
+            return -1
+            
     def delete_image(self, encode_id):
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
-            if (
-                "encodings" in existing_face_data.item()
-                and "ids" in existing_face_data.item()
-            ):
+            if self.load_and_compare_files(self.file_path, self.organ_empty) == 0:
                 face_data = existing_face_data.item()
-            else:
-                return {"statusCode":-1,
-                    "message":"Organization is empty",}
+            elif self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
+                return {"statusCode": -1,
+                        "message": "Organization is empty",}
         except (FileNotFoundError, ValueError):
-            return {"statusCode":-1,
-                    "message":"not found",}
+            return {"statusCode": -1,
+                    "message": "Organization not found",}
 
         encodings = face_data["encodings"]
         ids = face_data["ids"]
 
-        
+        # Use a flag to check if the encode_id is found
+        encode_id_found = False
+        i = 0  # Initialize i outside the loop
 
         for i in range(len(ids)):
             if ids[i] == encode_id:
+                # Set the flag to true if the encode_id is found
+                encode_id_found = True
                 break
-        
-        if i < len(ids):
+
+        if encode_id_found:
             # Delete the corresponding encoding and ID
             encodings.pop(i)
             ids.pop(i)
@@ -63,11 +78,12 @@ class FaceRecognition:
 
             # Save the updated package back to the file
             np.save(self.file_path, new_package)
-            return {"statusCode":1,
+            return {"statusCode": 1,
                     "message": "Image deleted successfully",}
         else:
-            return {"statusCode":-1,
-                    "message":"Encode ID not found in the package"}
+            return {"statusCode": -1,
+                    "message": "Encode ID not found in the package"}
+
 
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
@@ -80,14 +96,6 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(img_path)
         
         resize_face_image = cv2.resize(face_image,(224,224))
-        # Liveness Detection
-        model = keras.models.load_model("face_spoof_model.h5")
-        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
-
-        if predictions[0][0] < 0.86:
-            liveness = False
-        else:
-            liveness = True
 
         if not face_recognition.face_encodings(face_image):
             for i in range(3):
@@ -121,6 +129,14 @@ class FaceRecognition:
                 "message": "Oganization not found",
             }
         
+        # Liveness Detection
+        model = keras.models.load_model("/Users/tai/face_rec_git/face-recognition/ml-server/face_spoof_model.h5")
+        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
+
+        if predictions[0][0] < 0.86:
+            liveness = False
+        else:
+            liveness = True
 
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
@@ -149,17 +165,17 @@ class FaceRecognition:
         return {"encodedId": str(timestamp),
                 "statusCode":1,
                 "liveness": liveness,}
+    
 
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if os.path.exists(self.file_path):
-            file_size = os.path.getsize(self.file_path)
-            if file_size == 0:
-                print("ERROR: Dataset is empty.")
+            if self.load_and_compare_files(self.file_path, self.organ_empty)==1:
+                print("ERROR: Organization is empty.")
                 return {
                     "statusCode": -1,
                     "checkedTime": timestamp,
-                    "message": "Dataset is empty",
+                    "message": "Organization is empty",
                 }
             else:
                 pass
@@ -237,7 +253,7 @@ class FaceRecognition:
             best_match_index = np.argmin(face_distances)
             if face_distances[best_match_index] <= 0.9:
                 id = face_data["ids"][best_match_index]
-                confidence = FaceRecognition.calculate_face_confidence(
+                confidence = self.calculate_face_confidence(
                     face_distances[best_match_index]
                 )
                 percentage = float(confidence.replace("%", ""))
