@@ -3,16 +3,16 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 
-const HomePage = lazy(() => import("@/pages/Homepage"));
-const Analytics = lazy(() => import("@/pages/DashBoard/Analytics"));
-const Loginpage = lazy(() => import("@/pages/LoginPage"));
-const Signuppage = lazy(() => import("@/pages/SignUpPage"));
-const Profile = lazy(() => import("@/pages/Dashboard/ProfilePage"));
-const PermissionPage = lazy(() =>  import("@/pages/Dashboard/Permission"));
-const OrganizationService = lazy(() => import("@/pages/Dashboard/Organize"));
-const Recognition = lazy(() => import("@/pages/Recognition"));
-const CreateTeam = lazy(() => import("@/pages/CreateTeam"));
-const OrganizationInfo = lazy(() => import("@/pages/Dashboard/OrganizeInfo"));
+const HomePage = lazy(() => import("@/pages/Homepage.jsx"));
+const Analytics = lazy(() => import("@/pages/DashBoard/Analytics.jsx"));
+const Loginpage = lazy(() => import("@/pages/LoginPage.jsx"));
+const Signuppage = lazy(() => import("@/pages/SignUpPage.jsx"));
+const Profile = lazy(() => import("@/pages/Dashboard/ProfilePage.jsx"));
+const PermissionPage = lazy(() =>  import("@/pages/Dashboard/Permission.jsx"));
+const OrganizationService = lazy(() => import("@/pages/Dashboard/Organize.jsx"));
+const Recognition = lazy(() => import("@/pages/Recognition.jsx"));
+const CreateTeam = lazy(() => import("@/pages/CreateTeam.jsx"));
+const OrganizationInfo = lazy(() => import("@/pages/Dashboard/OrganizeInfo.jsx"));
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage />, },
