@@ -72,7 +72,7 @@ notebook==6.5.2
 notebook_shim==0.2.2
 numpy==1.26.1
 oauthlib==3.2.2
-headless-opencv-python==4.8.1.78
+-opencv-python-headless==4.8.1.78
 opt-einsum==3.3.0
 packaging==23.0
 pandocfilters==1.5.0
