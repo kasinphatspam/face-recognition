@@ -12,6 +12,6 @@ export class SelfGuard implements CanActivate {
     const { user, params } = context.switchToHttp().getRequest<Request>();
     const { userId } = params as unknown as Params;
 
-    return (user as User).id === userId;
+    return (user as User).id === +userId;
   }
 }
