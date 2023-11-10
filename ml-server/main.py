@@ -7,6 +7,16 @@ from file import generate_random_filename, create_file, delete_file
 app = Flask(__name__)
 load_dotenv()
 
+def create_folders(folder_paths):
+  current_path = os.getcwd()
+  for folder_path in folder_paths:
+    if not os.path.exists(current_path + folder_path):
+      os.makedirs(current_path + folder_path, mode=0o777)
+      print(f"Folder created at {folder_path}")     
+    else:
+      print(f"Folder already exists at {folder_path}")
+    
+    
 #TEST
 #1. PASS Success
 @app.route("/")
@@ -79,4 +89,5 @@ def delete():
 #TEST
 #1. PASS Success
 if __name__ == "__main__":
+    create_folders(path)
     app.run(host="0.0.0.0", port=3002)
