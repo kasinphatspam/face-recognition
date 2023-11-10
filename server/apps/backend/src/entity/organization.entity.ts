@@ -1,9 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 import { History } from './history.entity';
 import { Contact } from './contact.entity';
 import { RequestJoin } from './request.join.entity';
 import { Role } from './role.entity';
+import { Plan } from './plan.entity';
 
 @Entity('organization')
 class Organization {
@@ -63,6 +71,12 @@ class Organization {
   })
   public isPublic: boolean;
 
+  @Column({
+    nullable: false,
+    default: '',
+  })
+  public description: string;
+
   @OneToMany(() => User, (user) => user.organization)
   public users: User[];
 
@@ -77,6 +91,10 @@ class Organization {
 
   @OneToMany(() => RequestJoin, (requestJoin) => requestJoin.organization)
   public requestJoins: RequestJoin[];
+
+  @ManyToOne(() => Plan, (plan) => plan.organizations)
+  @JoinColumn({ name: 'planId' })
+  public plan: Plan;
 }
 
 export { Organization };

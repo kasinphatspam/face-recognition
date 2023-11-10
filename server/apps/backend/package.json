@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "build:digitalocean": "yarn install --production=false && yarn run build && rm -rf node_modules && yarn install --production --frozen-lockfile",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
@@ -39,7 +40,7 @@
     "cookie-parser": "^1.4.6",
     "csv-parser": "^3.0.0",
     "mysql": "^2.18.1",
-    "nestjs-redis": "^1.3.3",
+    "mysql2": "^3.6.3",
     "nodemailer": "^6.9.5",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

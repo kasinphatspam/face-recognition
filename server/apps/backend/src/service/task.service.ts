@@ -9,12 +9,10 @@ export class TasksService {
   @Cron('45 * * * * *')
   async handleCron() {
     const otp = await this.otpRepository.findAll();
-    console.log(otp);
     for (const i of otp) {
       if (i.expireTime < new Date()) {
         this.otpRepository.delete(i.id);
       }
     }
-    console.log('Called when the current second is 45');
   }
 }

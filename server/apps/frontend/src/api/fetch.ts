@@ -1,7 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 
+declare var process : {
+  env: {
+    VITE_BACKEND_URL: string
+  }
+}
+
 export const fetch = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001',
+  baseURL: 'https://api.pphamster.com',
   withCredentials: true,
 });
 

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  Injectable,
+} from '@nestjs/common';
 import { Organization } from '@/entity';
 import {
   CreateOrganizationDto,
@@ -9,6 +13,7 @@ import { RecognitionService } from '@/service/recognition.service';
 import { InsertResult } from 'typeorm';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { UserRepository } from '@/repositories/user.repository';
+import { PlanRepository } from '@/repositories/plan.repository';
 
 @Injectable()
 export class OrganizationService {
@@ -17,6 +22,7 @@ export class OrganizationService {
     private readonly roleService: RoleService,
     private readonly organizationRepository: OrganizationRepository,
     private readonly userRepository: UserRepository,
+    private readonly planRepository: PlanRepository,
   ) {}
 
   public async getOrganizationById(
@@ -31,10 +37,10 @@ export class OrganizationService {
     ]);
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new NotFoundException('User not found');
     }
     if (!user.organization) {
-      throw new BadRequestException("User hasn't joined organization");
+      throw new NotFoundException("User hasn't joined organization");
     }
     return user.organization;
   }
@@ -46,7 +52,28 @@ export class OrganizationService {
     // Check if the user account exists or not.
     const property = await this.userRepository.getUserById(userId, null);
     if (!property) {
-      throw new BadRequestException(`Not found user id: ${userId}`);
+      throw new NotFoundException('User not found');
+    }
+    // Check if client sent package id or not
+    if (!body.planId) {
+      // Find free package
+      const plan = await this.planRepository.getPlanByCost(0);
+      if (!plan) {
+        const result = await this.planRepository.createPlan({
+          title: 'Free package',
+          cost: 0,
+          limitEmployee: 1,
+          limitContact: 50,
+        });
+        body.planId = result.raw.insertId;
+      } else {
+        body.planId = plan.id;
+      }
+    }
+
+    const plan = await this.planRepository.getPlanById(body.planId);
+    if (!plan) {
+      throw new NotFoundException('Plan not found');
     }
     // Create dataset file on ml-server
     const packageKey = await this.recognitionApiService.createPackage();
@@ -57,6 +84,7 @@ export class OrganizationService {
         await this.randomPasscodeWithUniqueResult(),
         new Date(),
         packageKey,
+        plan,
       );
 
     // Create simple role to new organization
@@ -73,7 +101,7 @@ export class OrganizationService {
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
-    if (!organization) throw new BadRequestException('Not found organization.');
+    if (!organization) throw new NotFoundException('Not found organization.');
     return this.organizationRepository.update(organizationId, body);
   }
 
@@ -122,7 +150,7 @@ export class OrganizationService {
     // Check if organization is empty
     const organization = await this.getOrganizationById(organizationId);
     if (!organization) {
-      throw new BadRequestException('Not found organization.');
+      throw new NotFoundException('Organization not found.');
     }
     // Update organization passcode and return it
     const newData = {

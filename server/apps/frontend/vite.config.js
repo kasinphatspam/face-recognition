@@ -14,6 +14,13 @@ export default ({ mode }) => {
     },
     server: {
       port: 3003,
+      host: true,
+      strictPort: true,
+    },
+    preview: {
+      port: 3003,
+      host: true,
+      strictPort: true,
     },
   });
 };

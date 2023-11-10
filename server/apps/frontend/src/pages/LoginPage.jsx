@@ -54,7 +54,7 @@ export default function Loginpage() {
   useEffect(() => {
     if (user !== undefined) {
       toast.update(loginToast.current, {
-        render: `welcome, ${user.email}`,
+        render: `welcome, ${user?.email}`,
         type: "success",
         isLoading: false,
         containerId: "main",
