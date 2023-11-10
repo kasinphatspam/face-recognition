@@ -9,7 +9,7 @@ const Loginpage = lazy(() => import("@/pages/LoginPage"));
 const Signuppage = lazy(() => import("@/pages/SignUpPage"));
 const Profile = lazy(() => import("@/pages/Dashboard/ProfilePage"));
 const Settings = lazy(() =>  import("@/pages/Dashboard/Permission"));
-const OrganizationService = lazy(() => import("@/pages/Dashboard/settings"));
+const OrganizationService = lazy(() => import("@/pages/Dashboard/Settings"));
 const Recognition = lazy(() => import("@/pages/Recognition"));
 const CreateTeam = lazy(() => import("@/pages/CreateTeam"));
 const OrganizationInfo = lazy(() => import("@/pages/Dashboard/OrganizeInfo"));
