@@ -8,7 +8,7 @@ export default function FeaturesCard({ head, desc }) {
                     <div className="font-semibold ml-[8px] text-lg">{head}</div>
                 </CardHeader>
                 <CardBody>
-                    <div className="min-w-[150px] text-sm -mt-6">
+                    <div className="min-w-[150px] max-sm:-mt-4 text-sm -mt-4">
                         {desc}
                     </div>
                 </CardBody>

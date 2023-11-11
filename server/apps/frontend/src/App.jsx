@@ -2,6 +2,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const Analytics = lazy(() => import("@/pages/Dashboard/Analytics"));
@@ -29,20 +30,22 @@ const router = createBrowserRouter([
 export const App = () => {
   return (
     <NextUIProvider>
-      <AuthProvider>
-        <Suspense fallback={
-        <>
-          <div className="-z-10 bg-zinc-700 w-screen h-screen">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
-              <p className="text-white/90 font-medium">Loading data</p>
-              <img src="/loading.svg" className="w-16 h-16 ml-7" />
-            </div> 
-          </div>
-        </>
-        }>
-          <RouterProvider router={router}/>
-        </Suspense>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Suspense fallback={
+          <>
+            <div className="-z-10 bg-zinc-700 w-screen h-screen">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
+                <p className="text-white/90 font-medium">Loading data</p>
+                <img src="/loading.svg" className="w-16 h-16 ml-7" />
+              </div> 
+            </div>
+          </>
+          }>
+            <RouterProvider router={router}/>
+          </Suspense>
+        </AuthProvider>
+      </ThemeProvider>
     </NextUIProvider>
   );
 };

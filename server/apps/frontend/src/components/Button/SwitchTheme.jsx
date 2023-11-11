@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { VisuallyHidden, useSwitch } from "@nextui-org/react";
 import { Sun, Moon } from "react-feather";
-import useLocalStorage from "@/utils/useLocalstorage";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Switchthemebutton(props) {
+  const { theme, changeTheme } = useTheme();
   const {
     Component,
     slots,
@@ -12,18 +12,9 @@ export default function Switchthemebutton(props) {
     getInputProps,
     getWrapperProps,
   } = useSwitch(props);
-  const [theme, setTheme] = useLocalStorage("theme", "light");
-  if (theme === "light") {
-    document.documentElement.classList.remove("dark");
-  } else {
-    document.documentElement.classList.add("dark");
-  }
+
   const handleClick = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
+    changeTheme();
   }
 
   return (

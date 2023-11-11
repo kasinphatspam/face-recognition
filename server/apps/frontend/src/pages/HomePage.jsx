@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@nextui-org/react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { textVariant, staggerContainer } from "@/utils/motion";
 import FeaturesCard from "@/components/Card/FeatureCard";
@@ -14,7 +15,7 @@ export default function HomePage() {
 
   const handleMonth = (value, base) => {
     if (value === base) return null
-    else { 
+    else {
       setSelectedMonth(!value) 
       setMonth(1 + 11 * value)
     }
@@ -41,19 +42,19 @@ export default function HomePage() {
               <TypingText title="businesses platform" textStyles="-ml-2" />
 
               {/* Main Text */}
-              <motion.div className="relative font-outfit font-semibold text-inherit text-[80px]"
+              <motion.div className="relative font-outfit font-semibold text-inherit text-[80px] max-sm:text-[60px]"
                 variants={textVariant(0.1)}
               >
                 Face Identify
               </motion.div>
-              <motion.div className="font-semibold font-outfit text-inherit text-[80px] ml-1 -mt-4"
+              <motion.div className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[60px] ml-1 -mt-4"
                 variants={textVariant(0.2)}
               >
                 Application
               </motion.div>
 
               {/* Secondary Text */}
-              <motion.p className="text-gray-400 text-6 -ml-4 mt-10 w-[450px] max-w-[35vw] max-sm:max-w-[70vw]"
+              <motion.p className="text-gray-400 text-6 -ml-4 mt-10 w-[450px] max-w-[35vw] max-sm:max-w-[80vw]"
                 variants={textVariant(0.3)}
               >
                 Face recognition Application is computer algorithm method to vertify the identify people using
@@ -63,9 +64,11 @@ export default function HomePage() {
 
             {/* Get started Button */}
             <div className="flex flex-row mt-8 -ml-4">
-              <Button color="success" href="/signup" radius="full" size="md">
-                <p className="text-white font-medium"> Get Started </p>
-              </Button>
+              <Link to="/login">
+                <Button color="success" href="/signup" radius="full" size="md">
+                  <p className="text-white font-medium"> Get Started </p>
+                </Button>
+              </Link>
             </div>
           </div>
           {/* Right Content */}
@@ -125,8 +128,8 @@ export default function HomePage() {
           className="mx-auto my-4 w-[80vw] h-[700px] bg-cover max-sm:h-[400px] max-sm:w-screen"
           alt="device picture"
         />
-        <div className="flex mx-auto items-center font-medium text-black/40 dark:text-white/70 px-12 pb-24 text-medium">
-          currently support mobile devices on version
+        <div className="flex mx-auto items-center font-medium text-black/40 dark:text-white/70 px-12 max-sm:px-0 pb-24 text-medium">
+          currently support mobile devices on
           <img src="/google-play.svg" loading="lazy" className="w-5 h-5 px-1" />
           7.0+
           <img src="/apple.svg" loading="lazy" className="w-5 h-5 px-1" />
@@ -159,8 +162,8 @@ export default function HomePage() {
       >
         <div className="flex flex-col ml-[8vw]">
           <motion.div variants={textVariant(0.1)} className="items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-sky-700 to-sky-300 mt-20 ml-1 px-12">built growth</motion.div>
-          <motion.div variants={textVariant(0.2)} className="font-bold text-[60px] w-[550px] -mt-1 mb-4 px-12 leading-tight">Ship your startup farther</motion.div>
-          <motion.div variants={textVariant(0.3)} className="mx-auto max-w-[820px] font-medium text-black/40 dark:text-white/70 px-12">With Faceprove, you can ship your startup farther than ever before, unlocking a world of opportunities and possibilities for your business.</motion.div>
+          <motion.div variants={textVariant(0.2)} className="font-bold text-[60px] w-[550px] -mt-1 mb-4 max-sm:px-12 max-sm:w-[90%] px-12 leading-tight">Ship your startup farther</motion.div>
+          <motion.div variants={textVariant(0.3)} className="mx-auto max-w-[820px] max-sm:px-6 max-sm:w-[95%] font-medium text-black/40 dark:text-white/70 px-12">With Faceprove, you can ship your startup farther than ever before, unlocking a world of opportunities and possibilities for your business.</motion.div>
         </div>
         <div className="ml-[8vw]">
           <img
@@ -183,7 +186,7 @@ export default function HomePage() {
           <Button className="" variant={selectedMonth ? "solid" : "light"} onClick={() => handleMonth(selectedMonth,true)}>Monthly billing</Button>
           <Button className="ml-2" variant={selectedMonth ? "light" : "solid"} onClick={() => handleMonth(selectedMonth,false)}> Yearly billing </Button>
         </div>
-        <div className="grid grid-flow-col gap-8 relative mt-16 mb-32 mx-auto">
+        <div className="grid grid-flow-col max-sm:grid-flow-row max-sm:mt-4 gap-8 relative mt-16 mb-32 mx-auto">
           <Pricing 
             session={'Startup'}
             description={'All basic for starting a business'}
@@ -206,7 +209,7 @@ export default function HomePage() {
         </div>
       </motion.div>
       {/** footer */}
-      <motion.div className="pt-12 px-[17vw] grid grid-cols-4 bg-white/90 dark:bg-zinc-900 w-99vw h-[300px]"
+      <motion.div className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 max-sm:gap-y-unit-md max-sm:justify-items-center bg-white/90 dark:bg-zinc-900 w-99vw h-[300px] max-sm:h-auto max-sm:pb-12"
         variants={footerVariants}
         initial="hidden"
         whileInView="visible"
@@ -214,15 +217,15 @@ export default function HomePage() {
       >
         {/** 1 */}
         <div>
-          <div className="flex flex-row">
+          <div className="flex flex-row max-sm:w-[200px]">
             <img src="/logo_svg_color.svg" loading="lazy" className="w-8 h-8 mt-0.5" />
             <p className="font-bold text-xl mt-[1px] ml-2 text-inherit">Face Prove</p>
           </div>
-          <div className="mt-24 ml-2 text-black/30 dark:text-white/70 text-md font-semibold">@2024 Faceprove.</div>
+          <div className="mt-24 max-sm:mt-4 ml-2 text-black/30 dark:text-white/70 text-md font-semibold">@2024 Faceprove.</div>
         </div>
         {/** 2 */}
         <div>
-          <div className="flex flex-col">
+          <div className="flex flex-col max-sm:w-[200px] max-sm:pt-8">
             <div className="font-bold text-xl text-inherit">Explore</div>
             <FooterText title="Home" path="/" />
             <FooterText title="Feature" path="/" />
@@ -231,14 +234,14 @@ export default function HomePage() {
           </div>
         </div>
         {/** 3 */}
-        <div className="flex flex-col">
+        <div className="flex flex-col max-sm:w-[200px]">
           <div className="font-bold text-xl text-inherit">Product</div>
           <FooterText title="Snapshot" path="/" />
           <FooterText title="Realtime processing" path="/" />
           <FooterText title="Employee management" path="/" />
         </div>
         {/** 4 */}
-        <div className="flex flex-col">
+        <div className="flex flex-col max-sm:w-[200px]">
           <div className="font-bold text-xl text-inherit">Resources</div>
           <FooterText title="Support Center" path="/" />
           <FooterText title="Privacy & Terms" path="/" />

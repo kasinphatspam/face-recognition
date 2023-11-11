@@ -23,12 +23,7 @@ import { useNavigate } from "react-router-dom";
   /* menu Item for small devices screen */
 }
 const menuItems = [
-  "Profile",
   "Dashboard",
-  "Activity",
-  "Analytics",
-  "System",
-  "Deployments",
   "My Settings",
   "Team Settings",
   "Help & Feedback",
@@ -95,7 +90,7 @@ export default function Navigation(props) {
 
       {/* Sign up or Logined parts */}
       <NavbarContent as="div" justify="end">
-        <NavbarItem>
+        <NavbarItem className="hidden sm:flex">
           <Switchthemebutton className="" size="sm" />
         </NavbarItem>
         <NavbarItem hidden={!user}>
@@ -137,6 +132,9 @@ export default function Navigation(props) {
             </Link>
           </NavbarMenuItem>
         ))}
+        <NavbarMenuItem>
+          <Switchthemebutton/>
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   );
