@@ -36,22 +36,17 @@ def delete_file(filename):
             "message": "Organization not found"
         }
 
-
-
 def create_file():
     directory = "./dataset/"
-    
-    # Create directory if it doesn't exist
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
+    os.makedirs(directory, exist_ok=True)
     while True:
+        print("in while loop")
         filename_random = generate_random_filename(10)
-        if check_unique_filename(filename_random, directory) == 1:
-            pass
-        else:
+        file_path = os.path.join(directory, f"{filename_random}.npy")
+
+        if not os.path.exists(file_path):
             face_data = {"encodings": [], "ids": []}
-            np.save(os.path.join(directory, f"{filename_random}.npy"), face_data)
+            np.save(file_path, face_data)
             return {
                 "packageKey": filename_random,
                 "statusCode": 1,
