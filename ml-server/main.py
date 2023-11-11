@@ -6,6 +6,7 @@ from file import generate_random_filename, create_file, delete_file
 
 app = Flask(__name__)
 load_dotenv()
+path = ["/api", "/data", "/dataset"]
 
 def create_folders(folder_paths):
   current_path = os.getcwd()
