@@ -30,6 +30,7 @@ export class AuthController {
     res.cookie('jwt', result.jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).json({
       message: `login sucessfully.`,
+      session: result.jwt,
       id: result.id,
     });
   }

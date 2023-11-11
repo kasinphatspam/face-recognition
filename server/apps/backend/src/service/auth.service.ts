@@ -86,8 +86,8 @@ export class AuthService {
 
   public async me(req: Request) {
     try {
-      const cookie = req.cookies['jwt'];
-      const data = await this.jwtService.verifyAsync(cookie);
+      const session = req.cookies['jwt'] || req.headers['session'];
+      const data = await this.jwtService.verifyAsync(session);
 
       if (!data) {
         throw new UnauthorizedException();

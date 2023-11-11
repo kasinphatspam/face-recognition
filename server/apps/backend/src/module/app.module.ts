@@ -26,7 +26,7 @@ dotenv.config();
         database: process.env.DB_NAME,
         entities: entities,
         synchronize: true,
-        logging: true,
+        logging: false,
         ssl: true,
       }),
     }),
