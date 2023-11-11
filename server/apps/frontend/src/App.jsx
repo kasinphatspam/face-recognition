@@ -8,7 +8,7 @@ const Analytics = lazy(() => import("@/pages/Dashboard/Analytics"));
 const Loginpage = lazy(() => import("@/pages/LoginPage"));
 const Signuppage = lazy(() => import("@/pages/SignUpPage"));
 const Profile = lazy(() => import("@/pages/Dashboard/ProfilePage"));
-const Settings = lazy(() =>  import("@/pages/Settings"));
+const Settings = lazy(() =>  import("@/pages/Dashboard/Settings"));
 const OrganizationService = lazy(() => import("@/pages/Dashboard/Organize"));
 const Recognition = lazy(() => import("@/pages/Recognition"));
 const CreateTeam = lazy(() => import("@/pages/CreateTeam"));
