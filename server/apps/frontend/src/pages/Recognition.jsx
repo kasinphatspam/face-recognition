@@ -4,10 +4,8 @@ import {
   Tab,
   Spinner
 } from "@nextui-org/react";
-import Navigation from "@/components/Navigation";
-import {
-  CornerDownRight
-} from "react-feather";
+import { FaceRecognitionNavigation } from "@/components/Navigation";
+
 const Realtime = React.lazy(() => import('@/pages/ReconitionSystem/Realtime'));
 const Snapshot = React.lazy(() => import('@/pages/ReconitionSystem/Snapshot'));
 
@@ -17,14 +15,8 @@ export default function Recognition() {
 
   return (
     <div>
-      <Navigation />
-      <div className="flex flex-col mt-[4vh] ml-[10vw]">
-        <div className="flex flex-row">
-          <CornerDownRight className="mt-1 mr-2" />
-          <p className="text-inherit font-bold text-4xl align-bottom">
-            Face Recognition
-          </p>
-        </div>
+      <FaceRecognitionNavigation />
+      <div className="flex flex-col mt-2 ml-[10vw]">
         <Tabs
           aria-label="Options"
           selectedKey={selected}

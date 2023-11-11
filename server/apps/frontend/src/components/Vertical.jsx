@@ -47,7 +47,7 @@ export default function Vertical({ role }) {
               </div>
             </Link>
           </section>
-          <Link to="/">
+          <Link to="/setting">
             <div className="flex flex-row pt-4 pb-4 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-600 duration-100 px-8">
               <Settings className="w-5 h-5 text-gray-700 dark:text-white mt-1" />
               <p className="ml-4 mt-[0.15rem] text-base text-gray-700 dark:text-white font-regular">Settings</p>

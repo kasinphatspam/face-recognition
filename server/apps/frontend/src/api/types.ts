@@ -42,3 +42,7 @@ export type Org = {
   isPublic: boolean
   
 }
+
+export type ImageRecognition = {
+  image: string
+}

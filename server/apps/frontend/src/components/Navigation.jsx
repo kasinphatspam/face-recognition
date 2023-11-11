@@ -141,7 +141,90 @@ export default function Navigation(props) {
     </Navbar>
   );
 }
+export function FaceRecognitionNavigation() {
+  const { user } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  return (
+    <>
+      <Navbar
+        isBordered
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+      >
+        {/* Tabs for small devices */}
+        <NavbarContent className="sm:hidden" justify="start">
+          <NavbarMenuToggle
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          />
+        </NavbarContent>
 
+        {/* Brand & logo */}
+        <NavbarContent className="pr-3" justify="start">
+          <NavbarBrand>
+            <Link href="/">
+              <img src="/logo_svg_color.svg" className="w-8 h-8" />
+              {/* ... */}
+              <p className="font-bold px-4">Face Prove</p>
+            </Link>
+          </NavbarBrand>
+        </NavbarContent>
+
+        {/* Tabs for medium devices or desktop */}
+        <NavbarContent
+          className="hidden sm:flex gap-4"
+          justify="center"
+        >
+          <p className="font-semibold dark:white text-xl">Face Reconition System</p>
+        </NavbarContent>
+        {/* Sign up or Logined parts */}
+        <NavbarContent as="div" justify="end">
+          <NavbarItem>
+            <Switchthemebutton className="" size="sm" />
+          </NavbarItem>
+          <NavbarItem hidden={!user}>
+            <DropdownAvatar />
+          </NavbarItem>
+          <NavbarItem hidden={user}>
+            <Button
+              as={Link}
+              color="primary"
+              href="/signup"
+              variant="light"
+              className="mr-5"
+            >
+              Sign Up
+            </Button>
+            <Button as={Link} color="primary" href="/login" variant="flat">
+              Login
+            </Button>
+          </NavbarItem>
+        </NavbarContent>
+
+        {/* Menu Toggle for small devices */}
+        <NavbarMenu>
+          {menuItems.map((item, index) => (
+            <NavbarMenuItem key={`${item}-${index}`}>
+              <Link
+                className="w-full"
+                color={
+                  index === 2
+                    ? "warning"
+                    : index === menuItems.length - 1
+                    ? "danger"
+                    : "foreground"
+                }
+                href="#"
+                size="lg"
+              >
+                {item}
+              </Link>
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
+      </Navbar>
+    </>
+  );
+}
 export function AnalyticsNavigation(props) {
   const { user } = useAuth();
   {
@@ -252,6 +335,12 @@ export function DropdownAvatar() {
               await useLogout();
               navigate("/");
             }
+            if (key === "dashboard") {
+              navigate("/dashboard");
+            }
+            if (key === "settings") {
+              navigate("/setting");
+            }
           }}
         >
           <DropdownItem key="profile" className="h-14 gap-2">
@@ -259,8 +348,7 @@ export function DropdownAvatar() {
             <p className="font-semibold">{user?.email ?? ""}</p>
           </DropdownItem>
           <DropdownItem key="settings">My Settings</DropdownItem>
-          <DropdownItem key="team_settings">Dashboard</DropdownItem>
-          <DropdownItem key="team_settings">Team Settings</DropdownItem>
+          <DropdownItem key="dashboard">Dashboard</DropdownItem>  
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="danger">
             Log Out
@@ -275,13 +363,16 @@ export function DropdownAvatar() {
               await useLogout();
               navigate("/");
             }
+            if (key === "create") {
+              navigate("/new");
+            }
           }}
         >
           <DropdownItem key="profile" className="h-14 gap-2">
             <p className="font-semibold">Signed in as</p>
             <p className="font-semibold">{user?.email ?? ""}</p>
           </DropdownItem>
-          <DropdownItem key="settings">My Settings</DropdownItem>
+          <DropdownItem key="create">Create/join</DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="danger">
             Log Out

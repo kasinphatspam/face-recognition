@@ -7,16 +7,14 @@ import base64
 from PIL import Image
 import face_recognition
 import time
-from tensorflow import keras
 
-# if boom, fix self.load_and_compare_files and self.calculate_face_confidence, add @staticmethod and self. to Facerecognition
 class FaceRecognition:
     def __init__(self, package_key):
         self.package_key = package_key
         self.file_path = f"dataset/{package_key}.npy"
         self.organ_empty = "dataset/empty_organization_for_check_empty.npy"
 
-    def calculate_face_confidence(face_distance, face_match_threshold=0.6):
+    def calculate_face_confidence(self,face_distance, face_match_threshold=0.6):
         range_val = 1.0 - face_match_threshold
         linear_val = (1.0 - face_distance) / (range_val * 2.0)
 
@@ -45,45 +43,56 @@ class FaceRecognition:
             
     def delete_image(self, encode_id):
         try:
-            existing_face_data = np.load(self.file_path, allow_pickle=True)
-            if self.load_and_compare_files(self.file_path, self.organ_empty) == 0:
-                face_data = existing_face_data.item()
-            elif self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
-                return {"statusCode": -1,
-                        "message": "Organization is empty",}
-        except (FileNotFoundError, ValueError):
-            return {"statusCode": -1,
-                    "message": "Organization not found",}
+            # Check if organization is empty
+            if self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
+                # Case 2: PASS Organization is empty
+                return {
+                    "statusCode": -1,
+                    "message": "FAIL: Organization is empty",
+                }
 
-        encodings = face_data["encodings"]
-        ids = face_data["ids"]
+            data = np.load(self.file_path, allow_pickle=True).item()
+            encodings = data.get("encodings", [])
+            ids = data.get("ids", [])
 
-        # Use a flag to check if the encode_id is found
-        encode_id_found = False
-        i = 0  # Initialize i outside the loop
+            # Find the index of the encode_id in the ids list
+            try:
+                encode_id = int(encode_id)
+                index = ids.index(encode_id)
+                # Remove the encoding and id at the found index
+                del encodings[index]
+                del ids[index]
 
-        for i in range(len(ids)):
-            if ids[i] == encode_id:
-                # Set the flag to true if the encode_id is found
-                encode_id_found = True
-                break
+                # Update the data dictionary
+                data["encodings"] = encodings
+                data["ids"] = ids
 
-        if encode_id_found:
-            # Delete the corresponding encoding and ID
-            encodings.pop(i)
-            ids.pop(i)
+                # Save the updated data to the file
+                np.save(self.file_path, data)
 
-            # Create a new package with the updated data
-            new_package = {"encodings": encodings, "ids": ids}
-
-            # Save the updated package back to the file
-            np.save(self.file_path, new_package)
-            return {"statusCode": 1,
-                    "message": "Image deleted successfully",}
-        else:
-            return {"statusCode": -1,
-                    "message": "Encode ID not found in the package"}
-
+                # Case 1: PASS Success
+                return {
+                    "statusCode": 1,
+                    "message": f"PASS: Successfully deleted ID: {encode_id}",
+                }
+            except ValueError:
+                # Case 4: Encode id not found in organization
+                return {
+                    "statusCode": 0,
+                    "message": f"FAIL: ID: {encode_id} not found in organization",
+                }
+        except FileNotFoundError:
+            # Case 3: PASS Organization not found
+            return {
+                "statusCode": -1,
+                "message": "FAIL: Organization not found",
+            }
+        except Exception as e:
+            # Case 5: Error during deletion
+            return {
+                "statusCode": -1,
+                "message": f"FAIL: Error deleting encoding: {str(e)}",
+            }
 
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
@@ -94,8 +103,6 @@ class FaceRecognition:
             img_file.write(decoded_data)
 
         face_image = face_recognition.load_image_file(img_path)
-        
-        resize_face_image = cv2.resize(face_image,(224,224))
 
         if not face_recognition.face_encodings(face_image):
             for i in range(3):
@@ -108,11 +115,11 @@ class FaceRecognition:
                 if not face_recognition.face_encodings(face_image):
                     if i == 2:
                         os.unlink(img_path)
-                        print("Face not found")
+                        print("Not found face in image")
                         return{
                             "statusCode": -1,
                             "checkedTime": timestamp,
-                            "message":"FACE_NOT_FOUND"
+                            "message":"FAIL: Not found face on image"
                         }
                 else:
                     break
@@ -126,17 +133,9 @@ class FaceRecognition:
             return {
                 "statusCode":-1,
                 "checkedTime": timestamp,
-                "message": "Oganization not found",
+                "message": "FAIL: Oganization not found",
             }
         
-        # Liveness Detection
-        model = keras.models.load_model("/Users/tai/face_rec_git/face-recognition/ml-server/face_spoof_model.h5")
-        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
-
-        if predictions[0][0] < 0.86:
-            liveness = False
-        else:
-            liveness = True
 
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
@@ -152,7 +151,7 @@ class FaceRecognition:
             return {
                 "statusCode": -1,
                 "checkedTime": timestamp,
-                "message": "Unable to load organization",
+                "message": "FAIL: Unable to load organization",
             }
 
         face_data["encodings"].append(face_encodings[0].tolist())
@@ -164,7 +163,7 @@ class FaceRecognition:
 
         return {"encodedId": str(timestamp),
                 "statusCode":1,
-                "liveness": liveness,}
+                "message":"PASS: Encode Sucess"}
     
 
     def recognition(self, encoded_data):
@@ -175,7 +174,7 @@ class FaceRecognition:
                 return {
                     "statusCode": -1,
                     "checkedTime": timestamp,
-                    "message": "Organization is empty",
+                    "message": "FAIL: Organization is empty",
                 }
             else:
                 pass
@@ -184,7 +183,7 @@ class FaceRecognition:
             return {
                 "statusCode":-1,
                 "checkedTime": timestamp,
-                "message": "Oganization not found",
+                "message": "FAIL: Oganization not found",
             }
 
         try:
@@ -194,7 +193,7 @@ class FaceRecognition:
             return {
                 "statusCode": -1,
                 "checkedTime": timestamp,
-                "message": "Unable to load organization",
+                "message": "FAIL: Unable to load organization",
             }
 
         decoded_data = base64.b64decode(encoded_data)
@@ -205,15 +204,6 @@ class FaceRecognition:
             img_file.write(decoded_data)
 
         face_image = face_recognition.load_image_file(img_path)
-        resize_face_image = cv2.resize(face_image,(224,224))
-        # Liveness Detection
-        model = keras.models.load_model("face_spoof_model.h5")
-        predictions = model.predict(np.expand_dims(resize_face_image, axis=0))
-
-        if predictions[0][0] < 0.95: # Liveness Adjust
-            liveness = False
-        else:
-            liveness = True
 
         if not face_recognition.face_encodings(face_image):
             for i in range(3):
@@ -230,7 +220,7 @@ class FaceRecognition:
                         return {
                             "statusCode": -1,
                             "checkedTime": timestamp,
-                            "message": "FACE_NOT_FOUND"
+                            "message": "FAIL: Face not found on image"
                         }
                 else:
                     break
@@ -264,12 +254,12 @@ class FaceRecognition:
                         "statusCode": 1,
                         "accuracy": percentage,
                         "checkedTime": timestamp,
-                        "liveness":liveness,
+                        "message":"PASS: Recognition Sucess"
                     }
 
         print("Unknown face")
         return {
             "statusCode": 0,
             "checkedTime": timestamp,
-            "liveness":liveness,
+            "message":"PASS: Unknown face"
         }
