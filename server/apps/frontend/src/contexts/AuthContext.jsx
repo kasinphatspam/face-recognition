@@ -12,21 +12,14 @@ export const AuthProvider = ({ children }) => {
         queryFn: async () => {
             return getUser()
         },
-       onError: () => {
-            queryClient.setQueriesData(["user"], null)
-            return;
-        },
     })
 
     const { data: organizeData, refetch: fetchOrg } = useQuery({
-        enabled: !!user?.id, 
+        enabled: !!user, 
         queryKey: ["organize", user?.id],
         queryFn: async () => {
+
             return organizeFn(user.id)
-        },
-        onError: () => {
-            queryClient.setQueriesData(["organize", user?.id], null)
-            return;
         },
     }) 
 
@@ -36,7 +29,8 @@ export const AuthProvider = ({ children }) => {
             return login({email, password})
         },
         onError: () => {
-            queryClient.setQueriesData(["user"], null)
+            queryClient.setQueriesData(["user"], undefined)
+            queryClient.setQueriesData(["organize", null], undefined)
             return;
         },
     })
@@ -46,6 +40,12 @@ export const AuthProvider = ({ children }) => {
         mutationFn: async ({ email, password, firstname, lastname, personalId }) => {
             return register({email, password, firstname, lastname, personalId })
         },
+        onError: () => {
+            queryClient.setQueriesData(["user"], undefined)
+            queryClient.setQueriesData(["organize", null], undefined)
+            return;
+        },
+
     })
 
     const useLogout = async () => {

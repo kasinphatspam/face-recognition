@@ -1,5 +1,5 @@
 server/volumes/
-ml-server/__pycache__/
+**/__pycache__/
 ml-server/api
 ml-server/data
 ml-server/encodedimage.npy
@@ -9,9 +9,9 @@ server/apps/backend/.env
 server/apps/backend/dist/
 server/apps/frontend/dist/
 server/apps/backend/node_modules/
-server/apps/frontend/node_modules/
-server/apps/backend/.yarn/
-server/apps/frontend/.yarn/
+server/apps/frontend/node_modules/ 
+server/apps/backend/.yarn/*
+server/apps/frontend/.yarn/*
 server/apps/frontend/.env
 server/apps/backend/images/**/*.png
 !server/apps/backend/images/**/default.png

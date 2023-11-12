@@ -8,6 +8,7 @@ import useLocalStorage from "@/utils/useLocalstorage";
 import { useAuth } from "@/contexts/AuthContext";
 import { messageCode } from "../utils/errMessage";
 import { toast } from 'react-toastify';
+import { config } from "@/utils/toastConfig";
 
 export default function Signuppage() {
 
@@ -34,7 +35,7 @@ export default function Signuppage() {
     const { email, password, confirmpassword, personalId } = formData;
     let error = false;
     // check handleError("name", "function" , "error")
-    error = handleError("Email", (email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)), error)
+    error = handleError("Email", (!!!email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)), error)
     error = handleError("Password", (!password || password?.length < 8), error)
     error = handleError("PersonalNumber", (!personalId || personalId?.length !== 13), error)
     error = handleError("Match", (!confirmpassword || password != confirmpassword), error)
@@ -51,32 +52,17 @@ export default function Signuppage() {
 
   /** handle sumbit button */
   const handleSubmit = async (event) => {
-    // reset error data
     event.preventDefault();
     const { email, password, firstname, lastname, personalId } = formData;
     if (!checkForm()) {
       const id = toast.loading("Please wait .." , { containerId: "main"});
       try {
         await useSignup.mutateAsync({ email, password, firstname, lastname, personalId })
-        toast.update(id, {
-          render: "Sign up successfully!",
-          type: "success",
-          isLoading: false,
-          containerId: "main",
-          closeButton: true,
-          autoClose: 3000
-        })
+        toast.update(id, config("Sign up successfully!","success"))
         navigate('/login');
       }
       catch (err) {
-        toast.update(id, {
-          render:  `${messageCode(err.response?.data?.message ?? err.message)}`,
-          type: "error",
-          isLoading: false,
-          containerId: "main",
-          closeButton: true,
-          autoClose: 3000
-        })
+        toast.update(id, config(`${messageCode(err.response?.data?.message ?? err.message)}`,"error"))
         useSignup.reset()
       }
     }
@@ -84,8 +70,8 @@ export default function Signuppage() {
 
   const handleChange = (event) => {
     event.preventDefault()
+    setErrorData({})
     setFormData({ ...formData, [event.target.name]: event.target.value })
-    setErrorData({});
   }
   {/* Password visibility */ }
   const [isVisible, setIsVisible] = useState(false);

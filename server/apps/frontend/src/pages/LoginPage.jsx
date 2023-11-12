@@ -5,7 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { messageCode } from "@/utils/errMessage";
-import Switchthemebutton from "../components/Button/SwitchTheme";
+import Switchthemebutton from "@/components/Button/SwitchTheme";
+import { config } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,22 +22,20 @@ export default function Loginpage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (/\S+@\S+\.\S+/.test(email)) {
+    if (!!email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
       const id = toast.loading("Please wait ..", { containerId: "main" });
       loginToast.current = id;
       try {
         await useLogin.mutateAsync({ email, password });
         await fetchUser();
-        await fetchOrg(user.id);
       } catch (err) {
-        toast.update(id, {
-          render: `${messageCode(err.response?.data?.message ?? err.message)}`,
-          type: "error",
-          isLoading: false,
-          containerId: "main",
-          closeButton: true,
-          autoClose: 3000,
-        });
+        toast.update(
+          id,
+          config(
+            `${messageCode(err.response?.data?.message ?? err.message)}`,
+            "error"
+          )
+        );
         useLogin.reset();
       }
     } else {
@@ -52,24 +51,21 @@ export default function Loginpage() {
   };
 
   useEffect(() => {
-    if (user !== undefined) {
-      toast.update(loginToast.current, {
-        render: `welcome, ${user?.email}`,
-        type: "success",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
-      loginToast.currentUser = null;
-      if (organizeData) {
-        navigate("/dashboard");
-      } else if (organizeData == null) {
+    if (user != undefined && loginToast.current != null) {
+      toast.update(
+        loginToast.current,
+        config(`welcome, ${user.email}`, "success")
+      );
+      fetchOrg();
+      loginToast.current = null;
+    }
+    if (organizeData !== undefined) {
+      if (organizeData == null) {
         navigate("/new");
-      }
+      } else navigate("/dashboard");
     }
   }, [user, organizeData]);
-  
+
   {
     /* Password visibility */
   }
