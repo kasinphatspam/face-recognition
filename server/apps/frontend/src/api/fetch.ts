@@ -1,13 +1,8 @@
+/// <reference types="vite/client" />
 import axios, { AxiosResponse } from 'axios';
 
-declare var process : {
-  env: {
-    VITE_BACKEND_URL: string
-  }
-}
-
 export const fetch = axios.create({
-  baseURL: 'https://api.pphamster.com',
+  baseURL: import.meta.env.VITE_APP_BACKEND_URL,
   withCredentials: true,
 });
 
