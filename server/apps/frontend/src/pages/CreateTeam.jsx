@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { createNewOrg } from "@/api/post";
 import { messageCode } from "../utils/errMessage";
 import { useNavigate } from "react-router-dom";
-import config from '@/utils/toastConfig';
+import { config } from '@/utils/toastConfig';
 
 export default function CreateTeam() {
   const displayCode = useRef(false);
@@ -66,7 +66,8 @@ export default function CreateTeam() {
       navigate('/dashboard');
     },
     onError: (err) => {
-      toast.update(idCode.current, config(`${messageCode(err.message)}`,"error"));      idCode.current = null;
+      toast.update(idCode.current, config(`${messageCode(err.message)}`,"error"));      
+      idCode.current = null;
       codeData.reset();
     }
   });
