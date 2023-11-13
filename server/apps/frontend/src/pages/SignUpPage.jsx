@@ -44,7 +44,7 @@ export default function Signuppage() {
 
   // check information in form is valid
   const checkForm = () => {
-    const { email, password, confirmpassword, personalId } = formData;
+    const { email, password, confirmpassword, personalId ,firstname, lastname} = formData;
     let error = false;
     // check handleError("name", "function" , "error")
     error = handleError(
@@ -56,10 +56,11 @@ export default function Signuppage() {
         ),
       error
     );
-    error = handleError("Password", !password || password?.length < 8, error);
+
+    error= handleError("Password", !password || password?.length < 8 || !(/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)), error);
     error = handleError(
       "PersonalNumber",
-      !personalId || personalId?.length !== 13,
+      !personalId || personalId?.length !== 13 || !/^\d+$/.test(personalId),
       error
     );
     error = handleError(
@@ -68,6 +69,9 @@ export default function Signuppage() {
       error
     );
     error = handleError("Policy", !isSelected, error);
+    error = handleError("FirstName", firstname?.length < 48 || (/\d/.test(firstname)), error);
+    error = handleError("LastName", lastname?.length < 48 || (/\d/.test(lastname)), error);
+
     if (error) {
       if (errorData["Policy"])
         toast.error("Please check policy first", { containerId: "main" });
@@ -192,6 +196,11 @@ export default function Signuppage() {
               label="FirstName"
               name="firstname"
               variant="bordered"
+              isInvalid={errorData["FirstName"]}
+              errorMessage={
+                errorData["FirstName"] &&
+                "Name can't include special characters or numbers"
+              }
               onChange={handleChange}
             />
             <Input
@@ -201,6 +210,11 @@ export default function Signuppage() {
               label="LastName"
               name="lastname"
               variant="bordered"
+              isInvalid={errorData["LastName"]}
+              errorMessage={
+                errorData["LastName"] &&
+                "Name can't include special characters or numbers"
+              }
               onChange={handleChange}
             />
             <Input
@@ -251,6 +265,10 @@ export default function Signuppage() {
               name="password"
               variant="bordered"
               isInvalid={errorData["Match"]}
+              errorMessage={
+                errorData["Password"] &&
+                "Password must include atleast one Upper, Lower and Number Character"
+              }
               onChange={handleChange}
             />
             <Input
