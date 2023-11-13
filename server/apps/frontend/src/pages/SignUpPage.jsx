@@ -69,8 +69,8 @@ export default function Signuppage() {
       error
     );
     error = handleError("Policy", !isSelected, error);
-    error = handleError("FirstName", !firstname || firstname?.length < 48 || (/\d/.test(firstname)), error);
-    error = handleError("LastName", !lastname || lastname?.length < 48 || (/\d/.test(lastname)), error);
+    error = handleError("FirstName", !firstname || firstname?.length > 48 || (/\d/.test(firstname)), error);
+    error = handleError("LastName", !lastname || lastname?.length > 48 || (/\d/.test(lastname)), error);
 
     if (error) {
       if (errorData["Policy"])
@@ -79,7 +79,6 @@ export default function Signuppage() {
         toast.error("your information was wrong", { containerId: "main" });
       }
     }
-    console.log(isSelected, error, errorData)
     return error;
   };
 
