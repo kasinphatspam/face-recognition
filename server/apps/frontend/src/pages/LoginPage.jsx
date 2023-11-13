@@ -34,6 +34,7 @@ export default function Loginpage() {
       try {
         await useLogin.mutateAsync({ email, password });
         await fetchUser();
+        await fetchOrg();
       } catch (err) {
         toast.update(
           id,
@@ -62,15 +63,9 @@ export default function Loginpage() {
         loginToast.current,
         config(`welcome, ${user.email}`, "success")
       );
-      fetchOrg();
       loginToast.current = null;
+      navigate('/')
     }
-    if (organizeData !== undefined) {
-      if (organizeData === null) {
-        navigate("/new");
-      } else navigate("/dashboard");
-    }
-
   }, [user, organizeData]);
 
   {
