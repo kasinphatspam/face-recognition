@@ -1,8 +1,7 @@
 import { Key, Tv } from "react-feather";
 import { useEffect, useRef, useState } from "react";
 import useVerification from "@/utils/Verification";
-import { Button, Divider } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
+import { Button, Divider, Input } from "@nextui-org/react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMutation } from "@tanstack/react-query";
 import { passCode } from "@/api/post";
@@ -10,16 +9,28 @@ import { toast } from "react-toastify";
 import { createNewOrg } from "@/api/post";
 import { messageCode } from "../utils/errMessage";
 import { useNavigate } from "react-router-dom";
+import config from '@/utils/toastConfig';
 
 export default function CreateTeam() {
   const displayCode = useRef(false);
   const toastCreate = useRef(null);
   const idCode = useRef(null);
-  const { user, fetchOrg } = useAuth();
+  const { user, organizeData, fetchOrg } = useAuth();
   const navigate = useNavigate()
   const [createData, setCreateData] = useState({});
   const { code, inputStates, handleChange, handleKeyDown } = useVerification(6);
 
+  /** check have organization already */
+  useEffect(() => {
+    if (!!!user) {
+      navigate("/login");
+    }
+    if (!!organizeData) {
+      navigate("/dashboard");
+    }
+  }, [])
+
+  /** post new organization */
   const createOrg = useMutation({
     mutationKey: ["organize", user?.id],
     mutationFn: async (name) => {
@@ -29,74 +40,45 @@ export default function CreateTeam() {
       const idCreate = toast.loading("Please wait ...", { containerId: "main" });
       toastCreate.current = idCreate;
     },
-    onSuccess: () => {
-      toast.update(toastCreate.current, {
-        render: "create organization successfully",
-        type: "success",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
+    onSuccess: async () => {
+      await fetchOrg();
+      toast.update(toastCreate.current, config(`create ${organizeData?.name} successfully`, "success"));
       toastCreate.current = null;
       navigate('/dashboard');
     },
     onError: (err) => {
-      toast.update(toastCreate.current, {
-        render: `${messageCode(
-          err.message
-        )}`,
-        type: "error",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
+      toast.update(toastCreate.current, config(`${messageCode(err.message)}`, "error"));
       toastCreate.current = null;
       createOrg.reset();
     },
   });
 
+  /** post passcode */
   const codeData = useMutation({
     mutationKey: ["code"], 
     mutationFn: async (code) => {
       await passCode(user.id, code);
     },
     onSuccess: async () => {
-      toast.update(idCode.current, {
-        render: "organize was found. Waiting response from admin",
-        type: "success",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
+      toast.update(idCode.current, config("organize was found. Waiting response from admin","success"));
       idCode.current = null;
       await fetchOrg();
       navigate('/dashboard');
     },
     onError: (err) => {
-      toast.update(idCode.current, {
-        render: `${messageCode(
-          err.message
-        )}`,
-        type: "error",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 2000,
-      });
-      idCode.current = null;
+      toast.update(idCode.current, config(`${messageCode(err.message)}`,"error"));      idCode.current = null;
       codeData.reset();
     }
   });
 
+  /** check code fullfilled? */
   useEffect(() => {
     if(!!code) {
       codeData.mutate(code)
     }
   }, [code])
 
+  /** toast handle fetch state changed */
   const handletoast = () => {
     // display is false and code is null
     if (!displayCode.current && !!code) {
@@ -110,14 +92,15 @@ export default function CreateTeam() {
     }
   };
   handletoast();
-
+  
+  /** handle event changed */
   const handleOnChange = (event) => {
     setCreateData({ ...createData, [event.target.name]: event.target.value });
   };
 
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    createOrg.mutate(createData["name"]);
+    createOrg.mutate(createData.name);
   };
 
   return (
