@@ -33,6 +33,7 @@ export default function Signuppage() {
   const [errorData, setErrorData] = useState({});
   const [formData, setFormData] = useState({});
   const [isSelected, setIsSelected] = useState(false);
+  const [isNoPersonalId, setIsNoPersonalId] = useState(false);
 
   // collect error varibles
   const handleError = (errorType, error, old) => {
@@ -60,7 +61,7 @@ export default function Signuppage() {
     error= handleError("Password", !password || password?.length < 8 || !(/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)), error);
     error = handleError(
       "PersonalNumber",
-      !personalId || personalId?.length !== 13 || !/^\d+$/.test(personalId),
+      personalId?.length !== 13 || !/^\d+$/.test(personalId),
       error
     );
     error = handleError(
@@ -115,6 +116,9 @@ export default function Signuppage() {
     event.preventDefault();
     setErrorData({});
     setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+    const handlePersonalIdCheckboxChange = () => {
+    setIsNoPersonalId(!isNoPersonalId);
   };
   {
     /* Password visibility */
@@ -229,21 +233,30 @@ export default function Signuppage() {
               errorMessage={errorData["Email"] && "Please enter a valid email"}
               onChange={handleChange}
             />
+            <div className="flex items-center">
+              <Checkbox
+                isSelected={isNoPersonalId}
+                onValueChange={handlePersonalIdCheckboxChange}
+                size="sm"
+              >
+                I don't have a Personal Identification Number
+              </Checkbox>
+            </div>
             <Input
-              isRequired
-              isClearable
-              type="text"
-              name="personalId"
-              size="sm"
-              label="Personal Identification Number"
-              variant="bordered"
-              isInvalid={errorData["PersonalNumber"]}
-              errorMessage={
-                errorData["PersonalNumber"] &&
-                "Please enter a valid personal identify number"
-              }
-              onChange={handleChange}
-            />
+                isRequired
+                type="text"
+                name="personalId"
+                size="sm"
+                label="Personal Identification Number"
+                variant="bordered"
+                isInvalid={errorData["PersonalNumber"]}
+                errorMessage={
+                  errorData["PersonalNumber"] &&
+                  "Please enter a valid personal identify number"
+                }
+                onChange={handleChange}
+                disabled={isNoPersonalId}
+              />
             <Input
               isRequired
               size="sm"
@@ -298,6 +311,8 @@ export default function Signuppage() {
               variant="bordered"
               onChange={handleChange}
             />
+
+
 
             {/* Policy */}
             <div className="flex flex-row">
