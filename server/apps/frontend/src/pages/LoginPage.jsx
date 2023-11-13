@@ -69,8 +69,8 @@ export default function Loginpage() {
       if (organizeData === null) {
         navigate("/new");
       } else navigate("/dashboard");
-    } else navigate("/");
-    
+    }
+
   }, [user, organizeData]);
 
   {
