@@ -11,7 +11,10 @@ export default function Settings() {
   const toastid = useRef(null);
   const { user, fetchUser } = useAuth();
   const { firstname, lastname, email, gender, dob, image } = user;
-  const [ dateData, setDateData] = useState(datetoJson(dob));
+  const [dateData, setDateData] = useState(datetoJson(dob));
+  const [imageURL, setImageURL] = useState(null)
+
+  cons
   
   function datetoJson(date) {
     if (date === undefined || date === null) {
@@ -33,6 +36,7 @@ export default function Settings() {
     return new Date(date.year, date.month - 1, date.day);
   }
 
+  /** fetch api */
   const updateData = useMutation({
     mutationKey: ["update"],
     mutationFn: async () => {
@@ -77,26 +81,30 @@ export default function Settings() {
     image: image,
   });
 
+  const handlePhoto = (e) => {
+    e.preventDefault();
+    const images = e.target.files[0];
+    setImageURL(URL.createObjectURL(images));
+
+    let formData = new FormData();
+    formData.append("image", images, images.name);
+    setEditData({...editData, image: formData});
+    console.log(editData);
+  }
+
   const handleChange = (e) => {
-    setEditData({ ...editData, [e.target.name]: e.target.value });
+    setEditData({ ...editData, [e.target.name]: e.target.value })
   };
 
   const handleDayChange = (e) => {
-    if (e.target.name == 'day') {
-      setDateData({ ...dateData, day: e.target.value });
-    }
-    else if (e.target.name =='month') {
-      setDateData({...dateData, month: e.target.value });
-    }
-    else if (e.target.name == 'year') {
-      setDateData({...dateData, year: e.target.value });
-    }
+    setDateData({ ...dateData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     updateData.mutate();
   };
+
   return (
     <>
       {/* Pages offset setup */}
@@ -131,10 +139,16 @@ export default function Settings() {
                 </p>
                 <div className="flex flex-row mt-6">
                   <div className="flex flex-col w-1/3">
-                    <img src={image} className="w-3/4 ,x-auto rounded-lg" />
-                    <Button className="ml-1 mt-4 w-16" size="sm">
-                      edit
-                    </Button>
+                    <img src={imageURL === null ? image : imageURL} className="w-3/4 ,x-auto rounded-lg" />
+                    <Input 
+                    className="-ml-1.5 mt-6 w-4/5"
+                    size="xs"
+                    type="file"
+                    accept="image/*"
+                    mutiple="false"
+                    name="image"
+                    onChange={handlePhoto}
+                    />
                   </div>
                   <div className="flex flex-col w-2/3">
                     <div className="flex flex-row w-full">
@@ -213,6 +227,7 @@ export default function Settings() {
                         onChange={(e) => handleDayChange(e)}
                       />
                     </div>
+                    <Button className="ml-8 mt-4 w-28 px-8" size="md" color="primary" onClick={(e) => handleSubmit(e)}>save profile</Button>
                   </div>
                 </div>
               </div>

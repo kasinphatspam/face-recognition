@@ -1,0 +1,19 @@
+# stage 0, "build stage", node.js compiler, to build and compile web server
+FROM node:13.12.0-alpine as build-stage
+
+WORKDIR /app
+COPY package*.json /apps/frontend/
+RUN yarn install
+COPY ./ /apps/frontend/
+RUN CI=true yarn test
+RUN yarn build
+
+# stage 1, nginx compiler, move apps -> Nginx
+FROM nginx:stable-alpine
+
+COPY --from=build-stage /app/build /usr/share/nginx/html
+COPY --from=build-stage /nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx","-g","daemon off;"]
