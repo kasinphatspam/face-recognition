@@ -69,8 +69,8 @@ export default function Signuppage() {
       error
     );
     error = handleError("Policy", !isSelected, error);
-    error = handleError("FirstName", !firstname || firstname?.length < 48 || (/\d/.test(firstname)), error);
-    error = handleError("LastName", !lastname || lastname?.length < 48 || (/\d/.test(lastname)), error);
+    error = handleError("FirstName", !firstname || firstname?.length > 48 || (/\d/.test(firstname)), error);
+    error = handleError("LastName", !lastname || lastname?.length > 48 || (/\d/.test(lastname)), error);
 
     if (error) {
       if (errorData["Policy"])
