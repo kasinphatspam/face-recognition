@@ -66,10 +66,11 @@ export default function Loginpage() {
       loginToast.current = null;
     }
     if (organizeData !== undefined) {
-      if (organizeData == null) {
+      if (organizeData === null) {
         navigate("/new");
       } else navigate("/dashboard");
-    }
+    } else navigate("/");
+    
   }, [user, organizeData]);
 
   {
