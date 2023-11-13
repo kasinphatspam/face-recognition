@@ -79,7 +79,6 @@ export default function Signuppage() {
         toast.error("your information was wrong", { containerId: "main" });
       }
     }
-    console.log(isSelected, error, errorData)
     return error;
   };
 
