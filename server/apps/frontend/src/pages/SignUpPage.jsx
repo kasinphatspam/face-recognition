@@ -22,61 +22,77 @@ import { toast } from "react-toastify";
 import { config } from "@/utils/toastConfig";
 
 export default function Signuppage() {
+  // ---------------------------- VARIABLES ----------------------------
   const { useSignup } = useAuth();
   const navigate = useNavigate();
-  {
-    /* variable for keeping register */
-  }
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [language, setLanguage] = useLocalStorage("lang", "th");
   const [errorData, setErrorData] = useState({});
   const [formData, setFormData] = useState({});
   const [isSelected, setIsSelected] = useState(false);
-  const [isNoPersonalId, setIsNoPersonalId] = useState(false);
-  const [passportNumber, setPassportNumber] = useState(""); 
 
   // collect error varibles
-  const handleError = (errorType, error, old) => {
+  const handleError = (errorType, error) => {
     if (error) {
-      setErrorData({ ...errorData, [errorType]: error });
+      setErrorData(prevData => {
+        const newData = { ...prevData, [errorType]: error }
+        console.log(newData)
+        return newData;
+      });
     }
-    return old === true ? true : error;
+    return error;
   };
 
   // check information in form is valid
   const checkForm = () => {
-    const { email, password, confirmpassword, firstname, lastname } = formData;
-    const idNumber = isNoPersonalId ? passportNumber : formData.personalId;
-    let error = false;
-    // check handleError("name", "function" , "error")
-    error = handleError(
-      "Email",
-      !!!email
-        .toLowerCase()
-        .match(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        ),
-      error
-    );
-
-    error= handleError("Password", !password || password?.length < 8 || !(/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)), error);
-    error = handleError(
-      "PersonalNumber",
-      (isNoPersonalId && (passportNumber.length < 7 || passportNumber.length > 9)) ||
-      (!isNoPersonalId && (idNumber && (idNumber.length !== 13 || !/^\d+$/.test(idNumber)))),
-      error
-    );
-    console.log(error)
-    error = handleError(
-      "Match",
-      !confirmpassword || password != confirmpassword,
-      error
-    );
-    error = handleError("Policy", !isSelected, error);
-    error = handleError("FirstName", !firstname || firstname?.length > 48 || (/\d/.test(firstname)), error);
-    error = handleError("LastName", !lastname || lastname?.length > 48 || (/\d/.test(lastname)), error);
-
+    const {
+      email,
+      password,
+      confirmpassword,
+      personalId,
+      firstname,
+      lastname,
+    } = formData;
+    // check handleError("name", "function")
+    const error =
+      handleError(
+        "Email",
+        !email || 
+        !!!email?.toLowerCase()
+          .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          )
+      ) || // OR
+      handleError("Password Length", !password || password?.length < 8) || // OR
+      handleError(
+        "Weak Password",
+        !password ||
+          !(
+            /[A-Z]/.test(password) &&
+            /[a-z]/.test(password) &&
+            /\d/.test(password)
+          )
+      ) || // OR
+      (handleError(
+        "PersonalNumber",
+        (!personalId|| personalId.length !== 13 || !/^\d+$/.test(personalId))
+      ) && // AND
+        handleError(
+          "PassportNumber",
+            (!personalId || personalId.length < 7 || personalId.length > 9)
+        )) 
+      || handleError("Match", !confirmpassword || password != confirmpassword) 
+      || handleError("Policy", !isSelected) 
+      || handleError(
+        "FirstName",
+        !firstname || firstname?.length > 48 || /\d/.test(firstname)
+      ) ||
+      handleError(
+        "LastName",
+        !lastname || lastname?.length > 48 || /\d/.test(lastname)
+      );
+    
     if (error) {
       if (errorData["Policy"])
         toast.error("Please check policy first", { containerId: "main" });
@@ -91,7 +107,6 @@ export default function Signuppage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { email, password, firstname, lastname, personalId } = formData;
-    console.log(formData)
     if (!checkForm()) {
       const id = toast.loading("Please wait ..", { containerId: "main" });
       try {
@@ -100,7 +115,7 @@ export default function Signuppage() {
           password,
           firstname,
           lastname,
-          personalId: isNoPersonalId ? passportNumber : personalId,
+          personalId,
         });
         toast.update(id, config("Sign up successfully!", "success"));
         navigate("/login");
@@ -121,20 +136,9 @@ export default function Signuppage() {
     event.preventDefault();
     setErrorData({});
     const { name, value } = event.target;
-
-    if (name === "personalId" && isNoPersonalId) {
-      setPassportNumber(value);
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
-    const handlePersonalIdCheckboxChange = () => {
-    setIsNoPersonalId(!isNoPersonalId);
-  };
-  {
-    /* Password visibility */
-  }
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -245,46 +249,19 @@ export default function Signuppage() {
               errorMessage={errorData["Email"] && "Please enter a valid email"}
               onChange={handleChange}
             />
-            <div className="flex items-center">
-              <Checkbox
-                isSelected={isNoPersonalId}
-                onValueChange={handlePersonalIdCheckboxChange}
-                size="sm"
-              >
-                I'm not Thai
-              </Checkbox>
-            </div>
-            {isNoPersonalId ? (
-              <Input
-                isRequired
-                type="text"
-                name="personalId"
-                size="sm"
-                label="Passport Number"
-                variant="bordered"
-                isInvalid={errorData["PersonalNumber"]}
-                errorMessage={
-                  errorData["PersonalNumber"] &&
-                  "Passport number must be between 7-9 digits"
-                }
-                onChange={handleChange}
-              />
-            ) : (
-              <Input
-                isRequired
-                type="text"
-                name="personalId"
-                size="sm"
-                label="Personal Identification Number"
-                variant="bordered"
-                isInvalid={errorData["PersonalNumber"]}
-                errorMessage={
-                  errorData["PersonalNumber"] &&
-                  "Please enter a valid personal identification number"
-                }
-                onChange={handleChange}
-              />
-            )}
+            <Input
+              isRequired
+              type="text"
+              name="personalId"
+              size="sm"
+              label="Personal identification / Passport Number"
+              variant="bordered"
+              isInvalid={errorData["PersonalNumber"] && errorData["PassportNumber"]}
+              errorMessage={
+                (errorData["PersonalNumber"] && errorData["PassportNumber"] &&"Personal number or Passport number must wrong") 
+              }
+              onChange={handleChange}
+            />
             <Input
               isRequired
               size="sm"
@@ -305,10 +282,11 @@ export default function Signuppage() {
               label="Password"
               name="password"
               variant="bordered"
-              isInvalid={errorData["Match"]}
+              isInvalid={errorData["Match"] || errorData["Password Length"] || errorData["Weak Password"]}
               errorMessage={
-                errorData["Password"] &&
-                "Password must include atleast one Upper, Lower and Number Character"
+                (errorData["Weak Password"] &&
+                "Password must include atleast one Upper, Lower and Number Character") ||
+                (errorData["Password Length"] && "Password Length must more than 8 characters")
               }
               onChange={handleChange}
             />
@@ -339,9 +317,6 @@ export default function Signuppage() {
               variant="bordered"
               onChange={handleChange}
             />
-
-
-
             {/* Policy */}
             <div className="flex flex-row">
               <Checkbox
