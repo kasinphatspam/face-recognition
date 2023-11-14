@@ -34,6 +34,7 @@ export default function Signuppage() {
   const [formData, setFormData] = useState({});
   const [isSelected, setIsSelected] = useState(false);
   const [isNoPersonalId, setIsNoPersonalId] = useState(false);
+  const [passportNumber, setPassportNumber] = useState(""); 
 
   // collect error varibles
   const handleError = (errorType, error, old) => {
@@ -45,7 +46,8 @@ export default function Signuppage() {
 
   // check information in form is valid
   const checkForm = () => {
-    const { email, password, confirmpassword, personalId ,firstname, lastname} = formData;
+    const { email, password, confirmpassword, firstname, lastname } = formData;
+    const idNumber = isNoPersonalId ? passportNumber : formData.personalId;
     let error = false;
     // check handleError("name", "function" , "error")
     error = handleError(
@@ -61,9 +63,11 @@ export default function Signuppage() {
     error= handleError("Password", !password || password?.length < 8 || !(/[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password)), error);
     error = handleError(
       "PersonalNumber",
-      personalId?.length !== 13 || !/^\d+$/.test(personalId),
+      (isNoPersonalId && (passportNumber.length < 7 || passportNumber.length > 9)) ||
+      (!isNoPersonalId && (idNumber && (idNumber.length !== 13 || !/^\d+$/.test(idNumber)))),
       error
     );
+    console.log(error)
     error = handleError(
       "Match",
       !confirmpassword || password != confirmpassword,
@@ -87,6 +91,7 @@ export default function Signuppage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { email, password, firstname, lastname, personalId } = formData;
+    console.log(formData)
     if (!checkForm()) {
       const id = toast.loading("Please wait ..", { containerId: "main" });
       try {
@@ -95,7 +100,7 @@ export default function Signuppage() {
           password,
           firstname,
           lastname,
-          personalId,
+          personalId: isNoPersonalId ? passportNumber : personalId,
         });
         toast.update(id, config("Sign up successfully!", "success"));
         navigate("/login");
@@ -115,8 +120,15 @@ export default function Signuppage() {
   const handleChange = (event) => {
     event.preventDefault();
     setErrorData({});
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+
+    if (name === "personalId" && isNoPersonalId) {
+      setPassportNumber(value);
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
+
     const handlePersonalIdCheckboxChange = () => {
     setIsNoPersonalId(!isNoPersonalId);
   };
@@ -239,10 +251,26 @@ export default function Signuppage() {
                 onValueChange={handlePersonalIdCheckboxChange}
                 size="sm"
               >
-                I don't have a Personal Identification Number
+                I'm not Thai
               </Checkbox>
             </div>
-            <Input
+            {isNoPersonalId ? (
+              <Input
+                isRequired
+                type="text"
+                name="personalId"
+                size="sm"
+                label="Passport Number"
+                variant="bordered"
+                isInvalid={errorData["PersonalNumber"]}
+                errorMessage={
+                  errorData["PersonalNumber"] &&
+                  "Passport number must be between 7-9 digits"
+                }
+                onChange={handleChange}
+              />
+            ) : (
+              <Input
                 isRequired
                 type="text"
                 name="personalId"
@@ -252,11 +280,11 @@ export default function Signuppage() {
                 isInvalid={errorData["PersonalNumber"]}
                 errorMessage={
                   errorData["PersonalNumber"] &&
-                  "Please enter a valid personal identify number"
+                  "Please enter a valid personal identification number"
                 }
                 onChange={handleChange}
-                disabled={isNoPersonalId}
               />
+            )}
             <Input
               isRequired
               size="sm"
