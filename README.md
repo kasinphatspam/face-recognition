@@ -4,8 +4,52 @@ Customer face recognition system for employees to view information through face 
 ## Project details
 
 ## Setup .env file
+````
+BACKEND_SERVER_PORT=
+BACKEND_URL=
+
+DB_HOST=
+DB_USER=
+DB_NAME=
+DB_PASSWORD=
+DB_PORT=
+
+ML_SERVER_URL=
+
+JWT_SECRET=
+
+GMAIL_USERNAME=
+GMAIL_PASSWORD=
+````
+
+````
+DB_USER=
+DB_NAME=
+DB_PASSWORD=
+DB_PORT=
+
+REDIS_PASSWORD=
+REDIS_PORT=
+REDIS_DATABASES=
+````
 
 ## Quick start
+````
+cd server/apps/backend
+yarn install
+````
+
+````
+cd server/apps/frontend
+yarn install
+````
+
+````
+cd ml-server
+mkdir api
+mkdir data
+````
+
 
 ## Server Port
 * Frontend: http://localhost:3000/
