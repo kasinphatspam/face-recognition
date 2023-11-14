@@ -46,7 +46,12 @@ export class UploadService {
           ContentType: 'image/jpg',
         }),
       );
-      return `${process.env.AWS_SPACE_ENDPOINT}/images/${userId}.jpg`;
+
+      const urlSplit = process.env.AWS_SPACE_ENDPOINT.split('//');
+      console.log(
+        `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${userId}.jpg`,
+      );
+      return `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${userId}.jpg`;
     } catch (error) {
       throw new BadRequestException(`${error}`);
     }
