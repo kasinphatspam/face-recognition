@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 
 class UpdateUserDto {
@@ -30,6 +31,7 @@ class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @MinLength(7)
   @MaxLength(13)
   public personalId: string;
 

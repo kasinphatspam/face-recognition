@@ -54,7 +54,7 @@ class AuthRegisterDto {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(13)
+  @MinLength(7)
   @MaxLength(13)
   public personalId: string;
 
