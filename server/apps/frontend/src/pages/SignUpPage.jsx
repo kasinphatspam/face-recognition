@@ -37,13 +37,13 @@ export default function Signuppage() {
     if (error) {
       setErrorData(prevData => {
         const newData = { ...prevData, [errorType]: error }
-        console.log(newData)
         return newData;
       });
     }
     return error;
   };
 
+  // --------------------------   VALIDATION   -------------------------------
   // check information in form is valid
   const checkForm = () => {
     const {
@@ -102,7 +102,7 @@ export default function Signuppage() {
     }
     return error;
   };
-
+  // ---------------------------- HANDLER ----------------------------
   /** handle sumbit button */
   const handleSubmit = async (event) => {
     event.preventDefault();
