@@ -3,106 +3,157 @@ import { AnalyticsNavigation } from "@/components/Navigation";
 import Vertical from "@/components/Vertical";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
-import { Input, Button, Select, SelectItem } from "@nextui-org/react";
+import { config } from "@/utils/toastConfig";
+import Resizer from "react-image-file-resizer";
+import {
+  Input,
+  Button,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import { updateUser } from "@/api/put";
+import { updateUser, updateImage } from "@/api/put";
 
 export default function Settings() {
+  // -----------------------   VARIABLES   -------------------------------
   const toastid = useRef(null);
   const { user, fetchUser } = useAuth();
+  const [date, setDate] = useState('');
+  const [imagefile, setImagefile] = useState(null);
   const { firstname, lastname, email, gender, dob, image } = user;
-  const [dateData, setDateData] = useState(datetoJson(dob));
-  const [imageURL, setImageURL] = useState(null)
-
-  cons
-  
-  function datetoJson(date) {
-    if (date === undefined || date === null) {
-      return {
-        day: null,
-        month: null,
-        year: null,
-      };
-    }
-    const dateFormat = new Date(date)
-    return {
-      day: dateFormat.getDate(),
-      month: dateFormat.getMonth() + 1,
-      year: dateFormat.getFullYear()
-    };
-  }
-
-  function JsonToDate(date) {
-    return new Date(date.year, date.month - 1, date.day);
-  }
-
-  /** fetch api */
-  const updateData = useMutation({
-    mutationKey: ["update"],
-    mutationFn: async () => {
-      updateUser(id, editData);
-    },
-    onMutate: () => {
-      const toastedit = toast.loading("Please wait...", {
-        containerId: "main",
-      });
-      toastid.current = toastedit;
-    },
-    onSuccess: () => {
-      toast.update(toastid.current, {
-        render: "update user information successfully",
-        type: "success",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
-      fetchUser();
-    },
-    onError: (err) => {
-      toast.update(toastCreate.current, {
-        render: `${messageCode(err.message)}`,
-        type: "error",
-        isLoading: false,
-        containerId: "main",
-        closeButton: true,
-        autoClose: 3000,
-      });
-      updateData.reset();
-    },
-  });
-
+  const [imageURL, setImageURL] = useState(null);
   const [editData, setEditData] = useState({
     firstname: firstname,
     lastname: lastname,
     email: email,
     gender: gender,
     dob: dob,
-    image: image,
   });
 
-  const handlePhoto = (e) => {
-    e.preventDefault();
-    const images = e.target.files[0];
-    setImageURL(URL.createObjectURL(images));
+  // -----------------------   API   -------------------------------
+  /** update image api */
+  const uploadImage = useMutation({
+    mutationKey: ["update"],
+    mutationFn: async (data) => {
+      return updateImage(user.id, data);
+    },
+    onMutate: () => {
+      const id = toast.loading("Please wait ...", { containerId: "main" });
+      toastid.current = id;
+    },
+    onSuccess: () => {
+      toast.update(
+        toastid.current,
+        config("update image successfully", "success")
+      );
+      fetchUser();
+    },
+    onError: (err) => {
+      toast.update(
+        toastCreate.current,
+        config(`${messageCode(err.message)}`, "error")
+      );
+      updateData.reset();
+    },
+  });
 
-    let formData = new FormData();
-    formData.append("image", images, images.name);
-    setEditData({...editData, image: formData});
-    console.log(editData);
-  }
+    /** update user api */
+    const updateData = useMutation({
+      mutationKey: ["update"],
+      mutationFn: async (data) => {
+        return updateUser(user.id, data);
+      },
+      onMutate: () => {
+        const toastedit = toast.loading("Please wait...", {
+          containerId: "main",
+        });
+        toastid.current = toastedit;
+      },
+      onSuccess: () => {
+        toast.update(
+          toastid.current,
+          config("update user information successfully", "success")
+        );
+        fetchUser();
+      },
+      onError: (err) => {
+        toast.update(
+          toastCreate.current,
+          config(`${messageCode(err.message)}`, "error")
+        );
+        updateData.reset();
+      },
+    });
+
+  // -----------------------   GENERAL   -------------------------------
+  
+  /** handle date inpput */
+  const handleInputChange = (e) => {
+    let inputValue = e.target.value;
+    inputValue = inputValue.replace(/\D/g, '');
+
+    // Add slashes to the input value based on the DD/MM/YYYY format
+    if (inputValue.length <= 2) {
+      setDate(inputValue);
+    } else if (inputValue.length <= 4) {
+      setDate(`${inputValue.slice(0, 2)}/${inputValue.slice(2)}`);
+    } else {
+      setDate(`${inputValue.slice(0, 2)}/${inputValue.slice(2, 4)}/${inputValue.slice(4, 8)}`);
+    }
+  };
+
+  const convertImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const maxWidth = 700;
+      const maxHeight = 700;
+      const image = Resizer.imageFileResizer(
+        file,
+        maxWidth,
+        maxHeight,
+        "JPG", // Specify the format
+        84, // Quality
+        0, // Rotation
+        (uri) => {
+          resolve(uri);
+        },
+        "file" //(base64, blob, or file)
+      );
+      return image;
+    });
+  };
+
+  /** handle image event */
+  const handleImage = async (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const image = e.target.files[0];
+      const formatimage = await convertImage(image);
+      const formData = new FormData();
+      formData.append("image", image, image.name);
+      setImageURL(URL.createObjectURL(formatimage));
+      setImagefile(formData);
+    }
+  };
 
   const handleChange = (e) => {
-    setEditData({ ...editData, [e.target.name]: e.target.value })
+    setEditData({ ...editData, [e.target.name]: e.target.value });
   };
 
-  const handleDayChange = (e) => {
-    setDateData({ ...dateData, [e.target.name]: e.target.value });
-  };
+  const handleImageSaver = (e) => {
+    e.preventDefault()
+    uploadImage.mutate(imagefile)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateData.mutate();
+    const datesplit = date.split("/");
+    let dateObject;
+    if (datesplit.length === 3) {
+      dateObject = new Date(+datesplit[2], datesplit[1] - 1, datesplit[0]);
+    } else dateObject = new Date("1970-01-01")
+    console.log(editData.gender.length)
+    const data = { ...editData, gender: editData.gender.length > 0 ? editData.gender[0] : "none", dob: dateObject}
+    console.log(data)
+    updateData.mutate(data);
   };
 
   return (
@@ -139,16 +190,46 @@ export default function Settings() {
                 </p>
                 <div className="flex flex-row mt-6">
                   <div className="flex flex-col w-1/3">
-                    <img src={imageURL === null ? image : imageURL} className="w-3/4 ,x-auto rounded-lg" />
-                    <Input 
-                    className="-ml-1.5 mt-6 w-4/5"
-                    size="xs"
-                    type="file"
-                    accept="image/*"
-                    mutiple="false"
-                    name="image"
-                    onChange={handlePhoto}
+                    <img
+                      src={imageURL === null ? image : imageURL}
+                      className="w-3/4 ,x-auto rounded-lg"
                     />
+                    {!!!imageURL && (
+                      <input
+                        className="block w-full ml-1/5 mt-6 text-[1px] text-white
+                      file:mr-4 file:py-1.5 file:px-3 file:rounded-md
+                      file:border-0 file:text-sm file:font-semibold
+                      file:bg-pink-50 file:text-pink-700
+                      hover:file:bg-pink-100 dark:text-slate-800/10"
+                        type="file"
+                        accept="image/*"
+                        mutiple="false"
+                        name="image"
+                        onChange={handleImage}
+                      />
+                    )}
+                    {!!imageURL && (
+                      <div className="w-3/4 flex flex-col">
+                        <Button
+                          className="mt-6 mx-auto w-1/6"
+                          onClick={(e) => handleImageSaver(e)}
+                          disabled={uploadImage.status === "pending"}
+                          size="md"
+                          variant="ghost"
+                          color="primary"
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          className="mt-2 mx-auto"
+                          onClick={() => setImageURL(null)}
+                          size="sm"
+                          variant="light"
+                        >
+                          clear
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col w-2/3">
                     <div className="flex flex-row w-full">
@@ -182,9 +263,11 @@ export default function Settings() {
                       variant="bordered"
                       name="gender"
                       placeholder={gender || "none"}
-                      selectedKeys={editData["gender"]}
+                      value={["male","female","none"]}
+                      selectedKeys={editData.gender}
                       className="max-w-xs w-32 ml-3"
-                      onSelectionChange={handleChange}
+                      // onChange={(e) => setEditData({ ...editData, gender: e.target.value})}
+                      onSelectionChange={(item) => setEditData({ ...editData, "gender": [...item.values()]})}
                     >
                       <SelectItem key="male" value="male">
                         male
@@ -196,38 +279,27 @@ export default function Settings() {
                         none
                       </SelectItem>
                     </Select>
-                    <p className="mt-2 ml-4 text-white/40 text-sm">date of birth</p>
                     <div className="flex flex-row">
                       <Input
-                        className="ml-3 w-1/4 my-4"
-                        type="number"
-                        label="day"
-                        name="day"
-                        size="sm"
-                        placeholder={dateData.day || ""}
-                        onChange={(e) => handleDayChange(e)}
-                        >
-                        </Input>
-                      <Input
-                        className="ml-3 w-1/3 my-4"
+                        className="ml-3 w-64 my-4"
                         type="text"
-                        label="month"
-                        name="month"
+                        label="Birth date (D/M/Y)"
                         size="sm"
-                        placeholder={dateData.month || ""}
-                        onChange={(e) => handleDayChange(e)}
+                        placeholder="DD/MM/YYYY"
+                        value={date}
+                        onChange={(e) => handleInputChange(e)}
                       />
-                      <Input
-                        className="ml-3 w-1/4 my-4"
-                        type="number"
-                        label="year"
-                        name="year"
-                        size="sm"
-                        placeholder={dateData.year || ""}
-                        onChange={(e) => handleDayChange(e)}
-                      />
+                  
                     </div>
-                    <Button className="ml-8 mt-4 w-28 px-8" size="md" color="primary" onClick={(e) => handleSubmit(e)}>save profile</Button>
+                    <Button
+                      className="ml-8 mt-4 w-28 px-8"
+                      size="md"
+                      color="primary"
+                      disabled={updateData.status === "pending"}
+                      onClick={(e) => handleSubmit(e)}
+                    >
+                      save profile
+                    </Button>
                   </div>
                 </div>
               </div>

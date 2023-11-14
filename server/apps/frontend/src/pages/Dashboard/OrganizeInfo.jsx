@@ -9,6 +9,7 @@ import Employeecomponent from "@/components/Employeelist";
 import { getOrg, getAllEmployees  } from '@/api/get';
 
 export default function OrganizationInfo() {
+	// ------------------------------------ API ------------------------------------------
 	const { id } = useParams();
 	const { data: organization, status: orgStatus } = useQuery({
 		queryKey: ['getOrganizations'],
@@ -48,8 +49,8 @@ export default function OrganizationInfo() {
 							{/* box context */}
 							<div className="relative w-[75vw] min-h-[300px] -ml-4 mt-8 bg-white dark:bg-zinc-800 shadow-md rounded-lg p-6">
 								<div className='absolute top-14 right-14 flex flex-col'>
-									<p className='font-medium ml-16'>passcode</p>
-									<p className='font-semibold text-4xl'>{orgStatus === "pending" ? "loading..": organization.passcode || '000000'}</p>
+									<p className='font-medium ml-[68px]'>passcode</p>
+									<p className='font-semibold text-4xl text-right'>{orgStatus === "pending" ? "loading..": organization.passcode || '000000'}</p>
 								</div>
 								<div className="flex flex-row mt-4">
 									<CornerLeftDown className="h-6 w-6 mt-6 mr-1 ml-2" />

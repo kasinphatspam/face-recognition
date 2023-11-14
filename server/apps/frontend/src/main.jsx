@@ -7,8 +7,6 @@ import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css'
 
-const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
-
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -16,7 +14,7 @@ export const queryClient = new QueryClient({
       refetchOnmount: false,
       refetchOnReconnect: false,
       retry: false,
-      staleTime: twentyFourHoursInMs,
+      staleTime: Infinity
     }
   }
 })

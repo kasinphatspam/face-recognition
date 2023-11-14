@@ -2,8 +2,7 @@ export type Login = {
   email: string
   password: string
 }
-
-export type User = {
+export type UpdateUser = {
   id: string
   email: string
   password: string
@@ -12,6 +11,8 @@ export type User = {
   gender: string
   personId: string
   dob: string
+}
+export type User = UpdateUser & {
   image: string
 }
 
@@ -45,4 +46,8 @@ export type Org = {
 
 export type ImageRecognition = {
   image: string
+}
+
+export type Image = {
+  file: FormData
 }
