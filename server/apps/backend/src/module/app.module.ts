@@ -12,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { PlanModule } from '@/module/plan.module';
+import { UploadModule } from './upload.module';
 
 dotenv.config();
 @Module({
@@ -38,6 +39,7 @@ dotenv.config();
     ImageModule,
     TaskModule,
     PlanModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

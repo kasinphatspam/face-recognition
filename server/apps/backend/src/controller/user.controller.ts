@@ -8,13 +8,19 @@ import {
   Res,
   Param,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from '@/service/user.service';
-import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
+import { UpdateUserDto } from '@/utils/dtos/user.dto';
 import { OrganizationService } from '@/service/organization.service';
 import { AuthGuard } from '@/utils/guards/auth.guard';
 import { SelfGuard } from '@/utils/guards/self.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -55,12 +61,21 @@ export class UserController {
 
   @Put(':userId/image')
   @UseGuards(AuthGuard, SelfGuard)
+  @UseInterceptors(FileInterceptor('image'))
   public async updateImage(
     @Param('userId') userId: number,
-    @Body() body: UpdateUserImageDto,
     @Res() res: Response,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10e6 }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
-    await this.userService.updateImage(userId, body);
+    await this.userService.updateImage(userId, file);
     return res.status(HttpStatus.OK).json({
       message: 'Update user image successfully',
     });

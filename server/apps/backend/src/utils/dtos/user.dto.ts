@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  IsBase64,
   IsDate,
   IsNotEmpty,
   IsOptional,
@@ -41,10 +40,4 @@ class UpdateUserDto {
   public dob: Date;
 }
 
-class UpdateUserImageDto {
-  @IsNotEmpty()
-  @IsBase64()
-  public image: string;
-}
-
-export { UpdateUserDto, UpdateUserImageDto };
+export { UpdateUserDto };

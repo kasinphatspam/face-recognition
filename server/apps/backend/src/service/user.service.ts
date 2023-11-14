@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from '@/entity';
-import { UpdateUserImageDto, UpdateUserDto } from '@/utils/dtos/user.dto';
+import { UpdateUserDto } from '@/utils/dtos/user.dto';
 import { ImageService } from './image.service';
 import { UserRepository } from '@/repositories/user.repository';
+import { UploadService } from '@/service/upload.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly imageService: ImageService,
+    private readonly uploadService: UploadService,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -51,14 +57,9 @@ export class UserService {
     return this.userRepository.update(userId, body);
   }
 
-  public async updateImage(userId: number, body: UpdateUserImageDto) {
-    const imagePath = body.image
-      ? this.imageService.saveImageFromBase64(
-          body.image,
-          'users',
-          `${userId}.png`,
-        )
-      : this.imageService.defaultImagePath('users');
+  public async updateImage(userId: number, file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No image were sent.');
+    const imagePath = await this.uploadService.uploadFile(file, userId);
     return this.userRepository.updateImage(userId, imagePath);
   }
 

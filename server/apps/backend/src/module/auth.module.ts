@@ -11,6 +11,10 @@ import { UserRepository } from '@/repositories/user.repository';
 import { OTPService } from '@/service/otp.service';
 import { NotificationEmailService } from '@/service/notification.email.service';
 import { OTPRepository } from '@/repositories/otp.repository';
+import {
+  DoSpacesServiceProvider,
+  UploadService,
+} from '@/service/upload.service';
 
 dotenv.config();
 
@@ -31,6 +35,8 @@ dotenv.config();
     OTPService,
     OTPRepository,
     NotificationEmailService,
+    UploadService,
+    DoSpacesServiceProvider,
   ],
   exports: [AuthService],
 })

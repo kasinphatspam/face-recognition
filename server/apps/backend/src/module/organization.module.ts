@@ -16,6 +16,10 @@ import { HistoryRepository } from '@/repositories/history.repository';
 import { RecognitionService } from '@/service/recognition.service';
 import { AuthModule } from '@/module/auth.module';
 import { PlanRepository } from '@/repositories/plan.repository';
+import {
+  DoSpacesServiceProvider,
+  UploadService,
+} from '@/service/upload.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature(entities), AuthModule],
@@ -33,6 +37,8 @@ import { PlanRepository } from '@/repositories/plan.repository';
     RecognitionService,
     HistoryRepository,
     PlanRepository,
+    UploadService,
+    DoSpacesServiceProvider,
   ],
   controllers: [OrganizationController],
 })
