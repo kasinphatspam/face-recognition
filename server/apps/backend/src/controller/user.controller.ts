@@ -21,6 +21,8 @@ import { OrganizationService } from '@/service/organization.service';
 import { AuthGuard } from '@/utils/guards/auth.guard';
 import { SelfGuard } from '@/utils/guards/self.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { RequestUser } from '@/utils/decorators/auth.decorator';
+import { User } from '@/entity';
 
 @Controller('user')
 export class UserController {
@@ -29,11 +31,23 @@ export class UserController {
     private readonly organizationService: OrganizationService,
   ) {}
 
-  @Get('list/all')
+  @Get('all')
   @UseGuards(AuthGuard)
   public async findAll(@Res() res: Response) {
     const users = await this.userService.findAll();
     return res.status(HttpStatus.OK).json(users);
+  }
+
+  @Get('organization')
+  @UseGuards(AuthGuard)
+  public async getCurrentOrganization(
+    @RequestUser() user: User,
+    @Res() res: Response,
+  ) {
+    const organization = await this.organizationService.getCurrentOrganization(
+      user.id,
+    );
+    return res.status(HttpStatus.OK).json(organization);
   }
 
   @Get(':userId')
@@ -42,7 +56,7 @@ export class UserController {
     @Param('userId') userId: number,
     @Res() res: Response,
   ) {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserBy(userId);
     return res.status(HttpStatus.OK).json(user);
   }
 
@@ -88,17 +102,5 @@ export class UserController {
     return res.status(HttpStatus.OK).json({
       message: 'Delete user account successfully',
     });
-  }
-
-  @Get(':userId/organization')
-  @UseGuards(AuthGuard)
-  public async getCurrentOrganization(
-    @Param('userId') userId: number,
-    @Res() res: Response,
-  ) {
-    const organization = await this.organizationService.getCurrentOrganization(
-      userId,
-    );
-    return res.status(HttpStatus.OK).json(organization);
   }
 }

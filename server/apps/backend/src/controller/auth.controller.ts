@@ -25,22 +25,21 @@ export class AuthController {
 
   @Post('login')
   public async login(@Body() body: AuthLoginDto, @Res() res: Response) {
-    const result = await this.authService.login(body);
+    const jwt = await this.authService.login(body);
 
-    res.cookie('jwt', result.jwt, { httpOnly: true });
+    res.cookie('jwt', jwt, { httpOnly: true });
     return res.status(HttpStatus.OK).json({
-      message: `login sucessfully.`,
-      session: result.jwt,
-      id: result.id,
+      message: `Login sucessfully.`,
+      session: jwt,
     });
   }
 
   @Post('register')
   public async register(@Body() body: AuthRegisterDto, @Res() res: Response) {
-    const user = await this.authService.register(body);
+    const jwt = await this.authService.register(body);
     return res.status(HttpStatus.OK).json({
-      message: `create account id: ${user.id} is successfully.`,
-      user: user,
+      message: `Create account is successfully.`,
+      session: jwt,
     });
   }
 
@@ -54,7 +53,7 @@ export class AuthController {
   public async logout(@Res() res: Response) {
     res.clearCookie('jwt');
 
-    return res.status(HttpStatus.OK).json({ msg: 'logout successfully' });
+    return res.status(HttpStatus.OK).json({ message: 'Logout successfully' });
   }
 
   @Put('forgot-password')
@@ -65,7 +64,7 @@ export class AuthController {
     await this.authService.forgotPassword(body);
     return res
       .status(HttpStatus.OK)
-      .json({ message: `send verification code to ${body.email}` });
+      .json({ message: `Send verification code to ${body.email}` });
   }
 
   @Post('forgot-password/verify')
@@ -76,7 +75,7 @@ export class AuthController {
     await this.authService.verify(body);
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'reset password request was accepted' });
+      .json({ message: 'Reset password request was accepted' });
   }
 
   @Put('change-password/wc')
@@ -87,7 +86,7 @@ export class AuthController {
     await this.authService.changePassword(body);
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'reset password successfully' });
+      .json({ message: 'Reset password successfully' });
   }
 
   @Put('change-password/woc')
@@ -98,6 +97,6 @@ export class AuthController {
     await this.authService.changePasswordWithOutConfirmation(body);
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'reset password successfully' });
+      .json({ message: 'Reset password successfully' });
   }
 }

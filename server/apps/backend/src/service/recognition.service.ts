@@ -29,6 +29,29 @@ export class RecognitionService {
     return obj.packageKey;
   }
 
+  public async deletePackage(packageKey: string) {
+    const response = await axios.delete(
+      `${process.env.ML_SERVER_URL}/dataset-file`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        data: {
+          packageKey: packageKey,
+        },
+      },
+    );
+
+    if (response.status !== 200) {
+      throw new Error(`Error! status: ${response.status}`);
+    }
+    const obj: CreatePackageResponseDto = JSON.parse(
+      JSON.stringify(response.data),
+    );
+    return obj.packageKey;
+  }
+
   public async encodeImage(
     packageKey: string,
     image: string,

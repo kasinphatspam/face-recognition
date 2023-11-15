@@ -20,11 +20,6 @@ class AuthLoginDto {
   public password: string;
 }
 
-class AuthLoginResult {
-  public id: number;
-  public jwt: string;
-}
-
 class AuthRegisterDto {
   @IsEmail()
   @MaxLength(50)
@@ -108,7 +103,6 @@ class AuthChangePasswordWithOutConfirmation {
 
 export {
   AuthLoginDto,
-  AuthLoginResult,
   AuthRegisterDto,
   AuthForgotPasswordDto,
   AuthVerifyResetPassword,

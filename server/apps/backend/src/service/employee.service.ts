@@ -10,7 +10,7 @@ export class EmployeeService {
   }
 
   public async delete(organizationId: number, userId: number) {
-    const user = await this.userRepository.getUserById(userId, null);
+    const user = await this.userRepository.getUserBy(userId, null);
     console.log(user);
     if (!user.organization) {
       throw new BadRequestException("User hasn't joined organization");
@@ -19,7 +19,7 @@ export class EmployeeService {
       throw new BadRequestException(
         'Organization entered invalid: Organization ID in the user database does not match the organization ID entered.',
       );
-    await this.userRepository.updateUserOrganization(userId, null);
-    await this.userRepository.updateUserRole(userId, null);
+    await this.userRepository.setOrganization(userId, null);
+    await this.userRepository.setRole(userId, null);
   }
 }

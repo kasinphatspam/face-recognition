@@ -31,8 +31,10 @@ export class RoleService {
     roleId: number,
     userId: number,
   ) {
-    const relations = ['organization', 'role'];
-    const user = await this.userRepository.getUserById(userId, relations);
+    const user = await this.userRepository.getUserBy(userId, [
+      'organization',
+      'role',
+    ]);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -41,7 +43,7 @@ export class RoleService {
         'This user does not belong to this company.',
       );
     }
-    await this.userRepository.updateUserRole(user.id, roleId);
+    await this.userRepository.setRole(user.id, roleId);
   }
 
   public async update(

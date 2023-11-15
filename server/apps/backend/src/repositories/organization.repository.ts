@@ -6,6 +6,10 @@ import { InsertResult } from 'typeorm';
 
 @Injectable()
 export class OrganizationRepository {
+  public async findAll() {
+    return await connection.getRepository(Organization).find();
+  }
+
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {

@@ -32,9 +32,7 @@ export class OrganizationService {
   }
 
   public async getCurrentOrganization(userId: number): Promise<Organization> {
-    const user = await this.userRepository.getUserById(userId, [
-      'organization',
-    ]);
+    const user = await this.userRepository.getUserBy(userId, ['organization']);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -50,10 +48,11 @@ export class OrganizationService {
     body: CreateOrganizationDto,
   ) {
     // Check if the user account exists or not.
-    const property = await this.userRepository.getUserById(userId, null);
+    const property = await this.userRepository.getUserBy(userId, null);
     if (!property) {
       throw new NotFoundException('User not found');
     }
+
     // Check if client sent package id or not
     if (!body.planId) {
       // Find free package
@@ -90,11 +89,11 @@ export class OrganizationService {
     // Create simple role to new organization
     const roleId = await this.createSimpleRole(organization);
     // Put organization id and role_id to user table with user id
-    await this.userRepository.updateUserOrganization(
+    await this.userRepository.setOrganization(
       property.id,
       organization.raw.insertId,
     );
-    await this.userRepository.updateUserRole(property.id, roleId);
+    await this.userRepository.setRole(property.id, roleId);
   }
 
   public async update(organizationId: number, body: UpdateOrganizationDto) {
@@ -106,6 +105,10 @@ export class OrganizationService {
   }
 
   public async deleteOrganization(organizationId: number) {
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+    if (!organization) throw new NotFoundException('Not found organization.');
     // Find the roles in this organization
     const roleProperty = await this.roleService.findAll(organizationId);
     for (const i of roleProperty) {
@@ -118,13 +121,14 @@ export class OrganizationService {
       // Remove the role id and organization id in each account of this organization
       for (const j of userArray) {
         if (j != null) {
-          await this.userRepository.updateUserOrganization(j.id, null);
-          await this.userRepository.updateUserRole(j.id, null);
+          await this.userRepository.setOrganization(j.id, null);
+          await this.userRepository.setRole(j.id, null);
         }
       }
       // Force delete the role
       await this.roleService.forceDelete(organizationId, i.id);
     }
+    await this.recognitionApiService.deletePackage(organization.packageKey);
     // Delete the organization
     return this.organizationRepository.delete(organizationId);
   }
@@ -139,8 +143,8 @@ export class OrganizationService {
     // Find user role id in organization
     const roleId = await this.roleService.findAll(organization.id);
     // Add orgnaization id to user account
-    await this.userRepository.updateUserOrganization(userId, organization.id);
-    await this.userRepository.updateUserRole(userId, roleId[1].id);
+    await this.userRepository.setOrganization(userId, organization.id);
+    await this.userRepository.setRole(userId, roleId[1].id);
     return organization;
   }
 

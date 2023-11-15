@@ -3,70 +3,58 @@ import { User } from '@/entity';
 import { AuthRegisterDto } from '@/utils/dtos/auth.dto';
 import { UpdateUserDto } from '@/utils/dtos/user.dto';
 import { Injectable } from '@nestjs/common';
-
+import { isString } from 'class-validator';
 @Injectable()
 export class UserRepository {
-  public async getRawUserDataByEmail(email: string): Promise<User> {
-    return connection
-      .getRepository(User)
-      .createQueryBuilder()
-      .select([
-        'id',
-        'email',
-        'firstname',
-        'lastname',
-        'gender',
-        'personalId',
-        'dob',
-        'image',
-      ])
-      .addSelect('password')
-      .where('email = :email', { email: email })
-      .getRawOne();
-  }
-
-  public async getRawUserDataById(id: number): Promise<User> {
-    return connection
-      .getRepository(User)
-      .createQueryBuilder()
-      .select([
-        'id',
-        'email',
-        'firstname',
-        'lastname',
-        'gender',
-        'personalId',
-        'dob',
-        'image',
-      ])
-      .addSelect('password')
-      .where('id = :id', { id: id })
-      .getRawOne();
-  }
-
-  public async getUserById(userId: number, relations: string[]): Promise<User> {
-    if (!relations) {
+  public async getRawUserBy(key: string | number): Promise<User> {
+    if (isString(key)) {
       return connection
         .getRepository(User)
-        .findOne({ relations: relations, where: { id: userId } });
+        .createQueryBuilder()
+        .select([
+          'id',
+          'email',
+          'firstname',
+          'lastname',
+          'gender',
+          'personalId',
+          'dob',
+          'image',
+        ])
+        .addSelect('password')
+        .where('email = :email', { email: key })
+        .getRawOne();
     }
     return connection
       .getRepository(User)
-      .findOne({ relations: ['organization', 'role'], where: { id: userId } });
+      .createQueryBuilder()
+      .select([
+        'id',
+        'email',
+        'firstname',
+        'lastname',
+        'gender',
+        'personalId',
+        'dob',
+        'image',
+      ])
+      .addSelect('password')
+      .where('id = :id', { id: key })
+      .getRawOne();
   }
 
-  public async getUserByEmail(
-    email: string,
-    relations: string[],
+  public async getUserBy(
+    key: number | string,
+    relations: ['organization'] | ['role'] | ['organization', 'role'],
   ): Promise<User> {
-    if (!relations) {
+    if (isString(key)) {
       return connection
         .getRepository(User)
-        .findOne({ relations: relations, where: { email: email } });
+        .findOne({ relations: relations, where: { email: key } });
     }
     return connection
       .getRepository(User)
-      .findOne({ relations: relations, where: { email: email } });
+      .findOne({ relations: relations, where: { id: key } });
   }
 
   public async findAll(): Promise<User[]> {
@@ -87,6 +75,16 @@ export class UserRepository {
     return connection.getRepository(User).find({
       where: { organization: { id: organizationId }, role: { id: roleId } },
     });
+  }
+
+  public async isAvailable(
+    email: string,
+    personalId: string,
+  ): Promise<boolean> {
+    const user = await connection.getRepository(User).find({
+      where: [{ email: email }, { personalId: personalId }],
+    });
+    return user.length > 0;
   }
 
   public async insert(
@@ -122,21 +120,21 @@ export class UserRepository {
       .update({ id: userId }, { image: imagePath });
   }
 
-  public async updateUserOrganization(userId: number, organizationId: number) {
+  public async setOrganization(userId: number, organizationId: number) {
     return connection.getRepository(User).save({
       id: userId,
       organization: { id: organizationId },
     });
   }
 
-  public async updateUserRole(userId: number, roleId: number) {
+  public async setRole(userId: number, roleId: number) {
     return connection.getRepository(User).save({
       id: userId,
       role: { id: roleId },
     });
   }
 
-  public async updateUserPassword(userId: number, password: string) {
+  public async changePassword(userId: number, password: string) {
     return connection.getRepository(User).save({
       id: userId,
       password: password,

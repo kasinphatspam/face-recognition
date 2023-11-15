@@ -23,7 +23,7 @@ export class OTPService {
       }
     }
 
-    const user = await this.userRepository.getUserById(userId, null);
+    const user = await this.userRepository.getUserBy(userId, null);
     const code = Math.floor(100000 + Math.random() * 900000);
 
     const confirmationTemplate = (email: string, code: string) => {

@@ -13,6 +13,8 @@ import { TaskModule } from './task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { PlanModule } from '@/module/plan.module';
 import { UploadModule } from './upload.module';
+import { APP_GUARD } from '@nestjs/core';
+import { ServiceGuard } from '@/utils/guards/service.guard';
 
 dotenv.config();
 @Module({
@@ -42,6 +44,12 @@ dotenv.config();
     UploadModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ServiceGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

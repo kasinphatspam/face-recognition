@@ -21,32 +21,16 @@ export class UserService {
     return this.userRepository.findAll();
   }
 
-  public async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.getUserById(userId, null);
+  public async getUserBy(key: number | string): Promise<User> {
+    const user = await this.userRepository.getUserBy(key, null);
     if (!user) {
       throw new NotFoundException('User not found');
     }
     return user;
   }
 
-  public async getRawUserDataById(id: number): Promise<User> {
-    const user = await this.userRepository.getRawUserDataById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
-  }
-
-  public async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.getUserByEmail(email, null);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
-  }
-
-  public async getRawUserDataByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.getRawUserDataByEmail(email);
+  public async getRawUserBy(key: number | string): Promise<User> {
+    const user = await this.userRepository.getRawUserBy(key);
     if (!user) {
       throw new NotFoundException('User not found');
     }

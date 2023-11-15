@@ -93,7 +93,7 @@ export class ContactService {
       organizationId,
     );
     const packageKey = organization.packageKey;
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserBy(userId);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
@@ -128,6 +128,22 @@ export class ContactService {
       result: contact,
     };
     return object;
+  }
+
+  public async deleteContact(organizationId: number, contactId: number) {
+    const contact = await this.contactRepository.getContactById(
+      organizationId,
+      contactId,
+    );
+
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+
+    await this.recognitionApiService.deleteEncodeImage(
+      organization.packageKey,
+      contact.encodedId,
+    );
   }
 
   public async importFromCSV() {

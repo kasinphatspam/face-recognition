@@ -13,11 +13,9 @@ import {
   AuthChangePasswordWithOutConfirmation,
   AuthForgotPasswordDto,
   AuthLoginDto,
-  AuthLoginResult,
   AuthRegisterDto,
   AuthVerifyResetPassword,
 } from '@/utils/dtos/auth.dto';
-import { User } from '@/entity';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '@/service/user.service';
 import { ImageService } from '@/service/image.service';
@@ -34,14 +32,9 @@ export class AuthService {
     private readonly otpService: OTPService,
   ) {}
 
-  public async login(body: AuthLoginDto): Promise<AuthLoginResult> {
+  public async login(body: AuthLoginDto): Promise<string> {
     const { email, password } = body;
-    const user = await this.userService.getRawUserDataByEmail(email);
-
-    if (!user)
-      throw new NotFoundException(
-        'The user account with this email address was not found.',
-      );
+    const user = await this.userService.getRawUserBy(email);
 
     if (!(await bcrypt.compare(password, user.password)))
       throw new BadRequestException(
@@ -49,23 +42,18 @@ export class AuthService {
       );
 
     const jwt = await this.jwtService.signAsync({ id: user.id });
-
-    const result = new AuthLoginResult();
-    result.id = user.id;
-    result.jwt = jwt;
-
-    return result;
+    return jwt;
   }
 
-  public async register(body: AuthRegisterDto): Promise<User> {
-    const userArray = await this.userRepository.findAll();
-    for (const i of userArray) {
-      if (i.email === body.email) {
-        throw new BadRequestException('This email already exists.');
-      }
-      if (i.personalId === body.personalId) {
-        throw new BadRequestException('This personalId already exists.');
-      }
+  public async register(body: AuthRegisterDto): Promise<string> {
+    const isAvailable = await this.userRepository.isAvailable(
+      body.email,
+      body.personalId,
+    );
+    if (isAvailable) {
+      throw new BadRequestException(
+        'This email or personal ID  already exists.',
+      );
     }
     const password = await bcrypt.hash(body.password, 12);
 
@@ -81,7 +69,8 @@ export class AuthService {
       await this.userRepository.updateImage(newUser.raw.insertId, imagePath);
     }
 
-    return this.userService.getUserByEmail(body.email);
+    const jwt = await this.jwtService.signAsync({ id: newUser.raw.insertId });
+    return jwt;
   }
 
   public async me(req: Request) {
@@ -92,7 +81,7 @@ export class AuthService {
       if (!data) {
         throw new UnauthorizedException();
       }
-      const user = await this.userRepository.getUserById(data.id, null);
+      const user = await this.userRepository.getUserBy(data.id, null);
       return user;
     } catch (error) {
       if (error instanceof ForbiddenException) {
@@ -106,7 +95,7 @@ export class AuthService {
   }
 
   public async changePassword(body: AuthChangePasswordWithConfirmation) {
-    const user = await this.userService.getRawUserDataById(body.id);
+    const user = await this.userService.getRawUserBy(body.id);
 
     if (!(await bcrypt.compare(body.oldPassword, user.password)))
       throw new BadRequestException(
@@ -114,18 +103,18 @@ export class AuthService {
       );
 
     const password = await bcrypt.hash(body.password, 12);
-    await this.userRepository.updateUserPassword(body.id, password);
+    await this.userRepository.changePassword(body.id, password);
   }
 
   public async changePasswordWithOutConfirmation(
     body: AuthChangePasswordWithOutConfirmation,
   ) {
     const password = await bcrypt.hash(body.password, 12);
-    await this.userRepository.updateUserPassword(body.id, password);
+    await this.userRepository.changePassword(body.id, password);
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {
-    const user = await this.userRepository.getUserByEmail(body.email, null);
+    const user = await this.userRepository.getUserBy(body.email, null);
 
     if (!user) {
       throw new NotFoundException();
@@ -134,7 +123,7 @@ export class AuthService {
   }
 
   public async verify(body: AuthVerifyResetPassword) {
-    const user = await this.userRepository.getUserByEmail(body.email, null);
+    const user = await this.userRepository.getUserBy(body.email, null);
 
     if (!user) {
       throw new NotFoundException();
