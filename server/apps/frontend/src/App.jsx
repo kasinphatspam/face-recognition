@@ -14,6 +14,8 @@ const OrganizationService = lazy(() => import("@/pages/Dashboard/Organize"));
 const Recognition = lazy(() => import("@/pages/Recognition"));
 const CreateTeam = lazy(() => import("@/pages/CreateTeam"));
 const OrganizationInfo = lazy(() => import("@/pages/Dashboard/OrganizeInfo"));
+const ContactUs = lazy(() => import("@/pages/ContactUs"));
+
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage />, },
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
   { path: "recognition", element: < Recognition />, },
   { path: "setting", element: < Settings />, },
   { path: "organize/:id", element: < OrganizationInfo />, },
+  { path: "contact", element: <ContactUs />, },
 ])
 export const App = () => {
   return (
