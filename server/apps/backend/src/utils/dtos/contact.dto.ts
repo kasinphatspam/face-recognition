@@ -63,10 +63,12 @@ class CreateNewContactDto {
   @MaxLength(60)
   public contactOwner: string;
 
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   public createdTime: Date;
 
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   public modifiedTime: Date;
