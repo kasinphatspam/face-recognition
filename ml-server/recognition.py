@@ -235,7 +235,7 @@ class FaceRecognition:
             rgb_small_frame, face_locations
         )
 
-        face_ids = []
+        faces_result = []
         for face_encoding in face_encodings:
             face_distances = face_recognition.face_distance(
                 face_data["encodings"], face_encoding
@@ -249,13 +249,16 @@ class FaceRecognition:
                 percentage = float(confidence.replace("%", ""))
                 if percentage > 80:
                     print("Success")
-                    return {
+                    faces_result.append({
                         "id": str(id),
                         "statusCode": 1,
                         "accuracy": percentage,
                         "checkedTime": timestamp,
                         "message":"PASS: Recognition Sucess"
-                    }
+                    })
+
+        if not faces_result:
+            return faces_result
 
         print("Unknown face")
         return {
