@@ -236,28 +236,24 @@ class FaceRecognition:
         )
 
         faces_result = []
-        for face_encoding in face_encodings:
-            face_distances = face_recognition.face_distance(
-                face_data["encodings"], face_encoding
-            )
-            best_match_index = np.argmin(face_distances)
-            if face_distances[best_match_index] <= 0.9:
-                id = face_data["ids"][best_match_index]
-                confidence = self.calculate_face_confidence(
-                    face_distances[best_match_index]
-                )
-                percentage = float(confidence.replace("%", ""))
-                if percentage > 80:
-                    print("Success")
-                    faces_result.append({
-                        "id": str(id),
-                        "statusCode": 1,
-                        "accuracy": percentage,
-                        "checkedTime": timestamp,
-                        "message":"PASS: Recognition Sucess"
-                    })
-
-        if not faces_result:
+        for idx, face_encoding in enumerate(face_encodings):
+            face_distances = face_recognition.face_distance(face_data["encodings"], face_encoding)
+            
+            for i, distance in enumerate(face_distances):
+                if distance <= 0.9:
+                    id = face_data["ids"][i]
+                    confidence = self.calculate_face_confidence(distance)
+                    percentage = float(confidence.replace("%", ""))
+                    if percentage > 95:
+                        print("Success")
+                        faces_result.append({
+                            "id": str(id),
+                            "statusCode": 1,
+                            "accuracy": percentage,
+                            "checkedTime": timestamp,
+                            "message": "PASS: Recognition Success"
+                        })
+        if faces_result:
             return faces_result
 
         print("Unknown face")
