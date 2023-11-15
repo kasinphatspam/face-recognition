@@ -93,22 +93,9 @@ export default function Navigation(props) {
             Features
           </ScrollLink>
         </NavbarItem>
-        <NavbarItem isActive={Active == "Customers" ? true : false}>
-          <Link
-            href="#"
-            aria-current="page"
-            color={Active == "Customers" ? "secondary" : "foreground"}
-          >
-            Customers
-          </Link>
-        </NavbarItem>
+
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/contact">Contact Us</Link>
+          <Link color="foreground" href="/contactus">Contact Us</Link>
         </NavbarItem>
       </NavbarContent>
 
