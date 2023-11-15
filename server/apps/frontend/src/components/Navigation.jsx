@@ -69,31 +69,44 @@ export default function Navigation(props) {
       {/* Tabs for medium devices or desktop */}
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {/* Other navigation links */}
-        <NavbarItem>
-          <ScrollLink
-            to="subscriptionSection" // ID of the section you want to scroll to
-            spy={true}
-            smooth={true}
-            duration={1000}
-            offset={0} // Adjust the offset as needed
-            className="cursor-pointer"
-          >
-            Subscription
-          </ScrollLink>
-        </NavbarItem>
-        <NavbarItem>
-          <ScrollLink
-            to="featuresSection" // ID of the section you want to scroll to
-            spy={true}
-            smooth={true}
-            duration={1000}
-            offset={-70} // Adjust the offset as needed
-            className="cursor-pointer"
-          >
-            Features
-          </ScrollLink>
-        </NavbarItem>
-
+        {Active === "Customers" && (
+          <>
+            <NavbarItem>
+              <ScrollLink
+                to="subscriptionSection" // ID of the section you want to scroll to
+                spy={true}
+                smooth={true}
+                duration={1000}
+                offset={0} // Adjust the offset as needed
+                className="cursor-pointer"
+              >
+                Subscription
+              </ScrollLink>
+            </NavbarItem>
+            <NavbarItem>
+              <ScrollLink
+                to="featuresSection" // ID of the section you want to scroll to
+                spy={true}
+                smooth={true}
+                duration={1000}
+                offset={-70} // Adjust the offset as needed
+                className="cursor-pointer"
+              >
+                Features
+              </ScrollLink>
+            </NavbarItem>
+          </>
+        )}
+        {Active === "Contactus" && (
+          <>
+            <NavbarItem>
+              <Link color="foreground" href="/contactus">Subscription</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="/">Home Page</Link>
+            </NavbarItem>
+          </>
+        )}
         <NavbarItem>
           <Link color="foreground" href="/contactus">Contact Us</Link>
         </NavbarItem>

@@ -190,31 +190,41 @@ export default function HomePage() {
         <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Pricing Plans</motion.div>
         <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] font-medium text-black/40 dark:text-white/70 px-12">flexible pricing plans tailored to meet the unique needs of your organization, ensuring cost-effectiveness and scalability.</motion.div>
         <div className="flex flex-row mx-auto mt-8 ring-2 dark:ring-zinc-600 ring-zinc-300 p-1 rounded-[0.9rem] mb-8">
-          <Button className="" variant={selectedMonth ? "solid" : "light"} onClick={() => handleMonth(selectedMonth,true)}>Monthly billing</Button>
-          <Button className="ml-2" variant={selectedMonth ? "light" : "solid"} onClick={() => handleMonth(selectedMonth,false)}> Yearly billing </Button>
+          <Button className="" variant={selectedMonth ? "solid" : "light"} onClick={() => handleMonth(selectedMonth, true)}>Monthly billing</Button>
+          <Button className="ml-2" variant={selectedMonth ? "light" : "solid"} onClick={() => handleMonth(selectedMonth, false)}> Yearly billing </Button>
         </div>
-        <div className="grid grid-flow-col max-sm:grid-flow-row max-sm:mt-4 gap-8 relative mt-16 mb-32 mx-auto">
-          <Pricing 
+        
+        <div className="grid grid-flow-col max-sm:grid-flow-row max-sm:mt-4 gap-8 relative mt-8 mb-32 mx-auto">
+          <Pricing
             session={'Startup'}
             description={'All basic for starting a business'}
-            user={'24 users'}    
-            snapshot={true}    
+            user={'24 users'}
+            snapshot={true}
             server={'10GB'}
             subscription={199}
             month={month}
           />
-          <Pricing 
+          <Pricing
             session={'Enterprise'}
             description={'addition feature for large enterprise'}
-            user={'100 users'}    
-            snapshot={false}    
+            user={'100 users'}
+            snapshot={false}
             server={'100GB'}
             subscription={699}
             month={month}
             custom={"ring-2 ring-pink-600"}
           />
         </div>
+
+        <div className="items-center mx-auto mt-4"> {/* Adjust the mt-4 value to your preference */}
+          <Link to={user ? "/" : "/login"}>
+            <Button color="bg-pinl-600" href="/signup" radius="full" size="md">
+              <p className="text-white font-medium"> Learn More </p>
+            </Button>
+          </Link>
+        </div>
       </motion.div>
+
       {/** footer */}
       <motion.div className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 max-sm:gap-y-unit-md max-sm:justify-items-center bg-white/90 dark:bg-zinc-900 w-99vw h-[300px] max-sm:h-auto max-sm:pb-12"
         variants={footerVariants}
