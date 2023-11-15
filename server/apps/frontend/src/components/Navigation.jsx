@@ -18,6 +18,7 @@ import {
 import Switchthemebutton from "./Button/SwitchTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Link as ScrollLink } from 'react-scroll';
 
 {
   /* menu Item for small devices screen */
@@ -67,10 +68,30 @@ export default function Navigation(props) {
       {/** ------------------------------------------------- */}
       {/* Tabs for medium devices or desktop */}
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        {/* Other navigation links */}
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <ScrollLink
+            to="subscriptionSection" // ID of the section you want to scroll to
+            spy={true}
+            smooth={true}
+            duration={1000}
+            offset={0} // Adjust the offset as needed
+            className="cursor-pointer"
+          >
+            Subscription
+          </ScrollLink>
+        </NavbarItem>
+        <NavbarItem>
+          <ScrollLink
+            to="featuresSection" // ID of the section you want to scroll to
+            spy={true}
+            smooth={true}
+            duration={1000}
+            offset={-70} // Adjust the offset as needed
+            className="cursor-pointer"
+          >
             Features
-          </Link>
+          </ScrollLink>
         </NavbarItem>
         <NavbarItem isActive={Active == "Customers" ? true : false}>
           <Link
@@ -85,6 +106,9 @@ export default function Navigation(props) {
           <Link color="foreground" href="#">
             Integrations
           </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/contact">Contact Us</Link>
         </NavbarItem>
       </NavbarContent>
 

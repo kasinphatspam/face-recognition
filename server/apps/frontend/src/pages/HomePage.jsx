@@ -11,6 +11,7 @@ import { footerVariants } from "../utils/motion";
 import Pricing from "@/components/Pricing"
 
 
+
 export default function HomePage() {
   const [ month, setMonth ] = useState(1);
   const [ selectedMonth, setSelectedMonth] = useState(true);
@@ -82,7 +83,9 @@ export default function HomePage() {
         </div>
       </div>
       {/* First Sub-Content */}
-      <motion.div className=" bg-[#B4B4B3] dark:bg-zinc-950 pl-[1px] pt-24 flex flex-col"
+      <motion.div
+        id="featuresSection" // Add this line
+        className=" bg-[#B4B4B3] dark:bg-zinc-950 pl-[1px] pt-24 flex flex-col"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
@@ -178,6 +181,7 @@ export default function HomePage() {
         </div>
       </motion.div>
       <motion.div className="flex flex-col bg-zinc-200 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
+        id="subscriptionSection"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
