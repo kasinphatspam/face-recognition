@@ -121,7 +121,7 @@ export class UserRepository {
 
   /**
    * Customized methods adhering to the policy; can be called directly.
-   * IMPORTANT: No need to import this repository; use these methods directly.
+   * IMPORTANT: No need to import this services; use these methods directly.
    */
 
   /**
