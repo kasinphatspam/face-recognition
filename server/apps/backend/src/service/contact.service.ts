@@ -3,7 +3,7 @@ import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
 import { RecognitionService } from '@/service/recognition.service';
 import { ContactRepository } from '@/repositories/contact.repository';
 import { OrganizationRepository } from '@/repositories/organization.repository';
-import { readCSV } from '@/utils/file.manager';
+import { readCSV, write, remove } from '@/utils/file.manager';
 import * as path from 'path';
 import { HistoryRepository } from '@/repositories/history.repository';
 import { UserService } from './user.service';
@@ -88,7 +88,6 @@ export class ContactService {
     userId: number,
     base64: string,
   ) {
-    console.log('pam pam');
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
@@ -146,9 +145,19 @@ export class ContactService {
     );
   }
 
-  public async importFromCSV() {
-    const filePath = path.join(this.folderPath, 'contact', 'IRIS.csv');
-    console.log(filePath);
-    return readCSV(filePath);
+  public async importFromCSV(
+    file: Express.Multer.File,
+    organizationId: number,
+  ) {
+    const filePath = path.join(
+      this.folderPath,
+      'contact',
+      `${organizationId}-${file.originalname}`,
+    );
+    write(filePath, file.buffer);
+    const data = await readCSV<CreateNewContactDto>(filePath);
+    remove(filePath);
+    await this.contactRepository.createManyContacts(organizationId, data);
+    return data;
   }
 }

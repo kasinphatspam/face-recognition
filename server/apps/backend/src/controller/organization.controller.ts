@@ -2,13 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   HttpStatus,
   Param,
+  ParseFilePipe,
   Post,
   Put,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ContactService } from '@/service/contact.service';
@@ -27,6 +31,7 @@ import { CreateNewRoleDto, EditRoleDto } from '@/utils/dtos/role.dto';
 import { AuthGuard } from '@/utils/guards/auth.guard';
 import { RequestUser } from '@/utils/decorators/auth.decorator';
 import { User } from '@/entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('organization')
 export class OrganizationController {
   constructor(
@@ -232,10 +237,23 @@ export class OrganizationController {
     return res.status(HttpStatus.OK).json(contacts);
   }
 
-  @Post(':organizationId/contact/import/excel')
-  public async importContactFromCSV(@Res() res: Response) {
-    const csv = await this.contactService.importFromCSV();
-    return res.status(HttpStatus.OK).json(csv);
+  @Post(':organizationId/contact/csv')
+  @UseInterceptors(FileInterceptor('csv'))
+  public async readCSV(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'csv' })],
+      }),
+    )
+    file: Express.Multer.File,
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    const data = await this.contactService.importFromCSV(file, organizationId);
+    return res.status(HttpStatus.OK).json({
+      message: 'Add data from CSV file successfully',
+      data,
+    });
   }
 
   @Post(':organizationId/contact/import/vtiger')

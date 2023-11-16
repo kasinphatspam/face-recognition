@@ -49,7 +49,11 @@ export class UserService {
 
   public async updateImage(userId: number, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No image were sent.');
-    const imagePath = await this.uploadService.uploadFile(file, userId);
+    const imagePath = await this.uploadService.uploadImageToStorage(
+      file,
+      'users',
+      userId,
+    );
     return this.userRepository.updateImage(userId, imagePath);
   }
 

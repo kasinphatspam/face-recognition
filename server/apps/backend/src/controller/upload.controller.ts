@@ -33,14 +33,4 @@ export class UploadController {
     console.log(file);
     return res.status(200).json({ message: 'Send success' });
   }
-
-  @Post()
-  @UseInterceptors(FileInterceptor('file'))
-  public async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const url = await this.uploadService.uploadFile(file, 1);
-
-    return {
-      url,
-    };
-  }
 }

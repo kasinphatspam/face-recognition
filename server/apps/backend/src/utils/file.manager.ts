@@ -15,17 +15,20 @@ export function remove(path: string) {
   }
 }
 
-export function readCSV(filePath: string) {
-  const result = [];
+export function readCSV<T>(filePath: string): Promise<T[]> {
+  return new Promise((resolve, reject) => {
+    const results = [];
 
-  fs.createReadStream(filePath)
-    .pipe(csv())
-    .on('data', (data) => {
-      result.push(data);
-    })
-    .on('end', () => {
-      console.log(result);
-    });
-
-  return result;
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on('data', (data) => {
+        results.push(data);
+      })
+      .on('end', () => {
+        resolve(results);
+      })
+      .on('error', (error) => {
+        reject(error);
+      });
+  });
 }

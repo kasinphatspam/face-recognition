@@ -32,15 +32,16 @@ export class UploadService {
     @Inject(DoSpacesServiceLib) private readonly s3Client: S3Client,
   ) {}
 
-  public async uploadFile(
+  public async uploadImageToStorage(
     file: Express.Multer.File,
+    folder: 'users' | 'contacts',
     userId: number,
   ): Promise<string> {
     try {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: process.env.AWS_SPACE_BUCKET,
-          Key: `images/${userId}.jpg`,
+          Key: `images/${folder}/${userId}.jpg`,
           Body: file.buffer,
           ACL: 'public-read',
           ContentType: 'image/jpg',
@@ -48,10 +49,7 @@ export class UploadService {
       );
 
       const urlSplit = process.env.AWS_SPACE_ENDPOINT.split('//');
-      console.log(
-        `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${userId}.jpg`,
-      );
-      return `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${userId}.jpg`;
+      return `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${folder}/${userId}.jpg`;
     } catch (error) {
       throw new BadRequestException(`${error}`);
     }
