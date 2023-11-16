@@ -194,7 +194,7 @@ export default function HomePage() {
           <Button className="ml-2" variant={selectedMonth ? "light" : "solid"} onClick={() => handleMonth(selectedMonth, false)}> Yearly billing </Button>
         </div>
         
-        <div className="grid grid-flow-col max-sm:grid-flow-row max-sm:mt-4 gap-8 relative mt-8 mb-32 mx-auto">
+        <div className="grid grid-flow-col max-sm:grid-flow-row max-sm:mt-4 gap-8 relative mt-8 mb-12 mx-auto">
           <Pricing
             session={'Startup'}
             description={'All basic for starting a business'}
@@ -217,8 +217,8 @@ export default function HomePage() {
         </div>
 
         <div className="items-center mx-auto mt-4"> {/* Adjust the mt-4 value to your preference */}
-          <Link to={user ? "/" : "/login"}>
-            <Button color="bg-pinl-600" href="/signup" radius="full" size="md">
+          <Link to="/subscription">
+            <Button color="default" radius="full" size="md" className="mb-32">
               <p className="text-white font-medium"> Learn More </p>
             </Button>
           </Link>

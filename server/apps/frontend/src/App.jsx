@@ -16,6 +16,8 @@ const CreateTeam = lazy(() => import("@/pages/CreateTeam"));
 const OrganizationInfo = lazy(() => import("@/pages/Dashboard/OrganizeInfo"));
 const Contact = lazy(() => import("@/pages/Dashboard/Contact"));
 const ContactUs = lazy(() => import("@/pages/ContactUs"));
+const Subscription = lazy(() => import("@/pages/Subscription"));
+
 
 
 const router = createBrowserRouter([
@@ -31,6 +33,8 @@ const router = createBrowserRouter([
   { path: "organize/:id", element: < OrganizationInfo />, },
   { path: "contact", element: <Contact />, },
   { path: "contactus", element: <ContactUs />, },
+  { path: "subscription", element: <Subscription />, },
+
 ])
 export const App = () => {
   return (

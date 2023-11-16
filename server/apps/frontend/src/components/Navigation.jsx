@@ -100,7 +100,7 @@ export default function Navigation(props) {
         {Active === "Contactus" && (
           <>
             <NavbarItem>
-              <Link color="foreground" href="/contactus">Subscription</Link>
+              <Link color="foreground" href="/subscription">Subscription</Link>
             </NavbarItem>
             <NavbarItem>
               <Link color="foreground" href="/">Home Page</Link>
