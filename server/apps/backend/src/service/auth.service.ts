@@ -81,7 +81,7 @@ export class AuthService {
       if (!data) {
         throw new UnauthorizedException();
       }
-      const user = await this.userRepository.getUserBy(data.id, null);
+      const user = await this.userService.getUserBy(data.id, null);
       return user;
     } catch (error) {
       if (error instanceof ForbiddenException) {
@@ -114,16 +114,12 @@ export class AuthService {
   }
 
   public async forgotPassword(body: AuthForgotPasswordDto) {
-    const user = await this.userRepository.getUserBy(body.email, null);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-    await this.otpService.send(user.id, 'forgot password');
+    const user = await this.userService.getUserBy(body.email, null);
+    await this.otpService.sendVerifyMail(user.id, 'forgot password');
   }
 
   public async verify(body: AuthVerifyResetPassword) {
-    const user = await this.userRepository.getUserBy(body.email, null);
+    const user = await this.userService.getUserBy(body.email, null);
 
     if (!user) {
       throw new NotFoundException();

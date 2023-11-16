@@ -25,6 +25,8 @@ import {
 } from '@/utils/dtos/organization.dto';
 import { CreateNewRoleDto, EditRoleDto } from '@/utils/dtos/role.dto';
 import { AuthGuard } from '@/utils/guards/auth.guard';
+import { RequestUser } from '@/utils/decorators/auth.decorator';
+import { User } from '@/entity';
 @Controller('organization')
 export class OrganizationController {
   constructor(
@@ -47,20 +49,21 @@ export class OrganizationController {
     return res.status(HttpStatus.OK).json(organization);
   }
 
-  @Post('/user/:userId')
+  @Post()
   @UseGuards(AuthGuard)
   public async createNewOrganization(
-    @Param('userId') userId: number,
+    @RequestUser() user: User,
     @Body() body: CreateOrganizationDto,
     @Res() res: Response,
   ) {
-    await this.organizationService.createNewOraganization(userId, body);
+    await this.organizationService.createNewOraganization(user.id, body);
     return res.status(HttpStatus.OK).json({
       message: `Created organization successfully`,
     });
   }
 
   @Put(':organizationId')
+  @UseGuards(AuthGuard)
   public async updateOrganizationInfo(
     @Param('organizationId') organizationId: number,
     @Body() body: UpdateOrganizationDto,
@@ -73,6 +76,7 @@ export class OrganizationController {
   }
 
   @Delete(':organizationId')
+  @UseGuards(AuthGuard)
   public async deleteOrganization(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -83,24 +87,26 @@ export class OrganizationController {
     });
   }
 
-  @Post('user/:userId/join/:passcode')
+  @Post('join/:passcode')
+  @UseGuards(AuthGuard)
   public async joinOrganizationWithPasscode(
-    @Param('userId') userId: number,
+    @RequestUser() user: User,
     @Param('passcode') passcode: string,
     @Res() res: Response,
   ) {
     const organization =
       await this.organizationService.joinOrganizationWithPasscode(
-        userId,
+        user.id,
         passcode,
       );
     return res.status(HttpStatus.OK).json({
-      message: `User id: ${userId} joined Organiztion id: ${organization.id} successfully`,
+      message: `User id: ${user.id} joined Organiztion id: ${organization.id} successfully`,
       organization,
     });
   }
 
   @Put(':organizationId/passcode')
+  @UseGuards(AuthGuard)
   public async generateNewPasscode(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -135,6 +141,7 @@ export class OrganizationController {
   }
 
   @Put(':organizationId/vtiger')
+  @UseGuards(AuthGuard)
   public async linkWithVtiger(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -143,6 +150,7 @@ export class OrganizationController {
   }
 
   @Post(':organizationId/vtiger')
+  @UseGuards(AuthGuard)
   public async importDataFromVtiger(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -181,13 +189,13 @@ export class OrganizationController {
   }
 
   @Put(':organizationId/contact/:contactId/encode')
+  @UseGuards(AuthGuard)
   public async encodeContactImage(
     @Param('organizationId') organizationId: number,
     @Param('contactId') contactId: number,
     @Body() body: EncodeContactImageDto,
     @Res() res: Response,
   ) {
-    console.log('***********');
     const encodedId = await this.contactService.encodeImage(
       organizationId,
       contactId,
@@ -198,16 +206,17 @@ export class OrganizationController {
       .json({ message: 'encode image successfully', encodedId: encodedId });
   }
 
-  @Post(':organizationId/user/:userId/contact/encode/recognition')
+  @Post(':organizationId/contact/encode/recognition')
+  @UseGuards(AuthGuard)
   public async recognitionContactImage(
     @Param('organizationId') organizationId: number,
-    @Param('userId') userId: number,
+    @RequestUser() user: User,
     @Body() body: EncodeContactImageDto,
     @Res() res: Response,
   ) {
     const data = await this.contactService.recognitionImage(
       organizationId,
-      userId,
+      user.id,
       body.image,
     );
 

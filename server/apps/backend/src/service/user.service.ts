@@ -6,7 +6,10 @@ import {
 import { User } from '@/entity';
 import { UpdateUserDto } from '@/utils/dtos/user.dto';
 import { ImageService } from './image.service';
-import { UserRepository } from '@/repositories/user.repository';
+import {
+  GetUserBySpecifyRelations,
+  UserRepository,
+} from '@/repositories/user.repository';
 import { UploadService } from '@/service/upload.service';
 
 @Injectable()
@@ -21,8 +24,11 @@ export class UserService {
     return this.userRepository.findAll();
   }
 
-  public async getUserBy(key: number | string): Promise<User> {
-    const user = await this.userRepository.getUserBy(key, null);
+  public async getUserBy(
+    key: number | string,
+    realtions: GetUserBySpecifyRelations,
+  ): Promise<User> {
+    const user = await this.userRepository.getUserBy(key, realtions);
     if (!user) {
       throw new NotFoundException('User not found');
     }

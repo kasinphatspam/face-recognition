@@ -1,17 +1,17 @@
 import { OTPRepository } from '@/repositories/otp.repository';
-import { UserRepository } from '@/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
 import { NotificationEmailService } from './notification.email.service';
 import { MailOptions } from 'nodemailer/lib/json-transport';
+import { UserService } from './user.service';
 
 @Injectable()
 export class OTPService {
   constructor(
     private readonly notificationService: NotificationEmailService,
     private readonly otpRepository: OTPRepository,
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
   ) {}
-  public async send(userId: number, topic: string) {
+  public async sendVerifyMail(userId: number, topic: string) {
     const previousOTP = await this.otpRepository.findAllByUserId(userId);
 
     if (previousOTP) {
@@ -23,7 +23,7 @@ export class OTPService {
       }
     }
 
-    const user = await this.userRepository.getUserBy(userId, null);
+    const user = await this.userService.getUserBy(userId, null);
     const code = Math.floor(100000 + Math.random() * 900000);
 
     const confirmationTemplate = (email: string, code: string) => {

@@ -14,6 +14,7 @@ import { InsertResult } from 'typeorm';
 import { OrganizationRepository } from '@/repositories/organization.repository';
 import { UserRepository } from '@/repositories/user.repository';
 import { PlanRepository } from '@/repositories/plan.repository';
+import { UserService } from './user.service';
 
 @Injectable()
 export class OrganizationService {
@@ -21,6 +22,7 @@ export class OrganizationService {
     private readonly recognitionApiService: RecognitionService,
     private readonly roleService: RoleService,
     private readonly organizationRepository: OrganizationRepository,
+    private readonly userService: UserService,
     private readonly userRepository: UserRepository,
     private readonly planRepository: PlanRepository,
   ) {}
@@ -31,27 +33,12 @@ export class OrganizationService {
     return this.organizationRepository.getOrganizationById(organizationId);
   }
 
-  public async getCurrentOrganization(userId: number): Promise<Organization> {
-    const user = await this.userRepository.getUserBy(userId, ['organization']);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    if (!user.organization) {
-      throw new NotFoundException("User hasn't joined organization");
-    }
-    return user.organization;
-  }
-
   public async createNewOraganization(
     userId: number,
     body: CreateOrganizationDto,
   ) {
     // Check if the user account exists or not.
-    const property = await this.userRepository.getUserBy(userId, null);
-    if (!property) {
-      throw new NotFoundException('User not found');
-    }
+    const property = await this.userService.getUserBy(userId, null);
 
     // Check if client sent package id or not
     if (!body.planId) {
@@ -131,6 +118,18 @@ export class OrganizationService {
     await this.recognitionApiService.deletePackage(organization.packageKey);
     // Delete the organization
     return this.organizationRepository.delete(organizationId);
+  }
+
+  public async getCurrentOrganization(userId: number): Promise<Organization> {
+    const user = await this.userService.getUserBy(userId, ['organization']);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (!user.organization) {
+      throw new NotFoundException("User hasn't joined organization");
+    }
+    return user.organization;
   }
 
   public async joinOrganizationWithPasscode(userId: number, passcode: string) {

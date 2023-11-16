@@ -1,16 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from '@/repositories/user.repository';
+import { UserService } from './user.service';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   public async findAll(organizationId: number) {
     return this.userRepository.findAllByOrganizationId(organizationId);
   }
 
   public async delete(organizationId: number, userId: number) {
-    const user = await this.userRepository.getUserBy(userId, null);
+    const user = await this.userService.getUserBy(userId, null);
     console.log(user);
     if (!user.organization) {
       throw new BadRequestException("User hasn't joined organization");

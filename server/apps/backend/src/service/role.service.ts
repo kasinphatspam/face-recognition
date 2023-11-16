@@ -5,11 +5,13 @@ import {
 } from '@nestjs/common';
 import { UserRepository } from '@/repositories/user.repository';
 import { RoleRepository } from '@/repositories/role.repository';
+import { UserService } from './user.service';
 
 @Injectable()
 export class RoleService {
   constructor(
     private readonly roleRepository: RoleRepository,
+    private readonly userService: UserService,
     private readonly userRepository: UserRepository,
   ) {}
 
@@ -31,7 +33,7 @@ export class RoleService {
     roleId: number,
     userId: number,
   ) {
-    const user = await this.userRepository.getUserBy(userId, [
+    const user = await this.userService.getUserBy(userId, [
       'organization',
       'role',
     ]);

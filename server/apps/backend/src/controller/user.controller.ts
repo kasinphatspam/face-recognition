@@ -56,7 +56,7 @@ export class UserController {
     @Param('userId') userId: number,
     @Res() res: Response,
   ) {
-    const user = await this.userService.getUserBy(userId);
+    const user = await this.userService.getUserBy(userId, null);
     return res.status(HttpStatus.OK).json(user);
   }
 

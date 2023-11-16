@@ -34,7 +34,7 @@ export class Contact {
     nullable: true,
     length: 60,
   })
-  public contactCompany: string;
+  public company: string;
 
   @Column({
     nullable: true,
@@ -76,7 +76,7 @@ export class Contact {
     nullable: true,
     length: 60,
   })
-  public contactOwner: string;
+  public owner: string;
 
   @Column({
     type: 'datetime',

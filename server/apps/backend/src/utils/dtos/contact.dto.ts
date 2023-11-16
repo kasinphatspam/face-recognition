@@ -28,7 +28,7 @@ class CreateNewContactDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(60)
-  public contactCompany: string;
+  public company: string;
 
   @IsOptional()
   @IsNotEmpty()
@@ -61,7 +61,7 @@ class CreateNewContactDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(60)
-  public contactOwner: string;
+  public owner: string;
 
   @IsOptional()
   @Type(() => Date)

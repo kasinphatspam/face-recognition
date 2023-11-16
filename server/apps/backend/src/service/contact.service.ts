@@ -93,7 +93,7 @@ export class ContactService {
       organizationId,
     );
     const packageKey = organization.packageKey;
-    const user = await this.userService.getUserBy(userId);
+    const user = await this.userService.getUserBy(userId, null);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
