@@ -23,7 +23,9 @@ import { SelfGuard } from '@/utils/guards/self.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestUser } from '@/utils/decorators/auth.decorator';
 import { User } from '@/entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(

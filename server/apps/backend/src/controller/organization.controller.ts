@@ -27,6 +27,9 @@ import { CreateNewRoleDto, EditRoleDto } from '@/utils/dtos/role.dto';
 import { AuthGuard } from '@/utils/guards/auth.guard';
 import { RequestUser } from '@/utils/decorators/auth.decorator';
 import { User } from '@/entity';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('organization')
 @Controller('organization')
 export class OrganizationController {
   constructor(

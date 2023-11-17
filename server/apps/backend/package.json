@@ -29,6 +29,7 @@
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/schedule": "^4.0.0",
+    "@nestjs/swagger": "^7.1.16",
     "@nestjs/typeorm": "^10.0.0",
     "@types/body-parser": "^1.19.4",
     "@types/cron": "^2.4.0",

@@ -11,7 +11,9 @@ import {
 import { Response } from 'express';
 import { PlanService } from '@/service/plan.service';
 import { PlanCreateDto, PlanEditDto } from '@/utils/dtos/plan.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('plan')
 @Controller('plan')
 export class PlanController {
   constructor(private readonly planService: PlanService) {}
