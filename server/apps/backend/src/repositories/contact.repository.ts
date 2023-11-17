@@ -92,6 +92,45 @@ export class ContactRepository {
   }
 
   /**
+   * Create many new contacts for a specific organization.
+   * @param organizationId - The ID of the organization.
+   * @param bodies - The datas for the new contacts.
+   * @returns A promise that resolves once the contact is created.
+   */
+  public async createManyContacts(
+    organizationId: number,
+    bodies: CreateNewContactDto[],
+  ) {
+    return connection
+      .createQueryBuilder()
+      .insert()
+      .into(Contact)
+      .values(
+        bodies.map((body) => {
+          return {
+            organization: { id: organizationId },
+            firstname: body.firstname,
+            lastname: body.lastname,
+            company: body.company,
+            title: body.title,
+            officePhone: body.officePhone,
+            mobile: body.mobile,
+            email1: body.email1,
+            email2: body.email2,
+            dob: body.dob,
+            owner: body.owner,
+            createdTime: body.createdTime,
+            modifiedTime: body.modifiedTime,
+            lineId: body.lineId,
+            facebook: body.facebook,
+            linkedin: body.linkedin,
+          };
+        }),
+      )
+      .execute();
+  }
+
+  /**
    * Update the encoded ID of a contact.
    * @param organizationId - The ID of the organization to which the contact belongs.
    * @param contactId - The ID of the contact to update.
