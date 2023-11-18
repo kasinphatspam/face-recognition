@@ -181,7 +181,7 @@ export default function Signuppage() {
         </ModalContent>
       </Modal>
       {/* Page offset */}
-      <div className="pt-4 pl-10 pb-[45px] max-md:pl-5 bg-gray-50 dark:bg-zinc-800 w-screen min-h-screen">
+      <div className="pt-4 px-8 pb-[45px] max-md:pl-5 bg-gray-50 dark:bg-zinc-800 w-screen min-h-screen">
         {/* Button menu warpper */}
         <div className="absolute mt-8 flex flex-row">
           {/* Back button */}
@@ -193,9 +193,9 @@ export default function Signuppage() {
           </div>
         </div>
         {/* Main content */}
-        <div className="flex flex-col items-center mt-[35px] mx-auto bg-white dark:bg-zinc-700/60 rounded-md max-w-[600px] drop-shadow-md">
+        <div className="relative flex flex-col items-center mt-[35px] mx-auto bg-white dark:bg-zinc-700/60 rounded-md max-w-[600px] drop-shadow-md">
           {/* Head content */}
-          <div className="mt-16 min-w-[450px] max-w-[500px]">
+          <div className="mt-16 max-sm:mt-8 max-sm:min-w-[250px] min-w-[450px] max-w-[500px]">
             {/* Text */}
             <p className="text-inherit font-bold text-[30px] text-blue-600">
               {" "}
@@ -208,7 +208,7 @@ export default function Signuppage() {
           </div>
 
           {/* input Email & Password*/}
-          <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 mt-10">
+          <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 max-sm:px-8 mt-10 max-sm:mt-4">
             <Input
               isRequired
               type="text"
@@ -350,7 +350,7 @@ export default function Signuppage() {
           </div>
 
           {/* sign up? */}
-          <div className="flex flex-row justify-start w-[420px] mb-8">
+          <div className="flex flex-row justify-start w-[420px] mb-8 max-sm:pl-[15%]">
             <p className="text-sm font-medium"> You already have an account?</p>
             <Nextlink className="text-sm ml-1 font-medium" href="/login">
               {" "}

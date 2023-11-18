@@ -66,7 +66,7 @@ export default function Loginpage() {
       loginToast.current = null;
       navigate('/')
     }
-  }, [user, organizeData]);
+  }, [user]);
 
   {
     /* Password visibility */
@@ -77,7 +77,7 @@ export default function Loginpage() {
   return (
     <>
       {/* Page offset */}
-      <div className="pt-8 pl-10 max-md:pl-6 bg-gray-5 dark:bg-zinc-800/80 w-screen min-h-screen">
+      <div className="pt-8 px-8 max-md:pl-6 bg-gray-5 dark:bg-zinc-800/80 w-screen min-h-screen">
         {/* Button menu */}
         <div className="flex flex-row">
           <Link to="/" className="w-[28px] h-[28px]">
@@ -162,7 +162,7 @@ export default function Loginpage() {
           </div>
 
           {/* sign up */}
-          <div className="flex flex-row w-[420px] mb-8">
+          <div className="flex flex-row w-[420px] mb-8 max-sm:pl-[15%]">
             <p className="text-sm font-medium"> Don't have an account?</p>
             <Nextlink className="text-sm ml-1 font-medium" href="/signup">
               {" "}
