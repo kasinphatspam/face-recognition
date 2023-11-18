@@ -74,7 +74,7 @@ export default function HomePage() {
               </motion.p>
 
               {/* Get Started Button */}
-              <div>
+              <div className="mb-10">
                 <Link>
                   <Button
                     variants={textVariant(0.3)}
@@ -174,7 +174,7 @@ export default function HomePage() {
         viewport={{ once: false, amount: 0.25 }}
       >
         <TypingText
-          textStyles="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-teal-400 mt-20 px-12"
+          textStyles="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-teal-400 px-12"
           title="Comprehensive"
         />
         <motion.div
