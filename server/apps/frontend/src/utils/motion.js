@@ -1,14 +1,14 @@
 /**
  * @constructor
  * @param {direction} direction - left | right | top | bottom
- * @param {type} type - tween | 
+ * @param {type} type - tween | spring
  * @param {delay} delay - number of milliseconds
  * @param {duration} duration - number of milliseconds
  */
-export const slideIn = (direction, type, delay, duration) => ({
+export const slideInVariant = (direction, type, delay, duration) => ({
     hidden: {
-        x: direction === 'left' ? '-100%' : direction === 'right' ? '100%' : 0,
-        y: direction === 'top' ? '-100%' : direction === 'bottom' ? '100%' : 0,
+        x: direction === 'left' ? '-20%' : direction === 'right' ? '100%' : 0,
+        y: direction === 'top' ? '-20%' : direction === 'bottom' ? '100%' : 0,
         opacity: 0
 
     },
