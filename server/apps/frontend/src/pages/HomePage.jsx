@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import { Button } from "@nextui-org/react";
+import {Card, CardHeader, CardBody, CardFooter, Image, Button} from "@nextui-org/react"
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { textVariant, staggerContainer } from "@/utils/motion";
@@ -32,7 +32,7 @@ export default function HomePage() {
       />
 
       {/* Background images */}
-      <div className="w-full min-h-full bg-gradient-to-r from-[#F1F0E8] to-blue-50 dark:from-zinc-900 dark:to-neutral-800 from-45% to-120% duration-150 ease-in dark:ease-out">
+      <div className="w-full min-h-full bg-gradient-to-r from-gray-50 to-blue-50 dark:from-zinc-900 dark:to-neutral-800 from-45% to-120% duration-150 ease-in dark:ease-out">
 
         {/* Main content */}
         <div className="flex flex-row max-sm:flex-col min-h-[78vh] w-99vw">
@@ -43,79 +43,91 @@ export default function HomePage() {
               whileInView="visible"
               viewport={{ once: false, amount: 0.25 }}
             >
-              <TypingText title="businesses platform" textStyles="-ml-2" />
+              {/* <TypingText title="PLATFORM FOR ENTERPRISE" /> */}
 
               {/* Main Text */}
-              <motion.div className="relative font-outfit font-semibold text-inherit text-[80px] max-sm:text-[60px]"
+              <motion.div className="relative font-outfit font-semibold text-inherit text-[80px] ml-1 max-sm:text-[60px]"
                 variants={textVariant(0.1)}
               >
-                Face Identify
+                Facial recognition
               </motion.div>
               <motion.div className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[60px] ml-1 -mt-4"
                 variants={textVariant(0.2)}
               >
-                Application
+                Improve services and
+              </motion.div>
+
+              <motion.div className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[60px] ml-1 -mt-4"
+                variants={textVariant(0.2)}
+              >
+                Create an impression
               </motion.div>
 
               {/* Secondary Text */}
-              <motion.p className="text-gray-400 text-6 -ml-4 mt-10 w-[450px] max-w-[35vw] max-sm:max-w-[80vw]"
+              <motion.p className="text-black/50 dark:text-white text-6 ml-1 mt-6 w-[450px] max-w-[35vw] max-sm:max-w-[80vw]"
                 variants={textVariant(0.3)}
               >
-                Face recognition Application is computer algorithm method to vertify the identify people using
-                their face in photos or real-time capture.
+                Customer face recognition system for employees to view information through face scanning
               </motion.p>
-            </motion.div>
 
-            {/* Get started Button */}
-            <div className="flex flex-row mt-8 -ml-4">
-              <Link to={user ? "/" : "/login"}>
-                <Button color="success" href="/signup" radius="full" size="md">
-                  <p className="text-white font-medium"> Get Started </p>
+              {/* Get Started Button */}
+              <motion.button
+                variants={textVariant(0.4)}
+                >
+                <Button className="font-bold mt-6 bg-gradient-to-tr from-green-500 to-green-500 text-white shadow-lg">
+                  Get started
                 </Button>
-              </Link>
-            </div>
+              </motion.button>
+
+            </motion.div>
           </div>
           {/* Right Content */}
-          <div className="flex flex-col pb-16">
-            {/* Images */}
-            <img src="/Faceillus.svg" loading="lazy" className="w-[550px] max-sm:w-[350px] min-w-[220px] mx-auto mt-[25vh] max-sm:mt-4" />
-          </div>
+          <motion.div
+            className="flex flex-col items-center -mb-16"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.25 }}>
+              <motion.img src="/app-mockup.webp" className="absolute bottom-24 right-0 w-[1400px] mb-32" variants={textVariant(0.3)}/>
+          </motion.div>
         </div>
       </div>
+
       {/* First Sub-Content */}
       <motion.div
         id="featuresSection" // Add this line
-        className=" bg-[#B4B4B3] dark:bg-zinc-950 pl-[1px] pt-24 flex flex-col"
+        className="grid grid-cols-1 bg-gradient-to-r from-white to-white dark:from-zinc-800 dark:to-zinc-800 duration-150 ease-in dark:ease-out"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.25 }}
       >
-        <motion.div variants={textVariant(0.1)} className="mx-auto font-bold text-[54px] align-middle text-white/90 mt-16">Features</motion.div>
-        <motion.div variants={textVariant(0.5)} className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 px-[12vw] pb-32">
+
+        <motion.div variants={textVariant(0.1)} className="items-center mx-auto font-bold text-[54px] align-middle text-black/90 dark:text-white mt-16">Features</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 align-middle px-[16vw] pb-32">
           <FeaturesCard
-            head={"Deep Learning Ai detection"}
-            desc={"deep learning is that it can automatically learn features from the data, which means that it doesn't require the features to be hand-engineered"}
+            head={"Machine Learning"}
+            desc={"Recognize customer faces with high-efficiency and easy use for employee. \nSupports mobile applications and desktop websites."}
           />
           <FeaturesCard
-            head={"User friendly"}
-            desc={"deep learning is that it can automatically learn features from the data, which means that it doesn't require the features to be hand-engineered"}
+            head={"Easy to import"}
+            desc={"Import customer data into the application by importing Excel or CSV files. We have an automatic customer face recording system."}
           />
           <FeaturesCard
             head={"Web security"}
             desc={"Having site security gives customers peace of mind that their personal and financial information is safe."}
           />
           <FeaturesCard
-            head={"Deep Learning Ai detection"}
-            desc={"deep learning is that it can automatically learn features from the data, which means that it doesn't require the features to be hand-engineered"}
+            head={"Enterprise Management"}
+            desc={"Employee and customer information can be viewed from anywhere. There is a feature to control access to authorization information."}
           />
           <FeaturesCard
-            head={"Deep Learning Ai detection"}
-            desc={"deep learning is that it can automatically learn features from the data, which means that it doesn't require the features to be hand-engineered"}
+            head={"Liveness Detection"}
+            desc={"Machine learning for detecting fake faces and settings based on your opinion of whether you want to use them or not."}
           />
           <FeaturesCard
-            head={"Deep Learning Ai detection"}
-            desc={"deep learning is that it can automatically learn features from the data, which means that it doesn't require the features to be hand-engineered"}
+            head={"Notification"}
+            desc={"Announce news or messages to the employees you want in 1 click. Easy, fast, and able to target or target groups."}
           />
         </motion.div>
       </motion.div>
@@ -125,15 +137,32 @@ export default function HomePage() {
         whileInView="visible"
         viewport={{ once: false, amount: 0.25 }}
       >
-        <motion.div variants={textVariant(0.1)} className="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-teal-400 mt-20 px-12">comprehensive</motion.div>
-        <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Device compatibility</motion.div>
-        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[80px] font-medium text-black/40 dark:text-white/70 px-12">Our application effortlessly adapts to multiple platforms, providing a native experience on mobile devices and a user-friendly website for desktop users</motion.div>
-        <img
-          src="/Mockup.svg"
-          loading="lazy"
-          className="mx-auto my-4 w-[80vw] h-[700px] bg-cover max-sm:h-[400px] max-sm:w-screen"
-          alt="device picture"
-        />
+        <motion.div variants={textVariant(0.1)} className="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-teal-400 mt-20 px-12">Comprehensive</motion.div>
+        <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Supported Devices</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12">Our application effortlessly adapts to multiple platforms, providing a native experience on mobile </motion.div> 
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12">devices and a user-friendly website for desktop users </motion.div>
+        
+        <div className="flex flex-col">
+          
+          <motion.div variants={textVariant(0.5)}  className="flex flex-col">
+            <div className="flex flex-row w-[800px] mx-auto items-center mb-6 mt-10 gap-4">
+              <img
+                src="/apple-store-download.webp"
+                loading="lazy"
+                className="mx-auto my-4 h-[100px] bg-cover max-sm:h-[400px] max-sm:w-screen"
+                alt="device picture"
+              />
+              <img
+                src="/google-play-download.webp"
+                loading="lazy"
+                className="mx-auto my-4 h-[100px]  bg-cover max-sm:h-[400px] max-sm:w-screen"
+                alt="device picture"
+              />
+            </div>
+
+          </motion.div>
+          
+        </div>
         <div className="flex mx-auto items-center font-medium text-black/40 dark:text-white/70 px-12 max-sm:px-0 pb-24 text-medium">
           currently support mobile devices on
           <img src="/google-play.svg" loading="lazy" className="w-5 h-5 px-1" />
@@ -141,24 +170,33 @@ export default function HomePage() {
           <img src="/apple.svg" loading="lazy" className="w-5 h-5 px-1" />
           ios 14+
         </div>
+
+        <motion.img variants={textVariant(0.5)}
+            src="/Mockup.svg"
+            loading="lazy"
+            className="mx-auto my-4 w-[80vw] h-[700px] bg-cover max-sm:h-[400px] max-sm:w-screen"
+            alt="device picture"
+          />
       </motion.div>
-      <motion.div className="flex flex-col bg-zinc-200 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
+      <motion.div className="flex flex-col bg-white dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.25 }}
       >
-        <motion.div variants={textVariant(0.1)} className="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-indigo-400 mt-20 px-12">revolutionize</motion.div>
-        <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Organization management</motion.div>
-        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] font-medium text-black/40 dark:text-white/70 px-12">The Organization Management system's user-friendly interface makes it a breeze to easily manage tasks and operations.</motion.div>
-        <div className="relative">
+        <motion.div variants={textVariant(0.1)} className="mx-auto max-sm:ml-1 items-center font-bold text-[16px] text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-indigo-400 mt-20 px-12">Revolutionize</motion.div>
+        <motion.div variants={textVariant(0.3)} className="mx-auto items-center font-bold text-[60px] -mt-3 mb-4 px-12 leading-tight">Enterprise Management</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12">The Organization Management system's user-friendly interface makes it a breeze to easily manage</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12">tasks, operations and employee. we have features to annoucne news or message direclty groups of</motion.div>
+        <motion.div variants={textVariant(0.5)} className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12">target or target in one click</motion.div>
+        <motion.div variants={textVariant(0.7)} className="relative">
           <img
-            src=""
+            src="/working.svg"
             loading="lazy"
             className="relative mx-auto my-16 w-[80vw] h-[400px] bg-cover"
             alt="page picture"
           />
-        </div>
+        </motion.div>
       </motion.div>
       <motion.div className="flex flex-row max-sm:flex-col bg-zinc-200 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
         variants={staggerContainer}

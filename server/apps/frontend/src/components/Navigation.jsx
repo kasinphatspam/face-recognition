@@ -58,7 +58,7 @@ export default function Navigation(props) {
       <NavbarContent className="pr-3" justify="start">
         <NavbarBrand>
           <Link href="/">
-            <img src="/logo_svg_color.svg" className="w-8 h-8" />
+            <img src="/logo_svg_color.svg" className="w-6 h-6" />
             {/* ... */}
             <p className="font-bold px-4">Face Prove</p>
           </Link>
