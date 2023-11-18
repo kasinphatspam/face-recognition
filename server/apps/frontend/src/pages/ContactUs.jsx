@@ -1,5 +1,6 @@
 import React from 'react';
 import Navigation from "@/components/Navigation";
+import { motion } from "framer-motion";
 
 const ContactUsPage = () => {
   return (
@@ -7,11 +8,17 @@ const ContactUsPage = () => {
       <Navigation
         Active="Contactus"
       />
-      <div className="container mx-auto mt-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto mt-8"
+      >
         <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
 
         {/* Contact Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
           <div>
             <h2 className="text-2xl font-semibold mb-4">Send us a message</h2>
             <form>
@@ -88,7 +95,48 @@ const ContactUsPage = () => {
             </div>
           </div>
         </div>
-      </div>
+
+        {/* input Email & Password*/}
+        <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 max-sm:px-8 -mt-8">
+          <Input
+            isRequired
+            isClearable
+            type="email"
+            label="Email"
+            variant="bordered"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            isRequired
+            endContent={
+              <button
+                className="focus:outline-none"
+                type="button"
+                onClick={toggleVisibility}
+              >
+                {isVisible ? (
+                  <EyeOff className="w-5 h-5 max-sm:w-4 max-sm:h-4 text-default-400 pointer-events-none" />
+                ) : (
+                  <Eye className="w-5 h-5 max-sm:w-4 max-sm:h-4 text-default-400 pointer-events-none" />
+                )}
+              </button>
+            }
+            type={isVisible ? "text" : "password"}
+            label="Password"
+            variant="bordered"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Nextlink
+            herf=""
+            underline="always"
+            className="flex justify-end mr-4 -mt-2"
+          >
+            {" "}
+            <p className="text-[12px]"> forgot password? </p>{" "}
+          </Nextlink>
+        </div>
+
+      </motion.div>
     </>
   );
 };
