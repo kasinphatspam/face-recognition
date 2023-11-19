@@ -104,7 +104,7 @@ const ContactUsPage = () => {
           <div>
             <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
             <p className="mb-2">
-              <span className="font-semibold">Email:</span> info@example.com
+              <span className="font-semibold">Email:</span> faceprove.gurateam@gmail.com
             </p>
             <p className="mb-2">
               <span className="font-semibold">Phone:</span> +1 (123) 456-7890

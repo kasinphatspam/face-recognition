@@ -108,7 +108,7 @@ export default function Navigation(props) {
           </>
         )}
         <NavbarItem>
-          <Link color="foreground" href="/contactus">Contact Us</Link>
+          <Link color="foreground" href="/contactus">Support Center</Link>
         </NavbarItem>
       </NavbarContent>
 

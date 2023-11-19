@@ -166,7 +166,15 @@ export default function HomePage() {
             }
             icon={<Bell className="text-cyan-500 mt-0.5"/>}
           />
+          <div className="flex justify-center col-start-2 mt-20">
+            <Link to="/subscription">
+              <Button color="white" radius="full" size="md" className="outline-2 outline-offset-2 outline-cyan-500 ounded-full">
+                <p className="text-cyan-500 font-medium"> Learn More </p>
+              </Button>
+            </Link>
+          </div>
         </motion.div>
+
       </motion.div>
       <motion.div
         className="flex flex-col bg-zinc-100 dark:bg-neutral-900 min-h-[800px] pt-24 pb-8 max-sm:pt-8"

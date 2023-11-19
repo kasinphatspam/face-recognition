@@ -42,8 +42,7 @@ const FooterBar = () => {
           <div className="font-bold text-xl text-inherit">Explore</div>
           <FooterText title="Home" path="/" />
           <FooterText title="Feature" path="/" />
-          <FooterText title="Pricing" path="/" />
-          <FooterText title="DashBoard Analysis" path="/" />
+          <FooterText title="Subscriptions" path="/subscription" />
         </div>
       </div>
       {/** 3 */}
@@ -52,11 +51,13 @@ const FooterBar = () => {
         <FooterText title="Snapshot" path="/" />
         <FooterText title="Realtime processing" path="/" />
         <FooterText title="Employee management" path="/" />
+        <FooterText title="DashBoard Analysis" path="/" />
+
       </div>
       {/** 4 */}
       <div className="flex flex-col max-sm:w-[200px]">
         <div className="font-bold text-xl text-inherit">Resources</div>
-        <FooterText title="Support Center" path="/" />
+        <FooterText title="Support Center" path="/contactus" />
         <FooterText title="Privacy & Terms" path="/" />
         <FooterText title="Licenses" path="/" />
         <FooterText title="About us" path="/" />
