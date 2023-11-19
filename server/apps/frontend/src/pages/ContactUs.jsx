@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button, Input, Link as Nextlink } from "@nextui-org/react";
 import { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
-
+import FooterBar from '@/components/Footersection';
 
 
 const ContactUsPage = () => {
@@ -22,7 +22,7 @@ const ContactUsPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto mt-16"
+        className="container mx-auto mt-16 m-auto ml-8 mr-8"
       >
         <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
 
@@ -107,9 +107,10 @@ const ContactUsPage = () => {
             </motion.div>
           </div>
         </div>
-
-
       </motion.div>
+      <div className="flex justify-center mt-20 bg-gradient-to-r from-blue-50/50 to-blue-200/10 dark:from-zinc-900 dark:to-neutral-800">
+        <FooterBar className="mt-10" />
+      </div>
     </>
   );
 };

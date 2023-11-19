@@ -12,6 +12,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Package, Truck, Shield, Heart, TrendingUp, Bell } from "react-feather";
 import { footerVariants } from "@/utils/motion";
 import Pricing from "@/components/Pricing";
+import FooterBar from '@/components/Footersection';
+
 
 export default function HomePage() {
   const [month, setMonth] = useState(1);
@@ -366,55 +368,9 @@ export default function HomePage() {
       </motion.div>
 
       {/** footer */}
-      <motion.div
-        className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 max-sm:gap-y-unit-md max-sm:justify-items-center bg-white/90 dark:bg-zinc-900 w-99vw h-[300px] max-sm:h-auto max-sm:pb-12"
-        variants={footerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: false, amount: 0.25 }}
-      >
-        {/** 1 */}
-        <div>
-          <div className="flex flex-row max-sm:w-[200px]">
-            <img
-              src="/logo_svg_color.svg"
-              loading="lazy"
-              className="w-8 h-8 mt-0.5"
-            />
-            <p className="font-bold text-xl mt-[1px] ml-2 text-inherit">
-              Face Prove
-            </p>
-          </div>
-          <div className="mt-24 max-sm:mt-4 ml-2 text-black/30 dark:text-white/70 text-md font-semibold">
-            @2024 Faceprove.
-          </div>
-        </div>
-        {/** 2 */}
-        <div>
-          <div className="flex flex-col max-sm:w-[200px] max-sm:pt-8">
-            <div className="font-bold text-xl text-inherit">Explore</div>
-            <FooterText title="Home" path="/" />
-            <FooterText title="Feature" path="/" />
-            <FooterText title="Pricing" path="/" />
-            <FooterText title="DashBoard Analysis" path="/" />
-          </div>
-        </div>
-        {/** 3 */}
-        <div className="flex flex-col max-sm:w-[200px]">
-          <div className="font-bold text-xl text-inherit">Product</div>
-          <FooterText title="Snapshot" path="/" />
-          <FooterText title="Realtime processing" path="/" />
-          <FooterText title="Employee management" path="/" />
-        </div>
-        {/** 4 */}
-        <div className="flex flex-col max-sm:w-[200px]">
-          <div className="font-bold text-xl text-inherit">Resources</div>
-          <FooterText title="Support Center" path="/" />
-          <FooterText title="Privacy & Terms" path="/" />
-          <FooterText title="Licenses" path="/" />
-          <FooterText title="About us" path="/" />
-        </div>
-      </motion.div>
+      <div className="flex justify-center bg-gradient-to-r from-blue-50/50 to-blue-200/10 dark:from-zinc-900 dark:to-neutral-800">
+        <FooterBar className="mt-10" />
+      </div>
     </>
   );
 }
