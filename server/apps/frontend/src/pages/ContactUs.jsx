@@ -5,12 +5,23 @@ import { Button, Input, Link as Nextlink } from "@nextui-org/react";
 import { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
 import FooterBar from '@/components/Footersection';
-
+import emailjs from '@emailjs/browser';
 
 const ContactUsPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  const form = useRef()
+  const sendEmail = (e) => {
+    e.preventDefault();
 
+    emailjs.sendForm('service_cutuw4q', 'template_54v60tf', form.current, 'Kr0pl6y_pLYkdkM99')
+      .then((result) => {
+          console.log(result.text);
+      }, (error) => {
+          console.log(error.text);
+      });
+      e.target.reset()
+  };
 
   return (
     <>
@@ -22,7 +33,7 @@ const ContactUsPage = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto mt-16 m-auto ml-8 mr-8"
+        className="container mx-auto mt-16 m-auto ml-20 mr-8"
       >
         <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
 
@@ -30,7 +41,7 @@ const ContactUsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
           <div>
             <h2 className="text-2xl font-semibold mb-4">Send us a message</h2>
-            <form>
+            <form ref={form} onSubmit={sendEmail}> 
               <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-3">
                   Your Name
@@ -38,10 +49,10 @@ const ContactUsPage = () => {
                 <Input
                   isRequired
                   isClearable
-                  type="email"
+                  type="text"
                   label="Name"
+                  name="user_name"
                   variant="bordered"
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="mb-4">
@@ -51,27 +62,40 @@ const ContactUsPage = () => {
                 <Input
                   isRequired
                   isClearable
-                  type="email"
+                  name="user_email"
+                  type="text"
                   label="Email"
                   variant="bordered"
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="mb-4">
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-3">
-                  Your Message
+                  Subject
                 </label>
                 <Input
                   isRequired
                   isClearable
-                  type="email"
-                  label="Type your message here"
+                  name='user_subject'
+                  type="text"
+                  label="Make the subject short and clearly"
                   variant="bordered"
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <Button className="font-bold mt-6 bg-gradient-to-tr from-green-500 to-green-500 text-white shadow-lg">
-                  Send Message
+              <div className="mb-4">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-3">
+                  Details
+                </label>
+                <Input
+                  isRequired
+                  isClearable
+                  name='user_detail'
+                  type="text"
+                  label="Explain details"
+                  variant="bordered"
+                />
+              </div>
+              <Button type='submit' className="font-bold mt-6 bg-gradient-to-tr from-green-500 to-green-500 text-white shadow-lg">
+                  Send
               </Button>
             </form>
           </div>
