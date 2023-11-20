@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export default function useVerification(codeLength) {
+export default function useVerification(codeLength: number) {
 
   let inputClass = "code-digit";
   // array collect all state
@@ -24,13 +24,13 @@ export default function useVerification(codeLength) {
       inputStates[index].setDigit(e.target.value);
       if (entry.length === 1) {
         if (index < codeLength - 1) {
-          let nextInput = document.querySelectorAll(`.${inputClass}`)[index + 1];
+          let nextInput = document.querySelectorAll(`.${inputClass}`)[index + 1] as HTMLInputElement;
           if (nextInput.value === "") {
             nextInput.focus()
           }
         } 
       } else if (entry.length === 0) {
-        let prevInput = document.querySelectorAll(`.${inputClass}`)[index - 1];
+        let prevInput = document.querySelectorAll(`.${inputClass}`)[index - 1] as HTMLInputElement;
         if (prevInput !== undefined) {
           prevInput.focus()
         }
