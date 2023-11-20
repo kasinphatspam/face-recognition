@@ -25,16 +25,27 @@ const statusColorMap = {
   vacation: "warning",
 };
 
+const columns = [
+  {name: "ID", uid: "id", sortable: true},
+  {name: "NAME", uid: "name", sortable: true},
+  {name: "EMAIL", uid: "email"},
+  {name: "STATUS", uid: "status", sortable: true},
+  {name: "ACTIONS", uid: "actions"},
+];
+
 const statusOptions = [
   {name: "Active", uid: "active"},
   {name: "Paused", uid: "paused"},
   {name: "Vacation", uid: "vacation"},
 ];
 
-export default function Employeecomponent({data, columns, visible_columns, isEmployee}) {
+
+const INITIAL_VISIBLE_COLUMNS = ["name", "id", "email", "actions"];
+
+export default function Employeecomponent({data}) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(visible_columns));
+  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
@@ -115,7 +126,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: (isEmployee ? user.image : null) }}
+            avatarProps={{ radius: "lg", src: user.image }}
             description={user.firstname + " " + user.lastname}
             name={cellValue}
           >
@@ -180,7 +191,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <p className="font-semibold ml-4 text-3xl">{isEmployee ? "All Employees" : "All Contacts"}</p>
+        <p className="font-semibold ml-4 text-3xl">All employees</p>
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
@@ -255,7 +266,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<Plus />} className={isEmployee ? "" : "hidden"}>
+            <Button color="primary" endContent={<Plus />}>
               Add New
             </Button>
           </div>
@@ -270,7 +281,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
             >
               <option value="5">5</option>
               <option value="10">10</option>
-              <option value="25">25</option>
+              <option value="15">15</option>
             </select>
           </label>
         </div>
@@ -322,7 +333,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
     <>
       <div className="mt-4 ml-4">
         <Table
-          aria-label="collection table"
+          aria-label="Example static collection table"
           color={"primary"}
           selectionMode="multiple"
           selectedKeys={selectedKeys}

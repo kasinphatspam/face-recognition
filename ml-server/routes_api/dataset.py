@@ -8,13 +8,13 @@ router = APIRouter(
 )
 
 @router.post("/")
-def create_package():
+def create_package() -> JSONResponse:
   packageId = create_file()
   return JSONResponse(status_code=status.HTTP_200_OK, content=packageId)
 
 @router.delete("/")
 def delete_package():
-  def delete_package():
+  def delete_package() -> JSONResponse:
     data = request.json
     package_key = data["packageKey"]
     status = delete_file(package_key)

@@ -14,12 +14,12 @@ class Data(BaseModel):
   image: str
   
 @router.post("/")
-async def post_face_recognition(request: Data):
+async def post_face_recognition(request: Data) -> JSONResponse:
   task_id = face_recognition_task.delay(request.package_key, request.image)
   return JSONResponse(status_code=status.HTTP_200_OK, content={'task_id': str(task_id), 'status': 'Processing'})
 
 @router.get("/results/{task_id}")
-async def get_face_recognition_result(task_id: str):
+async def get_face_recognition_result(task_id: str) -> JSONResponse:
   result = await get_task_info(task_id)
   return JSONResponse(status_code=status.HTTP_200_OK, content=result)
   

@@ -32,7 +32,7 @@ export default function Analytics() {
               {/* Employee list */}
               <div className="relative flex flex-col w-[70vw] min-h-[300px] -ml-4 mt-8 bg-white dark:bg-zinc-800 shadow-md rounded-lg py-12 px-24">
                 <div className="flex flex-row">
-                  <p className="font-semibold text-4xl text-inherit ml-2 w-[200px]">Hello, {user.firstname + " " + user.lastname}</p>
+                  <p className="font-semibold text-4xl text-inherit ml-2 w-[200px]">Hello, {(user ? user.firstname : "loading...") + " " + user?.lastname}</p>
                   <div className="absolute right-16 flex flex-row rounded-md px-4 py-1 border-1 dark:border-white/70 h-[34px] bg-black/5"><Calendar className="h-5 w-5 mr-3 mt-0.5" /> {date}</div>
                 </div>
                 <p className="font-light text-black/40 dark:text-white/30 ml-2 mt-0.5 ">good morning, check your daily Analysis record and Activities</p>

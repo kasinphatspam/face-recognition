@@ -51,3 +51,25 @@ export type ImageRecognition = {
 export type Image = {
   file: FormData
 }
+
+export type Contact = {
+  firstname: string
+  lastname: string
+  company: string
+  title: string
+  officePhone: string
+  mobile: string
+  email1: string
+  email2: string
+  dob: string
+  owner: string
+  createdTime: Date
+  modifiedTime: Date
+  lineId: string
+  facebook: string
+  linkedin: string
+}
+
+export type Encode = {
+  image: string
+}

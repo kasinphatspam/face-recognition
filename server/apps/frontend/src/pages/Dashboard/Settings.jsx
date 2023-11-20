@@ -5,30 +5,27 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "react-toastify";
 import { config } from "@/utils/toastConfig";
 import Resizer from "react-image-file-resizer";
-import {
-  Input,
-  Button,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Input, Button, Select, SelectItem } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser, updateImage } from "@/api/put";
 
 export default function Settings() {
   // -----------------------   VARIABLES   -------------------------------
-  const toastid = useRef(null);
   const { user, fetchUser } = useAuth();
-  const [date, setDate] = useState('');
+  const { firstname = '', lastname = '', email = '', gender = '', dob = '' } = user;
+  const toastid = useRef(null);
+  const [date, setDate] = useState("");
   const [imagefile, setImagefile] = useState(null);
-  const { firstname, lastname, email, gender, dob, image } = user;
   const [imageURL, setImageURL] = useState(null);
   const [editData, setEditData] = useState({
     firstname: firstname,
     lastname: lastname,
     email: email,
-    gender: gender,
+    gender: [gender],
     dob: dob,
   });
+  
+
 
   // -----------------------   API   -------------------------------
   /** update image api */
@@ -57,40 +54,40 @@ export default function Settings() {
     },
   });
 
-    /** update user api */
-    const updateData = useMutation({
-      mutationKey: ["update"],
-      mutationFn: async (data) => {
-        return updateUser(user.id, data);
-      },
-      onMutate: () => {
-        const toastedit = toast.loading("Please wait...", {
-          containerId: "main",
-        });
-        toastid.current = toastedit;
-      },
-      onSuccess: () => {
-        toast.update(
-          toastid.current,
-          config("update user information successfully", "success")
-        );
-        fetchUser();
-      },
-      onError: (err) => {
-        toast.update(
-          toastCreate.current,
-          config(`${messageCode(err.message)}`, "error")
-        );
-        updateData.reset();
-      },
-    });
+  /** update user api */
+  const updateData = useMutation({
+    mutationKey: ["update"],
+    mutationFn: async (data) => {
+      return updateUser(user.id, data);
+    },
+    onMutate: () => {
+      const toastedit = toast.loading("Please wait...", {
+        containerId: "main",
+      });
+      toastid.current = toastedit;
+    },
+    onSuccess: () => {
+      toast.update(
+        toastid.current,
+        config("update user information successfully", "success")
+      );
+      fetchUser();
+    },
+    onError: (err) => {
+      toast.update(
+        toastCreate.current,
+        config(`${messageCode(err.message)}`, "error")
+      );
+      updateData.reset();
+    },
+  });
 
   // -----------------------   GENERAL   -------------------------------
-  
+
   /** handle date inpput */
   const handleInputChange = (e) => {
     let inputValue = e.target.value;
-    inputValue = inputValue.replace(/\D/g, '');
+    inputValue = inputValue.replace(/\D/g, "");
 
     // Add slashes to the input value based on the DD/MM/YYYY format
     if (inputValue.length <= 2) {
@@ -98,20 +95,23 @@ export default function Settings() {
     } else if (inputValue.length <= 4) {
       setDate(`${inputValue.slice(0, 2)}/${inputValue.slice(2)}`);
     } else {
-      setDate(`${inputValue.slice(0, 2)}/${inputValue.slice(2, 4)}/${inputValue.slice(4, 8)}`);
+      setDate(
+        `${inputValue.slice(0, 2)}/${inputValue.slice(2, 4)}/${inputValue.slice(
+          4,
+          8
+        )}`
+      );
     }
   };
 
   const convertImage = async (file) => {
     return new Promise((resolve, reject) => {
-      const maxWidth = 700;
-      const maxHeight = 700;
+      const maxWH = 300;
       const image = Resizer.imageFileResizer(
         file,
-        maxWidth,
-        maxHeight,
-        "JPG", // Specify the format
-        84, // Quality
+        maxWH, maxWH, // width x height
+        "JPEG", // Specify the format
+        80, // Quality
         0, // Rotation
         (uri) => {
           resolve(uri);
@@ -128,7 +128,7 @@ export default function Settings() {
       const image = e.target.files[0];
       const formatimage = await convertImage(image);
       const formData = new FormData();
-      formData.append("image", image, image.name);
+      formData.append("image", formatimage, image.name);
       setImageURL(URL.createObjectURL(formatimage));
       setImagefile(formData);
     }
@@ -139,9 +139,9 @@ export default function Settings() {
   };
 
   const handleImageSaver = (e) => {
-    e.preventDefault()
-    uploadImage.mutate(imagefile)
-  }
+    e.preventDefault();
+    uploadImage.mutate(imagefile);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -149,10 +149,12 @@ export default function Settings() {
     let dateObject;
     if (datesplit.length === 3) {
       dateObject = new Date(+datesplit[2], datesplit[1] - 1, datesplit[0]);
-    } else dateObject = new Date("1970-01-01")
-    console.log(editData.gender.length)
-    const data = { ...editData, gender: editData.gender.length > 0 ? editData.gender[0] : "none", dob: dateObject}
-    console.log(data)
+    } else dateObject = new Date("1970-01-01");
+    const data = {
+      ...editData,
+      gender: editData.gender.length > 0 ? editData.gender[0] : "none",
+      dob: dateObject,
+    };
     updateData.mutate(data);
   };
 
@@ -191,7 +193,7 @@ export default function Settings() {
                 <div className="flex flex-row mt-6">
                   <div className="flex flex-col w-1/3">
                     <img
-                      src={imageURL === null ? image : imageURL}
+                      src={imageURL === null ? user ? user.image : "/default.jpg" : imageURL}
                       className="w-3/4 ,x-auto rounded-lg"
                     />
                     {!!!imageURL && (
@@ -238,7 +240,7 @@ export default function Settings() {
                         type="text"
                         label="firstname"
                         name="firstname"
-                        placeholder={firstname}
+                        placeholder={firstname ?? "please enter your first name"}
                         onChange={handleChange}
                       />
                       <Input
@@ -246,7 +248,7 @@ export default function Settings() {
                         type="text"
                         label="lastname"
                         name="lastname"
-                        placeholder={lastname}
+                        placeholder={lastname ?? "please enter your last name"}
                         onChange={handleChange}
                       />
                     </div>
@@ -255,7 +257,7 @@ export default function Settings() {
                       type="email"
                       label="email"
                       name="email"
-                      placeholder={email}
+                      placeholder={email ?? "ex. example@example.com"}
                       onChange={handleChange}
                     />
                     <Select
@@ -263,11 +265,12 @@ export default function Settings() {
                       variant="bordered"
                       name="gender"
                       placeholder={gender || "none"}
-                      value={["male","female","none"]}
-                      selectedKeys={editData.gender}
+                      value={["male", "female", "none"]}
+                      selectedKeys={editData.gender || []}
                       className="max-w-xs w-32 ml-3"
-                      // onChange={(e) => setEditData({ ...editData, gender: e.target.value})}
-                      onSelectionChange={(item) => setEditData({ ...editData, "gender": [...item.values()]})}
+                      onSelectionChange={(item) =>
+                        setEditData({ ...editData, gender: [...item.values()] })
+                      }
                     >
                       <SelectItem key="male" value="male">
                         male
@@ -289,7 +292,6 @@ export default function Settings() {
                         value={date}
                         onChange={(e) => handleInputChange(e)}
                       />
-                  
                     </div>
                     <Button
                       className="ml-8 mt-4 w-28 px-8"
