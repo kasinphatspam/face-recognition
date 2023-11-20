@@ -292,6 +292,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emailjs/browser@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "@emailjs/browser@npm:3.11.0"
+  checksum: fdeb780f49ed5ee75ad2d197ae2fcc77c266dcffe1204b6450d01df7db2e9a17d12af97a460eaf33f777c569935aa83285c184d63c59c03387a2c326e90ba5e9
+  languageName: node
+  linkType: hard
+
+"@emailjs/nodejs@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@emailjs/nodejs@npm:2.2.0"
+  checksum: 815d6ef0e0809b391f1d6c600bf5a6522c54833be55ff19b44f3662851d8f082a256419f1c899d023f91372640b198a50cff4fec794f416141fb40e8661684c0
+  languageName: node
+  linkType: hard
+
 "@emotion/is-prop-valid@npm:^0.8.2":
   version: 0.8.8
   resolution: "@emotion/is-prop-valid@npm:0.8.8"
@@ -7046,6 +7060,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "vite-project@workspace:."
   dependencies:
+    "@emailjs/browser": ^3.11.0
+    "@emailjs/nodejs": ^2.2.0
     "@mediapipe/camera_utils": ^0.3.1675466862
     "@mediapipe/drawing_utils": ^0.3.1675466124
     "@mediapipe/face_detection": ^0.4.1646425229

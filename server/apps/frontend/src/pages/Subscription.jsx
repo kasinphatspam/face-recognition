@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { textVariant, staggerContainer } from "@/utils/motion";
 import { Button } from "@nextui-org/react";
 import Pricing from "@/components/Pricing";
+import FooterBar from '@/components/Footersection';
+
 
 const Subscription = () => {
   const subscriptionImage =
@@ -134,6 +136,9 @@ const Subscription = () => {
             />
           </div>
         </motion.div>
+      </div>
+      <div className="flex justify-center bg-gradient-to-r from-blue-50/50 to-blue-200/10 dark:from-zinc-900 dark:to-neutral-800">
+        <FooterBar className="mt-10" />
       </div>
     </>
   );
