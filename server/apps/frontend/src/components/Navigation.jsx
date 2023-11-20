@@ -44,7 +44,7 @@ export default function Navigation(props) {
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="w-full"
+      className="w-screen"
     >
       {/** ------------------------------------------------- */}
       {/* Tabs for small devices */}
@@ -203,10 +203,10 @@ export function FaceRecognitionNavigation() {
           <NavbarItem>
             <Switchthemebutton className="" size="sm" />
           </NavbarItem>
-          <NavbarItem hidden={!user}>
+          <NavbarItem hidden={!(user == null)}>
             <DropdownAvatar />
           </NavbarItem>
-          <NavbarItem hidden={user}>
+          <NavbarItem hidden={(user == null)}>
             <Button
               as={Link}
               color="primary"

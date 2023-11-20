@@ -1,16 +1,26 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import {
-  Button,
-} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { textVariant, staggerContainer, slideInVariant } from "@/utils/motion";
+import {
+  textVariant,
+  staggerContainer,
+  slideInVariant,
+  footerVariants,
+} from "@/utils/motion";
 import FeaturesCard from "@/components/Card/FeatureCard";
 import { TypingText, FooterText } from "@/components/CustomText";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, Package, Truck, Shield, Heart, TrendingUp, Bell } from "react-feather";
-import { footerVariants } from "@/utils/motion";
+import {
+  ArrowRight,
+  Package,
+  Truck,
+  Shield,
+  Heart,
+  TrendingUp,
+  Bell,
+} from "react-feather";
 import Pricing from "@/components/Pricing";
 
 export default function HomePage() {
@@ -31,34 +41,35 @@ export default function HomePage() {
       <Navigation Active="Customers" />
 
       {/* Background images */}
-      <div className="w-full min-h-full bg-gradient-to-r from-blue-50/50 to-blue-200/70 dark:from-zinc-900 dark:to-neutral-800 from-25% to-[200%] duration-150 ease-in dark:ease-out">
+      <div className="relative w-screen min-h-screen overflow-x-hidden bg-gradient-to-r from-blue-50/50 to-blue-200/70 dark:from-zinc-900 dark:to-neutral-800 from-25% to-[200%] duration-150 ease-in dark:ease-out">
         {/* Main content */}
         <div className="flex flex-row max-md:flex-col min-h-[78vh] w-99vw">
-          <div className="flex flex-col min-w-[44vw] mt-[19vh] ml-[15vw] pb-24max-sm:pb-8 max-sm:ml-[9vw]">
+          <div className="relative flex flex-col min-w-[44vw] mt-[19vh] ml-[15vw] mb-16 pb-24max-sm:pb-8 max-sm:ml-[9vw]">
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: false, amount: 0.25 }}
+              className="z-10"
             >
               {/* <TypingText title="PLATFORM FOR ENTERPRISE" /> */}
 
               {/* Main Text */}
               <motion.div
-                className="relative font-outfit font-semibold text-inherit text-[80px] ml-1 max-sm:text-[40px] max-md:w-[90vw] z-10"
+                className="relative font-outfit font-semibold text-inherit text-[80px] ml-1 max-sm:text-[40px] max-md:w-[90vw]"
                 variants={textVariant(0.1)}
               >
-                Facial recognition
+                Facial recognition,
               </motion.div>
               <motion.div
-                className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[40px] max-md:w-[80vw] ml-1 -mt-3 z-10"
+                className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[40px] max-md:w-[80vw] ml-1 -mt-3"
                 variants={textVariant(0.2)}
               >
                 Improve services and
               </motion.div>
 
               <motion.div
-                className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[40px] max-md:w-[80vw] ml-1 -mt-3 z-10 "
+                className="font-semibold font-outfit text-inherit text-[80px] max-sm:text-[40px] max-md:w-[80vw] ml-1 -mt-3"
                 variants={textVariant(0.2)}
               >
                 Create an impression
@@ -74,7 +85,7 @@ export default function HomePage() {
               </motion.p>
 
               {/* Get Started Button */}
-              <div className="mb-10">
+              <div className="mb-16">
                 <Link>
                   <Button
                     variants={textVariant(0.3)}
@@ -96,7 +107,7 @@ export default function HomePage() {
               whileInView="visible"
               viewport={{ once: false, amount: 0.25 }}
               src="mockup.webp"
-              className="absolute left-[52vw] -top-16 mb-32 h-[90vh] w-[calc(90vh*1.1295)] overflow-hidden -z-5 max-md:top-4 max-md:w-[90vw] max-md:h-[calc(90vw*0.885)] max-md:left-4"
+              className="absolute left-[55vw] -top-12 mb-32 h-[90vh] w-[calc(90vh*1.1295)] overflow-hidden -z-5 max-md:top-4 max-md:w-[90vw] max-md:h-[calc(90vw*0.885)] max-md:left-4"
               variants={slideInVariant("left", "tween", 0.1, 1)}
             />
           </div>
@@ -127,42 +138,42 @@ export default function HomePage() {
             desc={
               "Recognize customer faces with high-efficiency and easy use for employee. \nSupports mobile applications and desktop websites."
             }
-            icon={<Package className="text-cyan-500 mt-0.5"/>}
+            icon={<Package className="text-cyan-500 mt-0.5" />}
           />
           <FeaturesCard
             head={"Easy to import"}
             desc={
               "Import customer data into the application by importing Excel or CSV files. We have an automatic customer face recording system."
             }
-            icon={<Truck className="text-cyan-500 mt-0.5"/>}
+            icon={<Truck className="text-cyan-500 mt-0.5" />}
           />
           <FeaturesCard
             head={"Web security"}
             desc={
               "Having site security gives customers peace of mind that their personal and financial information is safe."
             }
-            icon={<Shield className="text-cyan-500 mt-0.5"/>}
+            icon={<Shield className="text-cyan-500 mt-0.5" />}
           />
           <FeaturesCard
             head={"Enterprise Management"}
             desc={
               "Employee and customer information can be viewed from anywhere. There is a feature to control access to authorization information."
             }
-            icon={<TrendingUp className="text-cyan-500 mt-0.5"/>}
+            icon={<TrendingUp className="text-cyan-500 mt-0.5" />}
           />
           <FeaturesCard
             head={"Liveness Detection"}
             desc={
               "Machine learning for detecting fake faces and settings based on your opinion of whether you want to use them or not."
             }
-            icon={<Heart className="text-cyan-500 mt-0.5"/>}
+            icon={<Heart className="text-cyan-500 mt-0.5" />}
           />
           <FeaturesCard
             head={"Notification"}
             desc={
               "Announce news or messages to the employees you want in 1 click. Easy, fast, and able to target or target groups."
             }
-            icon={<Bell className="text-cyan-500 mt-0.5"/>}
+            icon={<Bell className="text-cyan-500 mt-0.5" />}
           />
         </motion.div>
       </motion.div>
@@ -188,7 +199,8 @@ export default function HomePage() {
           className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12"
         >
           Our application effortlessly adapts to multiple platforms, providing a
-          native experience on mobile devices and a user-friendly website for desktop users
+          native experience on mobile devices and a user-friendly website for
+          desktop users
         </motion.div>
 
         <div className="flex flex-col">
@@ -350,7 +362,7 @@ export default function HomePage() {
             server={"100GB"}
             subscription={699}
             month={month}
-            custom={"ring-2 ring-pink-600"}
+            Popular
           />
         </div>
 
@@ -367,7 +379,7 @@ export default function HomePage() {
 
       {/** footer */}
       <motion.div
-        className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 max-sm:gap-y-unit-md max-sm:justify-items-center bg-white/90 dark:bg-zinc-900 w-99vw h-[300px] max-sm:h-auto max-sm:pb-12"
+        className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 max-sm:gap-y-unit-md max-sm:justify-items-center bg-white/90 dark:bg-zinc-900 w-[99vw] h-[300px] max-sm:h-auto max-sm:pb-12"
         variants={footerVariants}
         initial="hidden"
         whileInView="visible"

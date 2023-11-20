@@ -5,10 +5,10 @@
  * @param {delay} delay - number of milliseconds
  * @param {duration} duration - number of milliseconds
  */
-export const slideInVariant = (direction, type, delay, duration) => ({
+export const slideInVariant = (direction: string, type: string, delay: number, duration: number) => ({
     hidden: {
-        x: direction === 'left' ? '-20%' : direction === 'right' ? '100%' : 0,
-        y: direction === 'top' ? '-20%' : direction === 'bottom' ? '100%' : 0,
+        x: direction === 'left' ? '-20%' : direction === 'right' ? '20%' : 0,
+        y: direction === 'top' ? '-20%' : direction === 'bottom' ? '20%' : 0,
         opacity: 0
 
     },
@@ -29,7 +29,7 @@ export const slideInVariant = (direction, type, delay, duration) => ({
  * @constructor
  * @param {delay} delay - number of milliseconds
  */
-export const textVariant = (delay) => ({
+export const textVariant = (delay: number) => ({
     hidden: {
         y: 30,
         opacity: 0,
@@ -47,24 +47,23 @@ export const textVariant = (delay) => ({
 
 /** 
  * @constructor
- * @param {delay} delay - number of milliseconds
  */
-export const textVariant2 = (delay) => ({
+export const textVariant2 = () => ({
     hidden: {
-        opacity: 0,
         y: 20,
+        opacity: 0,
     },
     visible: {
         opacity: 1,
         y: 0,
         transition: {
             type: 'tween',
-            ease: 'easeIn'
+            ease: 'easeInOut',
         },
     },
 });
 
-export const staggerContainer = (staggerChildren, delayChildren) => ({
+export const staggerContainer = (staggerChildren : any, delayChildren: any) => ({
   hidden: {},
   visible: {
     transition: {
@@ -80,7 +79,10 @@ export const textContainer = {
   },
   visible: (i = 1) => ({
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: i * 0.1 },
+    transition: { 
+        staggerChildren: 0.1,
+        delayChildren: i * 0.1,
+    },
   }),
 };
 

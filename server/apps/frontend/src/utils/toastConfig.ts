@@ -1,4 +1,4 @@
-export const config = (message, type) => {
+export const config = (message: string, type: string) => {
   return {
     render: `${message}`,
     type: `${type}`,

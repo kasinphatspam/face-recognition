@@ -34,7 +34,7 @@ export default function CreateTeam() {
   const createOrg = useMutation({
     mutationKey: ["organize", user?.id],
     mutationFn: async (name) => {
-      await createNewOrg(user?.id, {name});
+      await createNewOrg({name});
     },
     onMutate: () => {
       const idCreate = toast.loading("Please wait ...", { containerId: "main" });
@@ -57,7 +57,7 @@ export default function CreateTeam() {
   const codeData = useMutation({
     mutationKey: ["code"], 
     mutationFn: async (code) => {
-      await passCode(user.id, code);
+      await passCode(code);
     },
     onSuccess: async () => {
       toast.update(idCode.current, config("organize was found. Waiting response from admin","success"));
