@@ -43,7 +43,7 @@ export default function HomePage() {
       <Navigation Active="Customers" />
 
       {/* Background images */}
-      <div className="relative w-screen min-h-screen overflow-x-hidden bg-gradient-to-r from-blue-50/50 to-blue-200/70 dark:from-zinc-900 dark:to-neutral-800 from-25% to-[200%] duration-150 ease-in dark:ease-out">
+      <div className="relative w-screen min-h-screen overflow-x-hidden bg-gradient-to-r from-blue-50/50 to-blue-200/70 dark:from-zinc-900 dark:to-[#2a395a] from-15% to-[170%] duration-150 ease-in dark:ease-out">
         {/* Main content */}
         <div className="flex flex-row max-md:flex-col min-h-[78vh] w-99vw">
           <div className="relative flex flex-col min-w-[44vw] mt-[19vh] ml-[15vw] mb-16 pb-24max-sm:pb-8 max-sm:ml-[9vw]">
