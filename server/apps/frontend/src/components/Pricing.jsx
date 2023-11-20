@@ -13,7 +13,7 @@ export default function Pricing({
 }) {
 	return (
 		<>
-			<div className={`flex flex-col w-[320px] h-[390px] bg-white dark:bg-zinc-600 rounded-lg px-3 drop-shadow-lg dark:drop-shadow-none ${Popular && "ring-2 ring-pink-600 drop-shadow-[0_0px_20px_rgba(219,39,119,0.25)]"} ${custom}`}>
+			<div className={`flex flex-col w-[320px] h-[390px] bg-white dark:bg-zinc-600 rounded-lg px-3 dark:drop-shadow-none ${Popular ? "ring-2 ring-pink-600 drop-shadow-[0_0px_20px_rgba(219,39,119,0.25)]" :  "drop-shadow-lg"} ${custom}`}>
 				<div className="ml-6 font-semibold mt-8 text-2xl">{session}</div>
 				<div className="ml-5 font-light mt-1 text-sm text-black/40 dark:text-white/70">{description}</div>
 				<div className='flex flex-row mx-auto mt-8'>
