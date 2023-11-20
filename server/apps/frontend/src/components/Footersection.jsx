@@ -41,7 +41,7 @@ const FooterBar = () => {
         <div className="flex flex-col max-sm:w-[200px] max-sm:pt-8">
           <div className="font-bold text-xl text-inherit">Explore</div>
           <FooterText title="Home" path="/" />
-          <FooterText title="Feature" path="/" />
+          <FooterText title="Feature" path="/featurepage" />
           <FooterText title="Subscriptions" path="/subscription" />
         </div>
       </div>
