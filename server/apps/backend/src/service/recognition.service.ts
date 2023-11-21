@@ -104,7 +104,10 @@ export class RecognitionService {
     return response.data;
   }
 
-  public async recognitionImage(packageKey: string, image: string) {
+  public async recognitionImage(
+    packageKey: string,
+    image: string,
+  ): Promise<RecognitionImageResponseDto[]> {
     console.log(`${packageKey}`);
     const response = await axios.post(
       `${process.env.ML_SERVER_URL}/face-recognition`,
@@ -124,9 +127,46 @@ export class RecognitionService {
       throw new Error(`Error! status: ${response.status}`);
     }
 
-    const object: RecognitionImageResponseDto = JSON.parse(
-      JSON.stringify(response.data),
-    );
-    return object;
+    const recognitionDtoArray = convertJsonToDto(JSON.stringify(response.data));
+    const array: RecognitionImageResponseDto[] = [];
+
+    if (!isArray(recognitionDtoArray)) {
+      array.push(recognitionDtoArray as RecognitionImageResponseDto);
+      return array;
+    }
+    return recognitionDtoArray as RecognitionImageResponseDto[];
+  }
+}
+
+function isArray(obj: any) {
+  return Array.isArray(obj);
+}
+
+function convertJsonToDto(
+  jsonString: string,
+): RecognitionImageResponseDto | RecognitionImageResponseDto[] {
+  const jsonData = JSON.parse(jsonString);
+  try {
+    if (Array.isArray(jsonData)) {
+      return jsonData.map(
+        (item) =>
+          new RecognitionImageResponseDto(
+            item.id,
+            item.statusCode,
+            item.accuracy,
+            new Date(item.checkedTime),
+          ),
+      );
+    } else {
+      return new RecognitionImageResponseDto(
+        jsonData.id,
+        jsonData.statusCode,
+        jsonData.accuracy,
+        new Date(jsonData.checkedTime),
+      );
+    }
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return Array.isArray(jsonData) ? [] : null;
   }
 }

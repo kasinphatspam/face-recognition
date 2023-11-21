@@ -39,7 +39,6 @@ export class ContactService {
     organizationId: number,
     encodedId: string,
   ) {
-    console.log(organizationId, encodedId);
     return this.contactRepository.getContactByEncodedId(
       organizationId,
       encodedId,
@@ -92,40 +91,37 @@ export class ContactService {
       organizationId,
     );
     const packageKey = organization.packageKey;
-    const user = await this.userService.getUserBy(userId, null);
+    // const user = await this.userService.getUserBy(userId, null);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
     );
-    await this.historyRepository.insert(organization, user, resultObj);
-    if (!resultObj.id) {
-      const object = {
-        checkedTime: resultObj.checkedTime,
-        accuracy: resultObj.accuracy,
-        statusCode: resultObj.statusCode,
-      };
-      return object;
-    }
-    console.log(resultObj.id);
-    const contact = await this.getContactByEncodedId(
-      organizationId,
-      resultObj.id,
-    );
-    if (!contact) {
-      const object = {
-        checkedTime: resultObj.checkedTime,
-        error: "contact's face is conflict",
-        accuracy: resultObj.accuracy,
-        statusCode: resultObj.statusCode,
-      };
-      return object;
+    // await this.historyRepository.insert(organization, user, resultObj);
+    const contactArray = [];
+    const accuracyArray = [];
+
+    for (const i of resultObj) {
+      if (i.statusCode == 0 || i.statusCode == -1) {
+        const object = {
+          accuracy: [0.0],
+          statusCode: i.statusCode,
+        };
+        return object;
+      }
+
+      const contact = await this.getContactByEncodedId(organizationId, i.id);
+
+      if (contact) {
+        contactArray.push(contact);
+        accuracyArray.push(i.accuracy);
+      }
     }
     const object = {
-      checkedTime: resultObj.checkedTime,
-      accuracy: resultObj.accuracy,
-      statusCode: resultObj.statusCode,
-      result: contact,
+      accuracy: accuracyArray,
+      statusCode: 1,
+      result: contactArray,
     };
+    console.log(object);
     return object;
   }
 

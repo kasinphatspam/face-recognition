@@ -127,7 +127,7 @@ export class OrganizationController {
     });
   }
 
-  @Get(':organizationId/employee/list/all')
+  @Get(':organizationId/employee/all')
   public async getAllEmployee(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,
@@ -164,6 +164,15 @@ export class OrganizationController {
     @Res() res: Response,
   ) {
     return res.status(HttpStatus.OK).json(organizationId);
+  }
+
+  @Get(':organizationId/contact/all')
+  public async getAllContact(
+    @Param('organizationId') organizationId: number,
+    @Res() res: Response,
+  ) {
+    const contacts = await this.contactService.getAllContact(organizationId);
+    return res.status(HttpStatus.OK).json(contacts);
   }
 
   @Get(':organizationId/contact/:contactId')
@@ -229,15 +238,6 @@ export class OrganizationController {
     );
 
     return res.status(HttpStatus.OK).json(data);
-  }
-
-  @Get(':organizationId/contact/list/all')
-  public async getAllContact(
-    @Param('organizationId') organizationId: number,
-    @Res() res: Response,
-  ) {
-    const contacts = await this.contactService.getAllContact(organizationId);
-    return res.status(HttpStatus.OK).json(contacts);
   }
 
   @Post(':organizationId/contact/csv')

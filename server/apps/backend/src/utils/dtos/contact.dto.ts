@@ -125,6 +125,18 @@ class RecognitionImageResponseDto {
   @Type(() => Date)
   @IsDate()
   public checkedTime: Date;
+
+  constructor(
+    id: string,
+    statusCode: number,
+    accuracy: Float32Array,
+    checkedTime: Date,
+  ) {
+    this.id = id;
+    this.statusCode = statusCode;
+    this.accuracy = accuracy;
+    this.checkedTime = checkedTime;
+  }
 }
 
 class CreatePackageResponseDto {

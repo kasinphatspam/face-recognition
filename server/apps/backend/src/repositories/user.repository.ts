@@ -200,8 +200,13 @@ export class UserRepository {
    */
   public async findAllByOrganizationId(organizationId: number) {
     return connection.getRepository(User).find({
-      relations: ['organization'],
+      relations: ['organization', 'role'],
       where: [{ organization: { id: organizationId } }],
+      order: {
+        role: {
+          name: 'ASC',
+        },
+      },
     });
   }
 

@@ -81,7 +81,10 @@ export class AuthService {
       if (!data) {
         throw new UnauthorizedException();
       }
-      const user = await this.userService.getUserBy(data.id, null);
+      const user = await this.userService.getUserBy(data.id, [
+        'organization',
+        'role',
+      ]);
       return user;
     } catch (error) {
       if (error instanceof ForbiddenException) {
