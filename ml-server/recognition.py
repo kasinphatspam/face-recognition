@@ -13,6 +13,16 @@ class FaceRecognition:
         self.package_key = package_key
         self.file_path = f"dataset/{package_key}.npy"
         self.organ_empty = "dataset/empty_organization_for_check_empty.npy"
+        self.face_data = self.load_organization_data()
+
+    def load_organization_data(self):
+        if os.path.exists(self.file_path):
+            try:
+                return np.load(self.file_path, allow_pickle=True).item()
+            except (FileNotFoundError, ValueError):
+                print("ERROR: Unable to load organization.")
+        return None
+    
 
     def calculate_face_confidence(self,face_distance, face_match_threshold=0.6):
         range_val = 1.0 - face_match_threshold
@@ -136,7 +146,6 @@ class FaceRecognition:
                 "message": "FAIL: Oganization not found",
             }
         
-
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
             if (
@@ -144,6 +153,7 @@ class FaceRecognition:
                 and "ids" in existing_face_data.item()
             ):
                 face_data = existing_face_data.item()
+                del existing_face_data
             else:
                 pass
         except (FileNotFoundError, ValueError):
@@ -184,16 +194,6 @@ class FaceRecognition:
                 "statusCode":-1,
                 "checkedTime": timestamp,
                 "message": "FAIL: Oganization not found",
-            }
-
-        try:
-            face_data = np.load(self.file_path, allow_pickle=True).item()
-        except (FileNotFoundError, ValueError):
-            print("ERROR: Unable to load organization.")
-            return {
-                "statusCode": -1,
-                "checkedTime": timestamp,
-                "message": "FAIL: Unable to load organization",
             }
 
         decoded_data = base64.b64decode(encoded_data)
@@ -237,11 +237,11 @@ class FaceRecognition:
 
         faces_result = []
         for idx, face_encoding in enumerate(face_encodings):
-            face_distances = face_recognition.face_distance(face_data["encodings"], face_encoding)
+            face_distances = face_recognition.face_distance(self.face_data["encodings"], face_encoding)
             
             for i, distance in enumerate(face_distances):
                 if distance <= 0.9:
-                    id = face_data["ids"][i]
+                    id = self.face_data["ids"][i]
                     confidence = self.calculate_face_confidence(distance)
                     percentage = float(confidence.replace("%", ""))
                     if percentage > 95:
