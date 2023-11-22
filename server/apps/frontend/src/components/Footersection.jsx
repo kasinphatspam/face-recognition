@@ -48,18 +48,17 @@ const FooterBar = () => {
       {/** 3 */}
       <div className="flex flex-col max-sm:w-[200px]">
         <div className="font-bold text-xl text-inherit">Product</div>
-        <FooterText title="Snapshot" path="/" />
-        <FooterText title="Realtime processing" path="/" />
-        <FooterText title="Employee management" path="/" />
-        <FooterText title="DashBoard Analysis" path="/" />
+        <FooterText title="Snapshot" path="/featurepage" />
+        <FooterText title="Realtime processing" path="/featurepage" />
+        <FooterText title="Employee management" path="/featurepage" />
+        <FooterText title="DashBoard Analysis" path="/featurepage" />
 
       </div>
       {/** 4 */}
       <div className="flex flex-col max-sm:w-[200px]">
         <div className="font-bold text-xl text-inherit">Resources</div>
         <FooterText title="Support Center" path="/contactus" />
-        <FooterText title="Privacy & Terms" path="/" />
-        <FooterText title="Licenses" path="/" />
+        <FooterText title="FAQ" path="/" />
         <FooterText title="About us" path="/" />
       </div>
     </motion.div>

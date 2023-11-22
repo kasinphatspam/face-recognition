@@ -7,11 +7,9 @@ import {
   textVariant,
   staggerContainer,
   slideInVariant,
-  footerVariants,
 } from "@/utils/motion";
 import FeaturesCard from "@/components/Card/FeatureCard";
-import { TypingText, FooterText } from "@/components/CustomText";
-import { useAuth } from "@/contexts/AuthContext";
+import { TypingText } from "@/components/CustomText";
 import {
   ArrowRight,
   Package,
@@ -28,7 +26,6 @@ import FooterBar from '@/components/Footersection';
 export default function HomePage() {
   const [month, setMonth] = useState(1);
   const [selectedMonth, setSelectedMonth] = useState(true);
-  const { user } = useAuth();
 
   const handleMonth = (value, base) => {
     if (value === base) return null;

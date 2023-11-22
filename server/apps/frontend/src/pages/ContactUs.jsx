@@ -1,15 +1,12 @@
 import React from 'react';
 import Navigation from "@/components/Navigation";
 import { motion } from "framer-motion";
-import { Button, Input, Link as Nextlink } from "@nextui-org/react";
-import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Eye, EyeOff } from "react-feather";
+import { Button, Input } from "@nextui-org/react";
+import { useState, useRef } from "react";
 import FooterBar from '@/components/Footersection';
 import emailjs from '@emailjs/browser';
 
 const ContactUsPage = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const toggleVisibility = () => setIsVisible(!isVisible);
   const form = useRef()
   const sendEmail = (e) => {
     e.preventDefault();
