@@ -66,6 +66,11 @@ class UpdateOrganizationDto {
   @IsOptional()
   @IsBoolean()
   public isPublic: boolean;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  public description: string;
 }
 
 export { CreateOrganizationDto, UpdateOrganizationDto };

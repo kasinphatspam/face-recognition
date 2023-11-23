@@ -117,10 +117,10 @@ export default function Navigation(props) {
         <NavbarItem className="hidden sm:flex">
           <Switchthemebutton className="" size="sm" />
         </NavbarItem>
-        <NavbarItem hidden={!user}>
+        <NavbarItem hidden={(user == null)}>
           <DropdownAvatar />
         </NavbarItem>
-        <NavbarItem hidden={user}>
+        <NavbarItem hidden={!(user == null)}>
           <Button
             as={Link}
             color="primary"
@@ -196,17 +196,17 @@ export function FaceRecognitionNavigation() {
           className="hidden sm:flex gap-4"
           justify="center"
         >
-          <p className="font-semibold dark:white text-xl">Face Reconition System</p>
+          <p className="font-semibold dark:white text-xl">Face Recognition</p>
         </NavbarContent>
         {/* Sign up or Logined parts */}
         <NavbarContent as="div" justify="end">
           <NavbarItem>
             <Switchthemebutton className="" size="sm" />
           </NavbarItem>
-          <NavbarItem hidden={!(user == null)}>
+          <NavbarItem hidden={(user == null)}>
             <DropdownAvatar />
           </NavbarItem>
-          <NavbarItem hidden={(user == null)}>
+          <NavbarItem hidden={!(user == null)}>
             <Button
               as={Link}
               color="primary"

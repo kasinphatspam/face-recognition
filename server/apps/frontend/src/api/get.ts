@@ -23,9 +23,9 @@ export async function getOrg(orgId: number): Promise<Org> {
 }
 
 export async function getAllEmployees(orgId: number): Promise<User[]> {
-    return fetch.get(`/organization/${orgId}/employee/list/all`).then(handleApiResponse);
+    return fetch.get(`/organization/${orgId}/employee/all`).then(handleApiResponse);
 }
 
 export async function getContacts(orgId: number): Promise<Contact[]> {
-    return fetch.get(`/organization/${orgId}/contact/list/all`).then(handleApiResponse);
+    return fetch.get(`/organization/${orgId}/contact/all`).then(handleApiResponse);
 }

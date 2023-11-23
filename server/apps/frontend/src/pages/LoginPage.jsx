@@ -110,6 +110,8 @@ export default function Loginpage() {
           {/* input Email & Password*/}
           <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 max-sm:px-8 -mt-8">
             <Input
+              autoFocus
+              autoCorrect="@gmail.com"
               isRequired
               isClearable
               type="email"

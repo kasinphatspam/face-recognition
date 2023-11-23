@@ -11,15 +11,15 @@ export async function register(data: Register): Promise<AxiosResponse> {
 }
 
 export async function passCode(passcode: string): Promise<AxiosResponse> {
-  return fetch.post(`/organization/user/join/${passcode}`)
+  return fetch.post(`/organization/join/${passcode}`)
 }
 
 export async function createNewOrg(data: CreateOrg): Promise<AxiosResponse> {
   return fetch.post(`/organization/`, data)
 }
 
-export async function postImageRecognition(userId: number, orgId: number, data: ImageRecognition): Promise<AxiosResponse> {
-  return fetch.post(`/organization/${orgId}/user/${userId}/contact/encode/recognition`, data);
+export async function postImageRecognition(orgId: number, data: ImageRecognition): Promise<AxiosResponse> {
+  return fetch.post(`/organization/${orgId}/contact/encode/recognition`, data);
 }
 
 export async function postNewContact(orgId: number, data: Contact): Promise<AxiosResponse> {

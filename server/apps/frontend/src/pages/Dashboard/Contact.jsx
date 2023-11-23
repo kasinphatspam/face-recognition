@@ -17,6 +17,7 @@ import {
 import Employeecomponent from "@/components/Employeelist";
 import { getContacts } from "@/api/get";
 import { postNewContact } from "@/api/post";
+import { messageCode } from "@/utils/errMessage";
 import { config } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
 
@@ -98,11 +99,9 @@ export default function Contact() {
           reject(error);
         }
       };
-
       reader.onerror = (error) => {
         reject(error);
       };
-
       reader.readAsBinaryString(file);
     });
   };
@@ -193,7 +192,7 @@ export default function Contact() {
                   type="text"
                   className="w-full px-1.5"
                   variant="bordered"
-                  name="officePhone"
+                  name="mobile"
                   onChange={handleOnChange}
                 />
                 <Input
@@ -274,7 +273,7 @@ export default function Contact() {
                 <Button
                   color="primary"
                   onPress={async () => {
-                    postContact.mutate(formData);
+                    postContact.mutate({ ...formData, owner: user.id });
                     onClose();
                   }}
                 >

@@ -8,6 +8,7 @@ import Resizer from "react-image-file-resizer";
 import { Input, Button, Select, SelectItem } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { updateUser, updateImage } from "@/api/put";
+import { messageCode } from "@/utils/errMessage";
 
 export default function Settings() {
   // -----------------------   VARIABLES   -------------------------------
@@ -266,7 +267,6 @@ export default function Settings() {
                       name="gender"
                       placeholder={gender || "none"}
                       value={["male", "female", "none"]}
-                      selectedKeys={editData.gender || []}
                       className="max-w-xs w-32 ml-3"
                       onSelectionChange={(item) =>
                         setEditData({ ...editData, gender: [...item.values()] })

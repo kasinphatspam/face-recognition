@@ -42,7 +42,7 @@ export default function CreateTeam() {
     },
     onSuccess: async () => {
       await fetchOrg();
-      toast.update(toastCreate.current, config(`create ${organizeData?.name} successfully`, "success"));
+      toast.update(toastCreate.current, config(`create organization successfully`, "success"));
       toastCreate.current = null;
       navigate('/dashboard');
     },

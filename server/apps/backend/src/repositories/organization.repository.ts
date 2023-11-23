@@ -78,15 +78,8 @@ export class OrganizationRepository {
    */
   public async update(organizationId: number, body: UpdateOrganizationDto) {
     return connection.getRepository(Organization).save({
+      ...body,
       id: organizationId,
-      name: body.name,
-      passcode: body.passcode,
-      codeCreatedTime: body.codeCreatedTime,
-      vtigerToken: body.vtigerToken,
-      vtigerAccessKey: body.vtigerAccessKey,
-      vtigerLink: body.vtigerLink,
-      packageKey: body.packageKey,
-      isPublic: body.isPublic,
     });
   }
 

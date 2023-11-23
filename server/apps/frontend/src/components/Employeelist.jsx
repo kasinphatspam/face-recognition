@@ -31,7 +31,7 @@ const statusOptions = [
   {name: "Vacation", uid: "vacation"},
 ];
 
-export default function Employeecomponent({data, columns, visible_columns, isEmployee}) {
+export default function Employeecomponent({data, columns, visible_columns, isEmployee , handleDelete}) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(visible_columns));
@@ -131,8 +131,13 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
         );
       case "status":
         return (
+          user?.status ?
           <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
             {cellValue}
+          </Chip>
+          : 
+          <Chip className="capitalize" color="success" size="sm" variant="flat">
+            Online
           </Chip>
         );
       case "actions":
@@ -145,9 +150,7 @@ export default function Employeecomponent({data, columns, visible_columns, isEmp
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
+                <DropdownItem onClick={() => {handleDelete(user.id)}}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>

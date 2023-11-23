@@ -8,10 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function OrganizationService() {
   const { organizeData } = useAuth()
-  const Request = [{
-    'name': 'John Doe',
-    'Organize': 'example',
-  }]
+  const Request = []
   let mapOrganize = []
   mapOrganize[0] = organizeData
 
@@ -93,6 +90,7 @@ export default function OrganizationService() {
                           name={item.name}
                           description={item.description || "simple decoration on organization..."}
                           image={item.image}
+                          package="free trial"
                         />
                       )): <></>
                     }

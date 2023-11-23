@@ -1,7 +1,8 @@
 import { Card, 
     Image, 
     CardFooter, 
-    CardHeader, 
+    CardHeader,
+    Chip, 
      } 
         from "@nextui-org/react";
 import React from "react";
@@ -12,12 +13,16 @@ export default function OrganizeCard(props) {
         <>  
             {/** Tool name */}
             <LinkR to={{pathname:`/organize/${props.id}`}}>
-                <Card isFooterBlurred isHeaderBlurred className="group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
+                <Card isFooterBlurred isHeaderBlurred className="relative group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
                     {/** Box Upper */}
                     <CardHeader className="absolute z-10 top-0 flex-col items-start bg-white/30">
                         <p className=" text-[0.6rem] text-black/60 uppercase font-bold">Total {props.employee} users</p>
                         <h4 className="text-black/90 font-medium text-2xl">{props.name}</h4>
+                        
                     </CardHeader>
+                    <div className="absolute z-10 top-4 right-4">
+                        <Chip variant="flat" color="success" size="sm">{props.package}</Chip>
+                    </div>
                     {/** background image */}
                     <Image
                         removeWrapper
