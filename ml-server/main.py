@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from recognition import FaceRecognition
 from file import create_file, delete_file
-
+import time
 app = Flask(__name__)
 load_dotenv()
 path = ["/api", "/data", "/dataset"]
@@ -78,6 +78,31 @@ def encode():
     image = data["imageBase64"]
     encoded_id = FaceRecognition(package_key).encode(image)
     return jsonify(encoded_id)
+
+
+#TEST
+#1. PASS Success
+#2. PASS Face not found in image
+#3. PASS Organization not found
+#4. Unable to load organization
+@app.route("/face-recognition-file", methods=["PUT"])
+def encode_file():
+    package_key = request.form["packageKey"]
+    image = request.files["image"]
+    encoded_id = FaceRecognition(package_key).encode_file(image)
+    return jsonify(encoded_id)
+
+#TEST
+#1. PASS Success
+#2. PASS Face not found in image
+#3. PASS Organization not found
+#4. Unable to load organization
+@app.route("/face-recognition-file", methods=["POST"])
+def face_recognition_service_file():
+    package_key = request.form["packageKey"]
+    image = request.files["image"]
+    result = FaceRecognition(package_key).recognition_file(image)
+    return jsonify(result)
 
 #TEST
 #1. PASS Success
