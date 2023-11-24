@@ -1,6 +1,9 @@
 import { connection } from '@/utils/connection';
 import { Contact } from '@/entity';
-import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
+import {
+  CreateNewContactDto,
+  UpdateContactDto,
+} from '@/utils/dtos/contact.dto';
 import { Injectable } from '@nestjs/common';
 
 /**
@@ -119,6 +122,26 @@ export class ContactRepository {
       .update(
         { id: contactId, organization: { id: organizationId } },
         { encodedId: encodedId },
+      );
+  }
+
+  /**
+   * Update contact information.
+   * @param organizationId - The ID of the organization to which the contact belongs.
+   * @param contactId - The ID of the contact to update.
+   * @param body - The new data for the contact.
+   * @returns A promise that resolves once the data is updated.
+   */
+  public async updateContactById(
+    organizationId: number,
+    contactId: number,
+    body: UpdateContactDto,
+  ) {
+    return connection
+      .getRepository(Contact)
+      .update(
+        { id: contactId, organization: { id: organizationId } },
+        { ...body },
       );
   }
 

@@ -10,7 +10,8 @@ import { OrganizationRepository } from '@/repositories/organization.repository';
 import { readCSV, write, remove } from '@/utils/file.manager';
 import * as path from 'path';
 import { HistoryRepository } from '@/repositories/history.repository';
-import { UserService } from './user.service';
+import { UserService } from '@/service/user.service';
+import { UploadService } from '@/service/upload.service';
 
 @Injectable()
 export class ContactService {
@@ -20,6 +21,7 @@ export class ContactService {
     private readonly organizationRepository: OrganizationRepository,
     private readonly historyRepository: HistoryRepository,
     private readonly recognitionApiService: RecognitionService,
+    private readonly uploadService: UploadService,
   ) {}
 
   public readonly folderPath = path.join(__dirname, '../../images');
@@ -88,11 +90,18 @@ export class ContactService {
       file ? file : base64,
       contactProperty,
     );
-    await this.contactRepository.updateContactEncodeId(
-      organizationId,
+
+    const imagePath = await this.uploadService.uploadImageToStorage(
+      file,
+      'contacts',
       contactId,
-      encodeId,
     );
+
+    await this.contactRepository.updateContactById(organizationId, contactId, {
+      encodedId: encodeId,
+      image: imagePath,
+    });
+
     return encodeId;
   }
 

@@ -92,6 +92,88 @@ class CreateNewContactDto {
   public linkedin: string;
 }
 
+class UpdateContactDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
+  public firstname?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
+  public lastname?: string;
+
+  @IsOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(60)
+  public company?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
+  public title?: string;
+
+  @IsOptional()
+  @IsPhoneNumber('TH')
+  public officePhone?: string;
+
+  @IsOptional()
+  @IsPhoneNumber('TH')
+  public mobile?: string;
+
+  @IsOptional()
+  @IsEmail()
+  public email1?: string;
+
+  @IsOptional()
+  @IsEmail()
+  public email2?: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  public dob?: Date;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(60)
+  public owner?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
+  public lineId?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  public facebook?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  public linkedin?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  public encodedId?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  public image?: string;
+}
+
 class EncodeContactImageDto {
   @IsOptional()
   @IsNotEmpty()
@@ -149,6 +231,7 @@ class CreatePackageResponseDto {
 
 export {
   CreateNewContactDto,
+  UpdateContactDto,
   EncodeContactImageDto,
   EncodeImageResponseDto,
   RecognitionImageResponseDto,
