@@ -343,20 +343,13 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
-            for i in range(3):
-                image = image.rotate(90)
-                face_image = face_recognition.load_image_file(image)
-
-                if not face_recognition.face_encodings(face_image):
-                    if i == 2:
-                        print("Not found face in image")
-                        return {
-                            "statusCode": -1,
-                            "checkedTime": timestamp,
-                            "message": "FAIL: Not found face on image",
-                        }
-                else:
-                    break
+            
+            print("Not found face in image")
+            return {
+                "statusCode": -1,
+                "checkedTime": timestamp,
+                "message": "FAIL: Not found face on image",
+            }
 
         small_frame = cv2.resize(face_image, (0, 0), fx=0.25, fy=0.25)
         rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
