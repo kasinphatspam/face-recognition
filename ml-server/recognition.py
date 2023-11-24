@@ -182,20 +182,12 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
-            for i in range(3):
-                image = image.rotate(90)
-                face_image = face_recognition.load_image_file(image)
-
-                if not face_recognition.face_encodings(face_image):
-                    if i == 2:
-                        print("Not found face in image")
-                        return {
-                            "statusCode": -1,
-                            "checkedTime": timestamp,
-                            "message": "FAIL: Not found face on image",
-                        }
-                else:
-                    break
+            print("Not found face in image")
+            return {
+                "statusCode": -1,
+                "checkedTime": timestamp,
+                "message": "FAIL: Not found face on image",
+            }
 
         face_encodings = face_recognition.face_encodings(face_image)
 
