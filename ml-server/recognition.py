@@ -9,6 +9,7 @@ import face_recognition
 import time
 import io
 
+
 class FaceRecognition:
     def __init__(self, package_key):
         self.package_key = package_key
@@ -23,9 +24,8 @@ class FaceRecognition:
             except (FileNotFoundError, ValueError):
                 print("ERROR: Unable to load organization.")
         return None
-    
 
-    def calculate_face_confidence(self,face_distance, face_match_threshold=0.6):
+    def calculate_face_confidence(self, face_distance, face_match_threshold=0.6):
         range_val = 1.0 - face_match_threshold
         linear_val = (1.0 - face_distance) / (range_val * 2.0)
 
@@ -41,7 +41,7 @@ class FaceRecognition:
     # return 1 = it's the same file
     # return 0 = it's diffrent file
     # return -1 = File not found
-    def load_and_compare_files(self,file1, file2):
+    def load_and_compare_files(self, file1, file2):
         try:
             data1 = np.load(file1, allow_pickle=True).item()
             data2 = np.load(file2, allow_pickle=True).item()
@@ -51,7 +51,7 @@ class FaceRecognition:
                 return 0
         except FileNotFoundError:
             return -1
-            
+
     def delete_image(self, encode_id):
         try:
             # Check if organization is empty
@@ -107,8 +107,9 @@ class FaceRecognition:
 
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
-        timestamp = int(time.time())
-        current_time = datetime.now()
+        timestamp = int(time.time() * 10e3)
+        current_time = datetime.datetime.utcnow().strftime(
+            '%Y-%m-%d %H:%M:%S')
         img_path = f"data/{timestamp}.jpg"
 
         with open(img_path, "wb") as img_file:
@@ -128,10 +129,10 @@ class FaceRecognition:
                     if i == 2:
                         os.unlink(img_path)
                         print("Not found face in image")
-                        return{
+                        return {
                             "statusCode": -1,
                             "checkedTime": current_time,
-                            "message":"FAIL: Not found face on image"
+                            "message": "FAIL: Not found face on image"
                         }
                 else:
                     break
@@ -143,11 +144,11 @@ class FaceRecognition:
         else:
             print("ERROR: Organization not found")
             return {
-                "statusCode":-1,
+                "statusCode": -1,
                 "checkedTime": current_time,
                 "message": "FAIL: Oganization not found",
             }
-        
+
         try:
             existing_face_data = np.load(self.file_path, allow_pickle=True)
             if (
@@ -175,20 +176,21 @@ class FaceRecognition:
 
         return {"encodedId": str(timestamp),
                 "checkedTime": current_time,
-                "statusCode":1,
-                "message":"PASS: Encode Sucess"}
+                "statusCode": 1,
+                "message": "PASS: Encode Sucess"}
 
     # Testing 2 : remove save and load part
     def encode_file(self, image):
-        timestamp = int(time.time())
-        current_time = datetime.now()
+        timestamp = int(time.time() * 10e3)
+        current_time = datetime.datetime.utcnow().strftime(
+            '%Y-%m-%d %H:%M:%S')
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
             print("Not found face in image")
             return {
                 "statusCode": -1,
-                "checkedTime": timestamp,
+                "checkedTime": current_time,
                 "message": "FAIL: Not found face on image",
             }
 
@@ -225,13 +227,14 @@ class FaceRecognition:
         np.save(self.file_path, face_data)
 
         return {"encodedId": str(timestamp),
+                "checkedTime": current_time,
                 "statusCode": 1,
                 "message": "PASS: Encode Success"}
 
     def recognition(self, encoded_data):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if os.path.exists(self.file_path):
-            if self.load_and_compare_files(self.file_path, self.organ_empty)==1:
+            if self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
                 print("ERROR: Organization is empty.")
                 return {
                     "statusCode": -1,
@@ -243,7 +246,7 @@ class FaceRecognition:
         else:
             print("ERROR: Oganization not found")
             return {
-                "statusCode":-1,
+                "statusCode": -1,
                 "checkedTime": timestamp,
                 "message": "FAIL: Oganization not found",
             }
@@ -289,8 +292,9 @@ class FaceRecognition:
 
         faces_result = []
         for idx, face_encoding in enumerate(face_encodings):
-            face_distances = face_recognition.face_distance(self.face_data["encodings"], face_encoding)
-            
+            face_distances = face_recognition.face_distance(
+                self.face_data["encodings"], face_encoding)
+
             for i, distance in enumerate(face_distances):
                 if distance <= 0.9:
                     id = self.face_data["ids"][i]
@@ -312,13 +316,13 @@ class FaceRecognition:
         return {
             "statusCode": 0,
             "checkedTime": timestamp,
-            "message":"PASS: Unknown face"
+            "message": "PASS: Unknown face"
         }
 
     def recognition_file(self, image):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if os.path.exists(self.file_path):
-            if self.load_and_compare_files(self.file_path, self.organ_empty)==1:
+            if self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
                 print("ERROR: Organization is empty.")
                 return {
                     "statusCode": -1,
@@ -330,7 +334,7 @@ class FaceRecognition:
         else:
             print("ERROR: Oganization not found")
             return {
-                "statusCode":-1,
+                "statusCode": -1,
                 "checkedTime": timestamp,
                 "message": "FAIL: Oganization not found",
             }
@@ -338,7 +342,7 @@ class FaceRecognition:
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
-            
+
             print("Not found face in image")
             return {
                 "statusCode": -1,
@@ -356,8 +360,9 @@ class FaceRecognition:
 
         faces_result = []
         for idx, face_encoding in enumerate(face_encodings):
-            face_distances = face_recognition.face_distance(self.face_data["encodings"], face_encoding)
-            
+            face_distances = face_recognition.face_distance(
+                self.face_data["encodings"], face_encoding)
+
             for i, distance in enumerate(face_distances):
                 if distance <= 0.9:
                     id = self.face_data["ids"][i]
@@ -379,5 +384,5 @@ class FaceRecognition:
         return {
             "statusCode": 0,
             "checkedTime": timestamp,
-            "message":"PASS: Unknown face"
+            "message": "PASS: Unknown face"
         }

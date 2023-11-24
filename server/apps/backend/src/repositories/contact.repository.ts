@@ -70,22 +70,8 @@ export class ContactRepository {
       .into(Contact)
       .values([
         {
+          ...body,
           organization: { id: organizationId },
-          firstname: body.firstname,
-          lastname: body.lastname,
-          company: body.company,
-          title: body.title,
-          officePhone: body.officePhone,
-          mobile: body.mobile,
-          email1: body.email1,
-          email2: body.email2,
-          dob: body.dob,
-          owner: body.owner,
-          createdTime: body.createdTime,
-          modifiedTime: body.modifiedTime,
-          lineId: body.lineId,
-          facebook: body.facebook,
-          linkedin: body.linkedin,
         },
       ])
       .execute();
@@ -108,22 +94,8 @@ export class ContactRepository {
       .values(
         bodies.map((body) => {
           return {
+            ...body,
             organization: { id: organizationId },
-            firstname: body.firstname,
-            lastname: body.lastname,
-            company: body.company,
-            title: body.title,
-            officePhone: body.officePhone,
-            mobile: body.mobile,
-            email1: body.email1,
-            email2: body.email2,
-            dob: body.dob,
-            owner: body.owner,
-            createdTime: body.createdTime,
-            modifiedTime: body.modifiedTime,
-            lineId: body.lineId,
-            facebook: body.facebook,
-            linkedin: body.linkedin,
           };
         }),
       )
@@ -148,5 +120,9 @@ export class ContactRepository {
         { id: contactId, organization: { id: organizationId } },
         { encodedId: encodedId },
       );
+  }
+
+  public async deleteContactById(contactId: number) {
+    return connection.getRepository(Contact).delete({ id: contactId });
   }
 }

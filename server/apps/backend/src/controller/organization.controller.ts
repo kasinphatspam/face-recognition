@@ -5,6 +5,7 @@ import {
   FileTypeValidator,
   Get,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
   ParseFilePipe,
   Post,
@@ -207,7 +208,18 @@ export class OrganizationController {
 
   @Put(':organizationId/contact/:contactId/encode')
   @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
   public async encodeContactImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10 * 10e6 }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File,
     @Param('organizationId') organizationId: number,
     @Param('contactId') contactId: number,
     @Body() body: EncodeContactImageDto,
@@ -217,6 +229,7 @@ export class OrganizationController {
       organizationId,
       contactId,
       body.image,
+      file,
     );
     return res
       .status(HttpStatus.OK)
@@ -225,7 +238,18 @@ export class OrganizationController {
 
   @Post(':organizationId/contact/encode/recognition')
   @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
   public async recognitionContactImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10 * 10e6 }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File,
     @Param('organizationId') organizationId: number,
     @RequestUser() user: User,
     @Body() body: EncodeContactImageDto,
@@ -235,12 +259,14 @@ export class OrganizationController {
       organizationId,
       user.id,
       body.image,
+      file,
     );
 
     return res.status(HttpStatus.OK).json(data);
   }
 
   @Post(':organizationId/contact/csv')
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('csv'))
   public async readCSV(
     @UploadedFile(
@@ -262,6 +288,19 @@ export class OrganizationController {
   @Post(':organizationId/contact/import/vtiger')
   public async importContactFromVtigerAPI(@Res() res: Response) {
     return res.status(HttpStatus.OK).json({});
+  }
+
+  @Delete(':organizationId/contact/:contactId')
+  @UseGuards(AuthGuard)
+  public async deleteContactById(
+    @Param('organizationId') organizationId: number,
+    @Param('contactId') contactId: number,
+    @Res() res: Response,
+  ) {
+    await this.contactService.deleteContact(organizationId, contactId);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Delete contact successfully' });
   }
 
   @Get(':organizationId/role/list/all')

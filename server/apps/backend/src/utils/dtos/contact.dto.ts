@@ -93,9 +93,10 @@ class CreateNewContactDto {
 }
 
 class EncodeContactImageDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsBase64()
-  public image: string;
+  public image?: string;
 }
 
 class EncodeImageResponseDto {
@@ -104,7 +105,7 @@ class EncodeImageResponseDto {
   @MaxLength(100)
   public encodedId: string;
 
-  public statusCode: string;
+  public statusCode: number;
 
   public liveness: boolean;
 }

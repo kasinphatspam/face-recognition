@@ -89,6 +89,7 @@ export class Contact {
     type: 'datetime',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
   })
   public modifiedTime: Date;
 

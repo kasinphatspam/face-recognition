@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
 import { RecognitionService } from '@/service/recognition.service';
 import { ContactRepository } from '@/repositories/contact.repository';
@@ -53,10 +57,20 @@ export class ContactService {
     organizationId: number,
     contactId: number,
     base64: string,
+    file: Express.Multer.File,
   ) {
+    if (!base64 && !file) {
+      throw new BadRequestException('Image not found');
+    }
+
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+
     const packageKey = organization.packageKey;
     const contactProperty = await this.getContactById(
       organization.id,
@@ -71,7 +85,7 @@ export class ContactService {
 
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
-      base64,
+      file ? file : base64,
       contactProperty,
     );
     await this.contactRepository.updateContactEncodeId(
@@ -86,17 +100,27 @@ export class ContactService {
     organizationId: number,
     userId: number,
     base64: string,
+    file: Express.Multer.File,
   ) {
+    if (!base64 && !file) {
+      throw new BadRequestException('Image not found');
+    }
+
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+
     const packageKey = organization.packageKey;
     const user = await this.userService.getUserBy(userId, null);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
-      base64,
+      file ? file : base64,
     );
-    await this.historyRepository.insert(organization, user, resultObj);
+    await this.historyRepository.insert(organization, user, resultObj[0]);
     const contactArray = [];
     const accuracyArray = [];
 
@@ -131,14 +155,16 @@ export class ContactService {
       contactId,
     );
 
-    const organization = await this.organizationRepository.getOrganizationById(
-      organizationId,
-    );
+    if (!contact) {
+      throw new NotFoundException('Contact not found');
+    }
 
     await this.recognitionApiService.deleteEncodeImage(
-      organization.packageKey,
+      contact.organization.packageKey,
       contact.encodedId,
     );
+
+    await this.contactRepository.deleteContactById(contactId);
   }
 
   public async importFromCSV(
