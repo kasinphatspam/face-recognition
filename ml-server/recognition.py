@@ -365,7 +365,7 @@ class FaceRecognition:
             
             for i, distance in enumerate(face_distances):
                 if distance <= 0.9:
-                    id = face_data["ids"][i]
+                    id = self.face_data["ids"][i]
                     confidence = self.calculate_face_confidence(distance)
                     percentage = float(confidence.replace("%", ""))
                     if percentage > 80:
