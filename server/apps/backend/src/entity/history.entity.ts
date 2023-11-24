@@ -29,7 +29,7 @@ class History {
   })
   public detectedTime: Date;
 
-  public result: RecognitionImageResponseDto;
+  public result: RecognitionImageResponseDto[];
 }
 
 export { History };

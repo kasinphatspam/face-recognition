@@ -91,12 +91,12 @@ export class ContactService {
       organizationId,
     );
     const packageKey = organization.packageKey;
-    // const user = await this.userService.getUserBy(userId, null);
+    const user = await this.userService.getUserBy(userId, null);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
       base64,
     );
-    // await this.historyRepository.insert(organization, user, resultObj);
+    await this.historyRepository.insert(organization, user, resultObj);
     const contactArray = [];
     const accuracyArray = [];
 

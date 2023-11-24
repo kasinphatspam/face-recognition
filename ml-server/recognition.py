@@ -108,7 +108,7 @@ class FaceRecognition:
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
         timestamp = int(time.time())
-        current_time = time.time()
+        current_time = datetime.now()
         img_path = f"data/{timestamp}.jpg"
 
         with open(img_path, "wb") as img_file:
@@ -181,7 +181,7 @@ class FaceRecognition:
     # Testing 2 : remove save and load part
     def encode_file(self, image):
         timestamp = int(time.time())
-        current_time = time.time()
+        current_time = datetime.now()
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
