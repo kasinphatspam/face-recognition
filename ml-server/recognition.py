@@ -108,6 +108,7 @@ class FaceRecognition:
     def encode(self, encoded_data):
         decoded_data = base64.b64decode(encoded_data)
         timestamp = int(time.time())
+        current_time = time.time()
         img_path = f"data/{timestamp}.jpg"
 
         with open(img_path, "wb") as img_file:
@@ -129,7 +130,7 @@ class FaceRecognition:
                         print("Not found face in image")
                         return{
                             "statusCode": -1,
-                            "checkedTime": timestamp,
+                            "checkedTime": current_time,
                             "message":"FAIL: Not found face on image"
                         }
                 else:
@@ -143,7 +144,7 @@ class FaceRecognition:
             print("ERROR: Organization not found")
             return {
                 "statusCode":-1,
-                "checkedTime": timestamp,
+                "checkedTime": current_time,
                 "message": "FAIL: Oganization not found",
             }
         
@@ -161,7 +162,7 @@ class FaceRecognition:
             print("ERROR: Unable to load organization.")
             return {
                 "statusCode": -1,
-                "checkedTime": timestamp,
+                "checkedTime": current_time,
                 "message": "FAIL: Unable to load organization",
             }
 
@@ -173,12 +174,14 @@ class FaceRecognition:
         os.unlink(img_path)
 
         return {"encodedId": str(timestamp),
+                "checkedTime": current_time,
                 "statusCode":1,
                 "message":"PASS: Encode Sucess"}
 
     # Testing 2 : remove save and load part
     def encode_file(self, image):
         timestamp = int(time.time())
+        current_time = time.time()
         face_image = face_recognition.load_image_file(image)
 
         if not face_recognition.face_encodings(face_image):
@@ -197,7 +200,7 @@ class FaceRecognition:
             print("ERROR: Organization not found")
             return {
                 "statusCode": -1,
-                "checkedTime": timestamp,
+                "checkedTime": current_time,
                 "message": "FAIL: Oganization not found",
             }
 
@@ -212,7 +215,7 @@ class FaceRecognition:
             print("ERROR: Unable to load organization.")
             return {
                 "statusCode": -1,
-                "checkedTime": timestamp,
+                "checkedTime": current_time,
                 "message": "FAIL: Unable to load organization",
             }
 
