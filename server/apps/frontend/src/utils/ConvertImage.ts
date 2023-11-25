@@ -1,9 +1,13 @@
 import Resizer from "react-image-file-resizer";
 
+function hasBase64Prefix(base64String: string): boolean {
+  return base64String.startsWith('data:image/') || base64String.startsWith('data:video/') || base64String.startsWith('data:audio/');
+}
+
 /** convert base64 to image files type image/jpeg */
 export function base64toFile(base64String: string, fileName: string): File {
-  const imageWithoutPrefix = base64String.split(",")[1];
-  const byteCharacters = atob(imageWithoutPrefix);
+  const image = hasBase64Prefix(base64String) ? base64String.split(",")[1] : base64String;
+  const byteCharacters = atob(image);
   const byteNumbers = new Array(byteCharacters.length);
 
   for (let i = 0; i < byteCharacters.length; i++) {
