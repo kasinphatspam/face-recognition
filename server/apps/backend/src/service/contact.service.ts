@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
 import { RecognitionService } from '@/service/recognition.service';
 import { ContactRepository } from '@/repositories/contact.repository';
@@ -6,7 +10,8 @@ import { OrganizationRepository } from '@/repositories/organization.repository';
 import { readCSV, write, remove } from '@/utils/file.manager';
 import * as path from 'path';
 import { HistoryRepository } from '@/repositories/history.repository';
-import { UserService } from './user.service';
+import { UserService } from '@/service/user.service';
+import { UploadService } from '@/service/upload.service';
 
 @Injectable()
 export class ContactService {
@@ -16,6 +21,7 @@ export class ContactService {
     private readonly organizationRepository: OrganizationRepository,
     private readonly historyRepository: HistoryRepository,
     private readonly recognitionApiService: RecognitionService,
+    private readonly uploadService: UploadService,
   ) {}
 
   public readonly folderPath = path.join(__dirname, '../../images');
@@ -53,10 +59,20 @@ export class ContactService {
     organizationId: number,
     contactId: number,
     base64: string,
+    file: Express.Multer.File,
   ) {
+    if (!base64 && !file) {
+      throw new BadRequestException('Image not found');
+    }
+
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+
     const packageKey = organization.packageKey;
     const contactProperty = await this.getContactById(
       organization.id,
@@ -71,14 +87,21 @@ export class ContactService {
 
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
-      base64,
+      file ? file : base64,
       contactProperty,
     );
-    await this.contactRepository.updateContactEncodeId(
-      organizationId,
+
+    const imagePath = await this.uploadService.uploadImageToStorage(
+      file,
+      'contacts',
       contactId,
-      encodeId,
     );
+
+    await this.contactRepository.updateContactById(organizationId, contactId, {
+      encodedId: encodeId,
+      image: imagePath,
+    });
+
     return encodeId;
   }
 
@@ -86,17 +109,27 @@ export class ContactService {
     organizationId: number,
     userId: number,
     base64: string,
+    file: Express.Multer.File,
   ) {
+    if (!base64 && !file) {
+      throw new BadRequestException('Image not found');
+    }
+
     const organization = await this.organizationRepository.getOrganizationById(
       organizationId,
     );
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+
     const packageKey = organization.packageKey;
-    // const user = await this.userService.getUserBy(userId, null);
+    const user = await this.userService.getUserBy(userId, null);
     const resultObj = await this.recognitionApiService.recognitionImage(
       packageKey,
-      base64,
+      file ? file : base64,
     );
-    // await this.historyRepository.insert(organization, user, resultObj);
+    await this.historyRepository.insert(organization, user, resultObj[0]);
     const contactArray = [];
     const accuracyArray = [];
 
@@ -131,14 +164,16 @@ export class ContactService {
       contactId,
     );
 
-    const organization = await this.organizationRepository.getOrganizationById(
-      organizationId,
-    );
+    if (!contact) {
+      throw new NotFoundException('Contact not found');
+    }
 
     await this.recognitionApiService.deleteEncodeImage(
-      organization.packageKey,
+      contact.organization.packageKey,
       contact.encodedId,
     );
+
+    await this.contactRepository.deleteContactById(contactId);
   }
 
   public async importFromCSV(

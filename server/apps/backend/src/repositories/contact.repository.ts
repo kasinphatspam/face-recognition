@@ -1,6 +1,9 @@
 import { connection } from '@/utils/connection';
 import { Contact } from '@/entity';
-import { CreateNewContactDto } from '@/utils/dtos/contact.dto';
+import {
+  CreateNewContactDto,
+  UpdateContactDto,
+} from '@/utils/dtos/contact.dto';
 import { Injectable } from '@nestjs/common';
 
 /**
@@ -70,22 +73,8 @@ export class ContactRepository {
       .into(Contact)
       .values([
         {
+          ...body,
           organization: { id: organizationId },
-          firstname: body.firstname,
-          lastname: body.lastname,
-          company: body.company,
-          title: body.title,
-          officePhone: body.officePhone,
-          mobile: body.mobile,
-          email1: body.email1,
-          email2: body.email2,
-          dob: body.dob,
-          owner: body.owner,
-          createdTime: body.createdTime,
-          modifiedTime: body.modifiedTime,
-          lineId: body.lineId,
-          facebook: body.facebook,
-          linkedin: body.linkedin,
         },
       ])
       .execute();
@@ -108,22 +97,8 @@ export class ContactRepository {
       .values(
         bodies.map((body) => {
           return {
+            ...body,
             organization: { id: organizationId },
-            firstname: body.firstname,
-            lastname: body.lastname,
-            company: body.company,
-            title: body.title,
-            officePhone: body.officePhone,
-            mobile: body.mobile,
-            email1: body.email1,
-            email2: body.email2,
-            dob: body.dob,
-            owner: body.owner,
-            createdTime: body.createdTime,
-            modifiedTime: body.modifiedTime,
-            lineId: body.lineId,
-            facebook: body.facebook,
-            linkedin: body.linkedin,
           };
         }),
       )
@@ -148,5 +123,29 @@ export class ContactRepository {
         { id: contactId, organization: { id: organizationId } },
         { encodedId: encodedId },
       );
+  }
+
+  /**
+   * Update contact information.
+   * @param organizationId - The ID of the organization to which the contact belongs.
+   * @param contactId - The ID of the contact to update.
+   * @param body - The new data for the contact.
+   * @returns A promise that resolves once the data is updated.
+   */
+  public async updateContactById(
+    organizationId: number,
+    contactId: number,
+    body: UpdateContactDto,
+  ) {
+    return connection
+      .getRepository(Contact)
+      .update(
+        { id: contactId, organization: { id: organizationId } },
+        { ...body },
+      );
+  }
+
+  public async deleteContactById(contactId: number) {
+    return connection.getRepository(Contact).delete({ id: contactId });
   }
 }

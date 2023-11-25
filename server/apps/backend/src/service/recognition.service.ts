@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import axios, { AxiosResponse } from 'axios';
 import {
   CreatePackageResponseDto,
   EncodeImageResponseDto,
@@ -54,23 +54,32 @@ export class RecognitionService {
 
   public async encodeImage(
     packageKey: string,
-    image: string,
+    image: string | Express.Multer.File,
     contact: Contact,
   ): Promise<string> {
-    const response = await axios.put(
-      `${process.env.ML_SERVER_URL}/face-recognition`,
-      {
-        packageKey: packageKey,
-        imageBase64: image,
-        encodedId: contact.encodedId,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+    let response: AxiosResponse;
+
+    if (typeof image === 'string') {
+      response = await axios.put(
+        `${process.env.ML_SERVER_URL}/face-recognition`,
+        {
+          packageKey: packageKey,
+          image: image,
+          encodedId: contact.encodedId,
         },
-      },
-    );
+      );
+    } else {
+      const blob = new Blob([image.buffer], { type: image.mimetype });
+      const formData = new FormData();
+      formData.append('image', blob, image.originalname);
+      formData.append('packageKey', packageKey);
+      formData.append('encodeId', contact.encodedId);
+
+      response = await axios.put(
+        `${process.env.ML_SERVER_URL}/face-recognition-file`,
+        formData,
+      );
+    }
 
     if (response.status !== 200) {
       throw new Error(`Error! status: ${response.status}`);
@@ -79,20 +88,22 @@ export class RecognitionService {
     const obj: EncodeImageResponseDto = JSON.parse(
       JSON.stringify(response.data),
     );
+
+    console.log(obj);
+
+    if (obj.statusCode === -1) {
+      throw new BadRequestException('Face not found');
+    }
     return obj.encodedId;
   }
 
   public async deleteEncodeImage(packageKey: string, encodedId: string) {
-    const response = await axios.put(
-      `${process.env.ML_SERVER_URL}/face-recognition/dataset/delete`,
+    const response = await axios.delete(
+      `${process.env.ML_SERVER_URL}/face-recognition`,
       {
-        packageKey: packageKey,
-        encodedId: encodedId,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+        data: {
+          packageKey: packageKey,
+          encodedId: encodedId,
         },
       },
     );
@@ -106,22 +117,29 @@ export class RecognitionService {
 
   public async recognitionImage(
     packageKey: string,
-    image: string,
+    image: string | Express.Multer.File,
   ): Promise<RecognitionImageResponseDto[]> {
-    console.log(`${packageKey}`);
-    const response = await axios.post(
-      `${process.env.ML_SERVER_URL}/face-recognition`,
-      {
-        packageKey: packageKey,
-        imageBase64: image,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+    let response: AxiosResponse;
+
+    if (typeof image === 'string') {
+      response = await axios.post(
+        `${process.env.ML_SERVER_URL}/face-recognition`,
+        {
+          packageKey: packageKey,
+          image: image,
         },
-      },
-    );
+      );
+    } else {
+      const blob = new Blob([image.buffer], { type: image.mimetype });
+      const formData = new FormData();
+      formData.append('image', blob, image.originalname);
+      formData.append('packageKey', packageKey);
+
+      response = await axios.post(
+        `${process.env.ML_SERVER_URL}/face-recognition-file`,
+        formData,
+      );
+    }
 
     if (response.status !== 200) {
       throw new Error(`Error! status: ${response.status}`);
@@ -130,16 +148,12 @@ export class RecognitionService {
     const recognitionDtoArray = convertJsonToDto(JSON.stringify(response.data));
     const array: RecognitionImageResponseDto[] = [];
 
-    if (!isArray(recognitionDtoArray)) {
+    if (!Array.isArray(recognitionDtoArray)) {
       array.push(recognitionDtoArray as RecognitionImageResponseDto);
       return array;
     }
     return recognitionDtoArray as RecognitionImageResponseDto[];
   }
-}
-
-function isArray(obj: any) {
-  return Array.isArray(obj);
 }
 
 function convertJsonToDto(
