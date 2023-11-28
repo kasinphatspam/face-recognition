@@ -23,6 +23,7 @@ import {
   Avatar,
   SelectItem,
   CardHeader,
+  Chip,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
 import {
@@ -33,14 +34,14 @@ import {
   File as FileIcon,
   Cpu,
 } from "react-feather";
-import { useMutation, useQuery, QueryCache } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { postImageRecognition } from "@/api/post";
 import { updateEncode } from "@/api/put";
 import { getContacts } from "@/api/get";
 import { useAuth } from "@/contexts/AuthContext";
 import { config } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
-import { base64toFile, convertImage, getBase64 } from "@/utils/ConvertImage"
+import { base64toFile, convertImage } from "@/utils/ConvertImage";
 
 export default function Snapshot() {
   // -------------------------------- VARIABLES --------------------------------
@@ -50,7 +51,6 @@ export default function Snapshot() {
   const webcamRef = useRef(null);
   const toastsnap = useRef(null);
   const toastencode = useRef(null);
-  const canvasRef = useRef(null);
   const [selectedKeys, setSelectedKeys] = useState(new Set([""]));
   const [contactData, setContactData] = useState([]);
   const [filterValue, setFilterValue] = useState("");
@@ -61,6 +61,7 @@ export default function Snapshot() {
   const [date, setDate] = useState(Date.now());
   const [open, setOpen] = useState(true);
   const [recognitionData, setRecognitionData] = useState([]);
+  const [imageData, setImageData] = useState(null);
 
   // ------------------------------    API    -------------------------------------
   const { data: contact, status: contactStatus } = useQuery({
@@ -80,7 +81,7 @@ export default function Snapshot() {
   const sendImg = useMutation({
     mutationKey: ["recimage"],
     mutationFn: async (image) => {
-      return postImageRecognition(organizeData.id, { image });
+      return postImageRecognition(organizeData.id, image);
     },
     onMutate: () => {
       const snapid = toast.loading("sending image ...", {
@@ -90,21 +91,29 @@ export default function Snapshot() {
     },
     onSuccess: (data) => {
       const rdata = data.data;
-      const RecognitionData = []
+      const RecognitionData = [];
       for (let i = 0; i < rdata.accuracy.length; i++) {
         if (rdata.statusCode === 1) {
-          RecognitionData.push({
+          RecognitionData.unshift({
             id: rdata.result[i].id + i,
             accuracy: rdata.accuracy[i],
-            contact: rdata.result[i],
-            image: image,
+            result: rdata.result[i],
           });
         }
       }
-      setRecognitionData((prevData) => [...prevData, ...RecognitionData]);
+      if (rdata.statusCode === 1)
+        setRecognitionData((prevData) => [
+          { image: image, date: date, result: [...RecognitionData] },
+          ...prevData,
+        ]);
       toast.update(
         toastsnap.current,
-        config(rdata.statusCode === 1 ? "image sented to server successfully" : "customer not found", rdata.statusCode === 1 ? "success" : "warning")
+        config(
+          rdata.statusCode === 1
+            ? "image sented to server successfully"
+            : "customer not found",
+          rdata.statusCode === 1 ? "success" : "warning"
+        )
       );
       toastsnap.current = null;
     },
@@ -118,7 +127,7 @@ export default function Snapshot() {
   const encodeImg = useMutation({
     mutationKey: ["encodeimage"],
     mutationFn: async (Id) => {
-      return updateEncode(organizeData.id, Id, { image: image.split(",")[1] });
+      return updateEncode(organizeData.id, Id, imageData);
     },
     onMutate: () => {
       const encodeid = toast.loading("sending image ...", {
@@ -179,16 +188,14 @@ export default function Snapshot() {
       const videoDevices = mediaDevices.filter(
         ({ kind }) => kind === "videoinput"
       );
-      if (videoDevices.length === 0) {
-        setDevices([
+      setDevices(
+        videoDevices || [
           {
             deviceId: 0,
             label: "camera not found",
           },
-        ]);
-      } else {
-        setDevices(videoDevices);
-      }
+        ]
+      );
     },
     [setDevices]
   );
@@ -198,18 +205,18 @@ export default function Snapshot() {
     if (selectedKeys == new Set([""])) setImage("");
     else {
       const DateNow = new Date();
-      const imageSrc = webcamRef.current.getScreenshot(); // get base64
-      const file = base64toFile(imageSrc, "images.jpeg"); // base64 to file
-      const formatimage = await convertImage(file); // optimize file
-      const newImage = await getBase64(formatimage); // file -> base64
-      setImage(newImage); // set base64 
-      console.log(
-        `file size: ${formatimage.size / 1000} KB  \nbase64 size: ${imageSrc.length / 1000} KB \nbase64 optimizer size: ${newImage.length / 1000} KB \n`
-      );
+      const imageSrc = webcamRef.current.getScreenshot();
+      const file = base64toFile(imageSrc, "images.jpeg");
+      const formatimage = await convertImage(file);
+      const formData = new FormData();
+      formData.append("image", formatimage, file.name);
+      setImageData(formData);
+      setImage(URL.createObjectURL(formatimage)); // set base64
       setDate(
-        `${DateNow.toLocaleTimeString("th-TH")} ${DateNow.toLocaleDateString(
-          "th-TH"
-        )}`
+        `${DateNow.toLocaleString("th-TH", {
+          timeStyle: "short",
+          dateStyle: "short",
+        })}`
       );
     }
   }, [webcamRef]);
@@ -217,7 +224,9 @@ export default function Snapshot() {
   /** Send image to ml server */
   const handleSendToServer = useCallback(async () => {
     if (image == null || image === "") toast.error("No image found");
-    else await sendImg.mutateAsync(image.split(",")[1]);
+    else {
+      await sendImg.mutateAsync(imageData);
+    }
   });
 
   /** Send image :base64 type to encode to ml */
@@ -285,7 +294,7 @@ export default function Snapshot() {
       case "clear":
         setImage("");
         break;
-      case "send":
+      case "check":
         handleSendToServer();
         break;
       case "encode":
@@ -410,10 +419,13 @@ export default function Snapshot() {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={async () => {
-                  await handleRegSubmit()
-                  onClose()
-                }}>
+                <Button
+                  color="primary"
+                  onPress={async () => {
+                    await handleRegSubmit();
+                    onClose();
+                  }}
+                >
                   Register
                 </Button>
               </ModalFooter>
@@ -431,9 +443,7 @@ export default function Snapshot() {
               screenshotFormat="image/jpeg"
               width={1280}
               videoConstraints={{ deviceId: deviceId, facingMode: "user" }}
-              className={
-                open ? "relative drop-shadow-md w-full" : "hidden"
-              }
+              className={open ? "relative drop-shadow-md w-full" : "hidden"}
             />
             {!open && (
               <div className="w-full min-h-[500px] max-h-[526px] bg-gray-500 flex flex-col pt-[35%] pl-64">
@@ -506,7 +516,7 @@ export default function Snapshot() {
                   <Listbox
                     variant="flat"
                     aria-label="Actions"
-                    disabledKeys={image ? "" : ["send", "encode"]}
+                    disabledKeys={image ? "" : ["check", "encode"]}
                     onAction={(key) => handleAction(key)}
                   >
                     <ListboxSection title="actions">
@@ -534,7 +544,7 @@ export default function Snapshot() {
                     </ListboxSection>
                     <ListboxSection title="old customer">
                       <ListboxItem
-                        key="send"
+                        key="check"
                         showDivider
                         startContent={
                           <div className="flex items-center bg-blue-300/20 dark:bg-blue-600/70 rounded-small drop-shadow-md justify-center w-9 h-9 mr-2">
@@ -542,7 +552,7 @@ export default function Snapshot() {
                           </div>
                         }
                       >
-                        Send
+                        Check
                       </ListboxItem>
                     </ListboxSection>
                     <ListboxSection title="new customer">
@@ -564,29 +574,70 @@ export default function Snapshot() {
           </div>
         </div>
         <div className="flex flex-col dark:bg-neutral-800 bg-blue-50/40 mt-8 mr-24 py-4 px-8 rounded-md">
-        <p className="text-lg font-medium mb-4">Recent image recognition</p>
-        <div className="flex flex-row gap-x-4 w-[77vw] px-4 mx-4 overflow-scroll my-4 max-sm:flex-col">
-          { recognitionData.reverse().map((item, index) => (
-              <Card key={index} className={`min-w-[300px] my-4 ${item.accuracy > 95.00 ? " ring-2 ring-lime-400" : ""}`}>
+          <p className="text-lg font-medium mb-4">Recent image recognition</p>
+          <div className="flex flex-col gap-x-4 w-[77vw] px-4 mx-4 overflow-scroll my-4 max-sm:flex-col">
+            {recognitionData.map((item, index) => (
+              <Card key={index} className={`min-w-[300px] my-4`}>
                 <CardHeader>
-                <div className=" border-l-4 pl-2 mt-2 text-lg font-medium w-[270px] truncate">{`${item.contact.firstname} ${item.contact.lastname}`}</div>
+                  <div className="flex flex-col">
+                    <div className="ml-4  border-l-4 pl-2 mt-3 text-lg font-medium w-[270px] truncate">{`at ${item.date}`}</div>
+                    <img
+                      src={item.image}
+                      alt="image recognition"
+                      className="max-w-[300px] max-h-[300px] rounded-md ml-4 my-2"
+                    />
+                  </div>
                 </CardHeader>
                 <CardBody>
-                  <img
-                    src={item.image}
-                    alt="image recognition"
-                    className="max-w-[200px] max-h-[200px] rounded-md mx-auto mb-2"
-                  />
-                  <div className="text-md text-gray-400">{`email: ${item.contact.email1 ?? "n/a"}`}</div>
-                  <div className="text-md text-gray-400">{`Tel: ${item.contact.mobile ?? "n/a"}`}</div>
-                  <div className="text-md text-gray-400">{`company: ${item.contact.company?? "n/a"} `}</div>
+                  <div className="flex flex-row w-[70vw] overflow-scroll">
+                    {item.result
+                      .sort((a, b) => b.accuracy - a.accuracy)
+                      .map((contact, sindex) => (
+                        <div
+                          key={sindex}
+                          className={`flex flex-col ml-4 my-0.5  px-8 pt-4 rounded-md bg-gray-100/50 ${
+                            sindex === 0 ? " ring-2 ring-lime-400" : ""
+                          }`}
+                        >
+                          {sindex === 0 ? (
+                            <Chip
+                              color="success"
+                              variant="flat"
+                              size="sm"
+                              className="my-1.5"
+                            >
+                              best accuracy
+                            </Chip>
+                          ) : (
+                            <div className="pt-8"></div>
+                          )}
+                          <div className=" border-l-4 pl-2 mt-2 text-lg font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
+                          <div className="text-md text-gray-500 mt-4">
+                            {`email: ${contact.result.email1 ?? "n/a"}`}
+                          </div>
+                          <div className="text-md text-gray-500">
+                            {`Tel: ${contact.result.mobile ?? "n/a"}`}
+                          </div>
+                          <div className="text-md text-gray-500">{`company: ${
+                            contact.result.company ?? "n/a"
+                          } `}</div>
+                          <div
+                            className={`mt-4 text-tiny text-gray-500 w-[270px] h-[30px] truncate`}
+                          >
+                            {`reference owner: ${
+                              contact.contactOwner ?? "n/a"
+                            } (${contact.result.encodedId}: ${
+                              contact.accuracy
+                            })`}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </CardBody>
-                <CardFooter>
-                  <div className="text-tiny text-gray-400 w-[270px] h-[90px] truncate">{`reference owner: ${item.contact.contactOwner ?? "n/a"} (${item.contact.encodedId}: ${item.accuracy})`}</div>
-                </CardFooter>
+                <CardFooter></CardFooter>
               </Card>
             ))}
-        </div>
+          </div>
         </div>
       </div>
     </>

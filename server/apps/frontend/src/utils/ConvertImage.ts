@@ -28,16 +28,15 @@ export async function getBase64(file: File): Promise<string> {
 }
 
 /** image optimizer */
-export const convertImage = async (file: File): Promise<File> => {
+export const convertImage = async (file: File, max_res: number = 1000, quality_res: number = 80): Promise<File> => {
   return new Promise((resolve, reject) => {
-    const maxWH = 1000;
     Resizer.imageFileResizer(
       file,
-      maxWH,
-      maxWH, // width x height
-      "JPEG", // Specify the format
-      80, // Quality
-      0, // Rotation
+      max_res,
+      max_res, 
+      "JPEG", 
+      quality_res,
+      0, 
       (uri) => {
         resolve(uri as File);
       },

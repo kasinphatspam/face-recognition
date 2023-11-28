@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { fetch } from "./fetch";
-import { Login, Register, CreateOrg, ImageRecognition, Contact } from "./types"
+import { Login, Register, CreateOrg, Image, Contact } from "./types"
 
 export async function login(data: Login): Promise<AxiosResponse> {
   return fetch.post('auth/login', data)
@@ -18,7 +18,7 @@ export async function createNewOrg(data: CreateOrg): Promise<AxiosResponse> {
   return fetch.post(`/organization/`, data)
 }
 
-export async function postImageRecognition(orgId: number, data: ImageRecognition): Promise<AxiosResponse> {
+export async function postImageRecognition(orgId: number, data: Image): Promise<AxiosResponse> {
   return fetch.post(`/organization/${orgId}/contact/encode/recognition`, data);
 }
 

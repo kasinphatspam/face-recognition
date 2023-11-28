@@ -44,10 +44,6 @@ export type Org = {
   
 }
 
-export type ImageRecognition = {
-  image: string
-}
-
 export type Image = {
   file: FormData
 }
@@ -68,8 +64,4 @@ export type Contact = {
   lineId: string
   facebook: string
   linkedin: string
-}
-
-export type Encode = {
-  image: string
 }

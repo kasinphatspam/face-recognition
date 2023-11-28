@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback} from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -7,24 +7,68 @@ import {
   Button,
   Card,
   CardBody,
-  Image,
   CardFooter,
+  CardHeader,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
-import { CameraOff, Camera as CameraIcon, File } from "react-feather";
+import { useMutation } from "@tanstack/react-query";
+import { CameraOff, File } from "react-feather";
 import faceDetection from "@mediapipe/face_detection";
 import { Camera } from "@mediapipe/camera_utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { base64toFile, convertImage } from "@/utils/ConvertImage";
+import { postImageRecognition } from "@/api/post";
+import { toast } from "react-toastify";
 
 export default function Realtime() {
+  const lockRef = useRef(false);
+  const queueRef = useRef([]);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const FaceCamRef = useRef(null);
   const [selectedKeys, setSelectedKeys] = useState(new Set([""]));
   const [deviceId, setDeviceId] = useState({});
   const [devices, setDevices] = useState([]);
   const [image, setImage] = useState([""]);
+  const [recognitionData, setRecognitionData] = useState([]);
   const [date, setDate] = useState(Date.now());
   const [open, setOpen] = useState(true);
-  const FaceCamRef = useRef(null);
+  const { organizeData } = useAuth();
+
+  const sendImg = useMutation({
+    mutationKey: ["recimage"],
+    mutationFn: async (image) => {
+      return postImageRecognition(organizeData.id, image);
+    },
+    onSuccess: (data) => {
+      const rdata = data.data;
+      const RecognitionData = [];
+      for (let i = 0; i < rdata.accuracy.length; i++) {
+        if (rdata.statusCode === 1) {
+          RecognitionData.unshift({
+            id: rdata.result[i].id + i,
+            accuracy: rdata.accuracy[i],
+            result: rdata.result[i],
+          });
+        }
+      }
+      if (rdata.statusCode === 1)
+        setRecognitionData((prevData) => {
+          if (prevData.length > 20) {
+            prevData = prevData.pop()
+          }
+          return [
+            {
+              image: image,
+              contact: RecognitionData.sort(
+                (a, b) => b.accuracy - a.accuracy
+              ).slice(0, 2),
+            },
+            ...prevData,
+          ];
+        });
+    },
+  });
 
   /** handle other device that connect to hardware */
   const handleDevices = useCallback(
@@ -32,16 +76,14 @@ export default function Realtime() {
       const videoDevices = mediaDevices.filter(
         ({ kind }) => kind === "videoinput"
       );
-      if (videoDevices.length === 0) {
-        setDevices([
+      setDevices(
+        videoDevices || [
           {
             deviceId: 0,
             label: "camera not found",
           },
-        ]);
-      } else {
-        setDevices(videoDevices);
-      }
+        ]
+      );
     },
     [setDevices]
   );
@@ -81,6 +123,7 @@ export default function Realtime() {
     /** Call WebcamRef and CanvasRef */
     const videoWidth = webcamRef.current.video.videoHeight;
     const videoHeight = webcamRef.current.video.videoWidth;
+    const image = webcamRef.current.getScreenshot();
     canvasRef.current.width = videoWidth;
     canvasRef.current.height = videoHeight;
     const canvasElement = canvasRef.current;
@@ -94,8 +137,7 @@ export default function Realtime() {
         const topLeftY = yCenter * videoHeight - (height * videoHeight) / 2;
         const boundingBoxWidth = width * videoWidth;
         const boundingBoxHeight = height * videoHeight;
-        const message = Math.round(Box.V[0].ga * 100);
-        // console.log('x:', topLeftX, ' y:', topLeftY, ' h:', boundingBoxHeight, ' w:', boundingBoxWidth)
+        const acc = Math.round(Box.V[0].ga * 100);
 
         // Draw the bounding box
         canvasCtx.strokeStyle = "#2986cc";
@@ -105,17 +147,99 @@ export default function Realtime() {
         canvasCtx.fillStyle = "#2986cc";
         canvasCtx.fillRect(topLeftX, topLeftY - 20, 16, 20);
         canvasCtx.fillStyle = "white";
-        canvasCtx.fillText(message, topLeftX + 6, topLeftY - 6, 8);
+        canvasCtx.fillText(acc, topLeftX + 6, topLeftY - 6, 8);
         canvasCtx.stroke();
+
+        // send to ml server
+        if (acc > 90) {
+          handleSendtoserver(
+            image,
+            Math.floor(topLeftX),
+            Math.floor(topLeftY),
+            Math.floor(boundingBoxWidth),
+            Math.floor(boundingBoxHeight),
+            results.detections.length
+          );
+        }
       }
     }
     canvasCtx.restore();
   };
 
-  /** Send image base64 type to ml server */
-  const handleSendtoserver = useCallback(() => {
-    // TODO: send data to server
-  });
+  const CropImageFunction = async ({
+    image,
+    topLeftX,
+    topLeftY,
+    boundingBoxWidth,
+    boundingBoxHeight,
+  }) => {
+    let imageObj1 = new Image();
+    imageObj1.src = image;
+    imageObj1.onload = async function () {
+      const canvasElement = document.createElement("canvas");
+      const context = canvasElement.getContext("2d");
+      const cwidth = boundingBoxWidth + 160;
+      const cheight = boundingBoxHeight + 60;
+      canvasElement.width = cwidth;
+      canvasElement.height = cheight;
+      context.drawImage(
+        imageObj1,
+        topLeftX + 30,
+        topLeftY - 120,
+        cwidth,
+        cheight,
+        0,
+        0,
+        cwidth,
+        cheight
+      );
+      const dataURL = canvasElement.toDataURL("image/jpeg");
+      const file = base64toFile(dataURL, "image.jpeg");
+      const formatImage = await convertImage(file);
+      const formData = new FormData();
+      setImage(URL.createObjectURL(formatImage));
+      formData.append("image", formatImage, file.name);
+      await sendImg.mutateAsync(formData);
+    };
+  };
+
+  /** Send image to decode on ml  */
+  const handleSendtoserver = useCallback(
+    async (
+      image,
+      topLeftX,
+      topLeftY,
+      boundingBoxWidth,
+      boundingBoxHeight,
+      lengths
+    ) => {
+      if (lockRef.current) {
+        return;
+      }
+      if (queueRef.current.length < 9) {
+        queueRef.current.push({
+          image,
+          topLeftX,
+          topLeftY,
+          boundingBoxWidth,
+          boundingBoxHeight,
+        });
+      }
+      if (queueRef.current.length >= Math.min(lengths, 6) && !lockRef.current) {
+        lockRef.current = true;
+        while (queueRef.current.length > 0) {
+          const nextCall = queueRef.current.shift();
+          await CropImageFunction(nextCall);
+        }
+        if (queueRef.current.length === 0) {
+          setTimeout(() => {
+            lockRef.current = false;
+          }, lengths * 1250);
+        }
+      }
+    }
+  );
+
   /** handle action open & close */
   const handleOnclose = useCallback(() => {
     if (open) {
@@ -137,7 +261,7 @@ export default function Realtime() {
           FaceCamRef.current.start();
           setOpen(true);
         } catch (error) {
-          console.error("Error opening webcam:", error);
+          toast.error(`Error opening webcam: ${error}`);
         }
       };
       openWebcam();
@@ -159,9 +283,13 @@ export default function Realtime() {
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="relative w-full flex flex-row">
         <div className="mt-4 w-[50rem]">
-          <Card className="w-[700px] h-[606px] max-xl:w-[70vw] max-xl:h-[calc(70vw*9/16)]" isFooterBlurred radius="lg">
+          <Card
+            className="w-[700px] h-[606px] max-xl:w-[70vw] max-xl:h-[calc(70vw*9/16)]"
+            isFooterBlurred
+            radius="lg"
+          >
             {/* Webcam */}
             <Webcam
               ref={webcamRef}
@@ -205,16 +333,9 @@ export default function Realtime() {
                       onSelectionChange={setSelectedKeys}
                     >
                       {(item) => (
-                        console.log(item),
-                        item.length > 0 ? (
-                          <DropdownItem key={item.deviceId} color={"default"}>
-                            {item.label}
-                          </DropdownItem>
-                        ) : (
-                          <DropdownItem key={null}>
-                            camera not found
-                          </DropdownItem>
-                        )
+                        <DropdownItem key={item.deviceId} color={"default"}>
+                          {item.label}
+                        </DropdownItem>
                       )}
                     </DropdownMenu>
                   </Dropdown>
@@ -232,32 +353,57 @@ export default function Realtime() {
             </CardFooter>
           </Card>
         </div>
-        <div className="mt-7 w-[324px] ml-[4rem] flex flex-col">
-          <Card className="py-4 w-[20rem]">
-            <CardBody className="overflow-visible py-2">
+        <div className="mt-7 w-full  ml-[4rem] flex flex-col pl-0.5 pt-0.5 pr-8 h-[90vh]">
+          <Card className="py-4 w-full">
+            <CardBody className="overflow-scroll py-2">
               <p className="font-light text-sm text-gray-400 ml-2 mb-1">
                 Photo result
               </p>
-              {image.length == 0 && (
+              {recognitionData.length == 0 && (
                 <div className="flex flex-row ml-4 mt-8 mr-12">
                   <File />
                   <p className="ml-2 text-gray-600 text-md">no user found</p>
                 </div>
               )}
-              {image.map((item, index) => {
-                <Card radius="lg" key={index}>
-                  <Image
-                    alt="Card background"
-                    className="object-cover rounded-xl"
-                    src={item}
-                    width={270}
-                  />
-                </Card>;
-              })}
-
-              {image != "" && (
-                <p className="ml-4 text-sm text-gray-300 mt-1">{`> captured at ${date}`}</p>
-              )}
+              <div className="w-full min-h-full p-4">
+                {recognitionData.map((item, index) => (
+                  <Card radius="lg" key={index} className="mt-3 p-4">
+                    <div className="flex flex-row">
+                      <img
+                        alt="Card background"
+                        className="object-cover rounded-xl max-h-[100px] max-w-[100px]"
+                        src={item.image}
+                      />
+                      <div className="flex flex-col">
+                        {item.contact.map((contact, cindex) => (
+                          <div>
+                            <div key={cindex} className="flex flex-row">
+                              <div
+                                className={`ml-3 mt-2 text-sm font-medium p-1.5 rounded-md ${
+                                  contact.accuracy > 95
+                                    ? "text-green-800 bg-green-100"
+                                    : contact.accuracy > 90
+                                      ? "text-yellow-700 bg-yellow-100"
+                                      : "text-gray-300 bg-gray-50"
+                                }`}
+                              >{`${parseInt(contact.accuracy)}`}</div>
+                              <div className=" ml-3 pl-2 mt-2.5 text-md font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
+                            </div>
+                            <div className="flex flex-col ml-7">
+                              <div className="text-sm text-gray-500 mt-1">
+                                {`Email: ${contact.result.email1 ?? "n/a"}`}
+                              </div>
+                              <div className="text-sm text-gray-500 mb-3">
+                                {`Tel: ${contact.result.mobile ?? "n/a"}`}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </CardBody>
           </Card>
         </div>

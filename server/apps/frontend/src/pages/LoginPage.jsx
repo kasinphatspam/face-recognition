@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Loginpage() {
-  const { useLogin, organizeData, fetchOrg, fetchUser, user } = useAuth();
+  const { useLogin, fetchOrg, fetchUser, user } = useAuth();
   const loginToast = useRef(null);
   const navigate = useNavigate();
   {
@@ -43,6 +43,7 @@ export default function Loginpage() {
             "error"
           )
         );
+        loginToast.current = null;
         useLogin.reset();
       }
     } else {
@@ -152,7 +153,7 @@ export default function Loginpage() {
           {/* Sumbit button */}
           <div className="mt-4 mb-4">
             <Button
-              disabled={useLogin.status === "pending"}
+              disabled={loginToast.current !== null}
               color={useLogin.status === "pending" ? "default" : "primary"}
               variant="shadow"
               onClick={(e) => handleSubmit(e)}

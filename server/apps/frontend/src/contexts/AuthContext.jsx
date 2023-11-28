@@ -7,14 +7,14 @@ import { queryClient } from '@/main';
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const { data: user, refetch: fetchUser } = useQuery({ 
+    const { data: user, refetch: fetchUser, status: userStat } = useQuery({ 
         queryKey: ["user"],
         queryFn: async () => {
             return getUser()
         },
     })
 
-    const { data: organizeData, refetch: fetchOrg } = useQuery({
+    const { data: organizeData, refetch: fetchOrg, status: orgStat } = useQuery({
         enabled: !!user, 
         queryKey: ["organize", user?.id],
         queryFn: async () => {
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, organizeData, fetchOrg, fetchUser, useLogin, useSignup, useLogout }}
+            value={{ user, organizeData, fetchOrg, fetchUser, orgStat, userStat, useLogin, useSignup, useLogout }}
         >
             {children}
         </AuthContext.Provider>

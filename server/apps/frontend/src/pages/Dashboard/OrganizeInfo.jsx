@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Switch,
 } from "@nextui-org/react";
 import Employeecomponent from "@/components/Employeelist";
 import { getOrg, getAllEmployees, getContacts } from "@/api/get";
@@ -38,7 +39,7 @@ export default function OrganizationInfo() {
   // ------------------------------------ API ------------------------------------------
   const { id } = useParams();
   const { data: organization, status: orgStatus } = useQuery({
-    queryKey: ["getOrganizations"],
+    queryKey: ["organize", id],
     queryFn: async () => {
       return getOrg(id);
     },
@@ -252,7 +253,7 @@ export default function OrganizationInfo() {
                   <Tab key="teams" title="Teams">
                     <div className="relative">
                       <div className="absolute top-1 right-14 flex flex-col">
-                        <p className="font-medium ml-[68px]">passcode</p>
+                        <p className="font-medium ml-[68px] text-right">passcode</p>
                         <p className="font-semibold text-4xl text-right">
                           {orgStatus === "pending"
                             ? "loading.."
@@ -307,7 +308,7 @@ export default function OrganizationInfo() {
                   <Tab key="activity" title="Activity"></Tab>
                   <Tab key="settings" title="Settings">
                     <div className="mt-8 mx-8">
-                      <ColumnText index="name" title="Organization detail">
+                      <ColumnText index="name" title="Organization details">
                         <form ref={form} onSubmit={handleSubmit}>
                           <div className="flex flex-col">
                             <label className="ml-1 font-medium text-sm text-gray-500">
@@ -361,17 +362,29 @@ export default function OrganizationInfo() {
                         </form>
                       </ColumnText>
                       <Divider className="my-8" />
-                      <ColumnText index="delete" title="Delete organization">
+                      <ColumnText index="permission" title="Accessibility">
                         <div className="flex flex-row">
-                          <p className="text-gray-500 text-sm w-4/5 mt-1.5">
+                          <p className="text-gray-500 text-sm w-2/3">
+                            everyone can access this organization, if not user need to grant permission from administrator
+                          </p>
+                          <Switch
+                            className="mx-auto"
+                            defaultSelected={organization?.isPublic ?? false}
+                          />
+                        </div>
+                      </ColumnText>
+                      <Divider className="my-8" />
+                      <ColumnText index="delete" title="Delete organization">
+                        <div className="flex flex-row w-full">
+                          <p className="text-gray-500 text-sm w-2/3 mt-1.5">
                             Permanently delete all data and user information
                             within the organization
                           </p>
                           <Button
-                            variant="bordered"
+                            variant="flat"
                             color="danger"
                             size="sm"
-                            className=" drop-shadow-md dark:drop-shadow-none w-26 mb-2 text-md px-4"
+                            className=" drop-shadow-md dark:drop-shadow-none w-26 mb-2 mx-auto text-md px-4"
                             onPress={onOpen}
                           >
                             deactivated
