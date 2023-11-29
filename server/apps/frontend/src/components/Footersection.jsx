@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { footerVariants } from '@/utils/motion';
 
 const FooterText = ({ title, path }) => (
   <p className="mt-2 text-black/40 dark:text-white/70 text-md hover:text-blue-500">
@@ -7,22 +8,12 @@ const FooterText = ({ title, path }) => (
 );
 
 const FooterBar = () => {
-  const footerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-  const transition = {
-    duration: 1, // Adjust this value as needed
-  };
 
   return (
     <motion.div
       className="pt-12 sm:px-[17vw] grid grid-cols-4 max-sm:grid-cols-1 gap-10 max-sm:gap-y-unit-md max-sm:justify-items-center  w-99vw h-[250px] max-sm:h-auto max-sm:pb-12"
       variants={footerVariants}
       initial="hidden"
-      animate="visible"
-      exit="hidden"
-      transition={transition}
       whileInView="visible"
       viewport={{ once: false, amount: 0.25 }}
     >

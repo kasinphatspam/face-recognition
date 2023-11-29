@@ -106,3 +106,17 @@ export const footerVariants = {
         },
     },
 };
+
+export const imageVariants = {
+    hidden: {
+        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
+    },
+    visible: {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        transition: {
+            delay: 0,
+            duration: 2,
+            ease: [0, 1, 0.55, 0.7],
+        },
+    }
+}

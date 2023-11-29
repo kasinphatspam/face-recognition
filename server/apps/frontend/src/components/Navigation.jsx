@@ -18,16 +18,27 @@ import {
 import Switchthemebutton from "./Button/SwitchTheme";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Link as ScrollLink } from 'react-scroll';
+import { Link as ScrollLink } from "react-scroll";
 
 {
   /* menu Item for small devices screen */
 }
 const menuItems = [
   "Dashboard",
-  "My Settings",
-  "Team Settings",
+  "Recognition",
+  "Organization",
+  "Customer",
   "Help & Feedback",
+  "My Settings",
+  "Log Out",
+];
+
+const guestMenuItems = ["Sign Up", "Login", "Help & Feedback"];
+
+const noOrgMenuItems = [
+  "Create / Join",
+  "Help & Feedback",
+  "My Settings",
   "Log Out",
 ];
 
@@ -100,15 +111,21 @@ export default function Navigation(props) {
         {Active === "Contactus" && (
           <>
             <NavbarItem>
-              <Link color="foreground" href="/subscription">Subscription</Link>
+              <Link color="foreground" href="/subscription">
+                Subscription
+              </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="/">Home Page</Link>
+              <Link color="foreground" href="/">
+                Home Page
+              </Link>
             </NavbarItem>
           </>
         )}
         <NavbarItem>
-          <Link color="foreground" href="/contactus">Support Center</Link>
+          <Link color="foreground" href="/contactus">
+            Support Center
+          </Link>
         </NavbarItem>
       </NavbarContent>
 
@@ -117,7 +134,7 @@ export default function Navigation(props) {
         <NavbarItem className="hidden sm:flex">
           <Switchthemebutton className="" size="sm" />
         </NavbarItem>
-        <NavbarItem hidden={(user == null)}>
+        <NavbarItem hidden={user == null}>
           <DropdownAvatar />
         </NavbarItem>
         <NavbarItem hidden={!(user == null)}>
@@ -138,26 +155,9 @@ export default function Navigation(props) {
 
       {/* Menu Toggle for small devices */}
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              className="w-full"
-              color={
-                index === 2
-                  ? "warning"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
-          </NavbarMenuItem>
-        ))}
+        <BurgerItem/>
         <NavbarMenuItem>
-          <Switchthemebutton/>
+          <Switchthemebutton />
         </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
@@ -192,10 +192,7 @@ export function FaceRecognitionNavigation() {
         </NavbarContent>
 
         {/* Tabs for medium devices or desktop */}
-        <NavbarContent
-          className="hidden sm:flex gap-4"
-          justify="center"
-        >
+        <NavbarContent className="hidden sm:flex gap-4" justify="center">
           <p className="font-semibold dark:white text-xl">Face Recognition</p>
         </NavbarContent>
         {/* Sign up or Logined parts */}
@@ -203,7 +200,7 @@ export function FaceRecognitionNavigation() {
           <NavbarItem>
             <Switchthemebutton className="" size="sm" />
           </NavbarItem>
-          <NavbarItem hidden={(user == null)}>
+          <NavbarItem hidden={user == null}>
             <DropdownAvatar />
           </NavbarItem>
           <NavbarItem hidden={!(user == null)}>
@@ -223,26 +220,7 @@ export function FaceRecognitionNavigation() {
         </NavbarContent>
 
         {/* Menu Toggle for small devices */}
-        <NavbarMenu>
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                className="w-full"
-                color={
-                  index === 2
-                    ? "warning"
-                    : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </NavbarMenu>
+        <BurgerItem />
       </Navbar>
     </>
   );
@@ -307,32 +285,56 @@ export function AnalyticsNavigation(props) {
         </NavbarContent>
 
         {/* Menu Toggle for small devices */}
-        <NavbarMenu>
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                className="w-full"
-                color={
-                  index === 2
-                    ? "warning"
-                    : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </NavbarMenu>
+        <BurgerItem />
       </Navbar>
     </>
   );
 }
 
-export function DropdownAvatar() {
+function BurgerItem() {
+  const { user, organizeData, useLogout } = useAuth();
+  const arr = user ? organizeData ? menuItems : noOrgMenuItems : guestMenuItems
+
+  const handleClick = () => {
+    if (item === "Log Out") {
+      useLogout();
+    }
+  }
+
+  const mapLink = {
+    "Login": "/login",
+    "Sign Up": "/signup",
+    "Create / Join": "/new",
+    "Recognition": "/recognition",
+    "Dashboard": "/dashboard",
+    "Organization": "/organize",
+    "Customer": "/contact",
+    "My Settings": "/setting"
+  }
+  return (
+    <NavbarMenu>
+      {arr.map((item, index) => (
+        <NavbarMenuItem key={`${item}-${index}`}>
+          <Link
+            className="w-full"
+            color={
+                item === "Log Out"
+                  ? "danger"
+                  : "foreground"
+            }
+            href={mapLink[item]}
+            onPress={() => handleClick(item)}
+            size="lg"
+          >
+            {item}
+          </Link>
+        </NavbarMenuItem>
+      ))}
+    </NavbarMenu>
+  );
+}
+
+function DropdownAvatar() {
   const navigate = useNavigate();
   const { user, organizeData, useLogout } = useAuth();
   return (
@@ -370,7 +372,7 @@ export function DropdownAvatar() {
             <p className="font-semibold">{user?.email ?? ""}</p>
           </DropdownItem>
           <DropdownItem key="settings">My Settings</DropdownItem>
-          <DropdownItem key="dashboard">Dashboard</DropdownItem>  
+          <DropdownItem key="dashboard">Dashboard</DropdownItem>
           <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="danger">
             Log Out

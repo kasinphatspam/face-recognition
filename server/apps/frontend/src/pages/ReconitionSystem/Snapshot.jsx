@@ -1,4 +1,5 @@
 import _, { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   Dropdown,
   DropdownTrigger,
@@ -42,6 +43,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { config } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
 import { base64toFile, convertImage } from "@/utils/ConvertImage";
+import { AnimateListItem } from "@/components/Box/AnimateListItem";
 
 export default function Snapshot() {
   // -------------------------------- VARIABLES --------------------------------
@@ -103,8 +105,13 @@ export default function Snapshot() {
       }
       if (rdata.statusCode === 1)
         setRecognitionData((prevData) => [
-          { image: image, date: date, result: [...RecognitionData] },
           ...prevData,
+          {
+            id: uuidv4(),
+            image: image,
+            date: date,
+            result: [...RecognitionData],
+          },
         ]);
       toast.update(
         toastsnap.current,
@@ -575,69 +582,78 @@ export default function Snapshot() {
         </div>
         <div className="flex flex-col dark:bg-neutral-800 bg-blue-50/40 mt-8 mr-24 py-4 px-8 rounded-md">
           <p className="text-lg font-medium mb-4">Recent image recognition</p>
-          <div className="flex flex-col gap-x-4 w-[77vw] px-4 mx-4 overflow-scroll my-4 max-sm:flex-col">
-            {recognitionData.map((item, index) => (
-              <Card key={index} className={`min-w-[300px] my-4`}>
-                <CardHeader>
-                  <div className="flex flex-col">
-                    <div className="ml-4  border-l-4 pl-2 mt-3 text-lg font-medium w-[270px] truncate">{`at ${item.date}`}</div>
-                    <img
-                      src={item.image}
-                      alt="image recognition"
-                      className="max-w-[300px] max-h-[300px] rounded-md ml-4 my-2"
-                    />
-                  </div>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex flex-row w-[70vw] overflow-scroll">
-                    {item.result
-                      .sort((a, b) => b.accuracy - a.accuracy)
-                      .map((contact, sindex) => (
-                        <div
-                          key={sindex}
-                          className={`flex flex-col ml-4 my-0.5  px-8 pt-4 rounded-md bg-gray-100/50 ${
-                            sindex === 0 ? " ring-2 ring-lime-400" : ""
-                          }`}
-                        >
-                          {sindex === 0 ? (
-                            <Chip
-                              color="success"
-                              variant="flat"
-                              size="sm"
-                              className="my-1.5"
-                            >
-                              best accuracy
-                            </Chip>
-                          ) : (
-                            <div className="pt-8"></div>
-                          )}
-                          <div className=" border-l-4 pl-2 mt-2 text-lg font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
-                          <div className="text-md text-gray-500 mt-4">
-                            {`email: ${contact.result.email1 ?? "n/a"}`}
-                          </div>
-                          <div className="text-md text-gray-500">
-                            {`Tel: ${contact.result.mobile ?? "n/a"}`}
-                          </div>
-                          <div className="text-md text-gray-500">{`company: ${
-                            contact.result.company ?? "n/a"
-                          } `}</div>
+          {recognitionData.length === 0 && (
+            <div className="mx-auto mt-16 list-none">
+              <AnimateListItem>
+                <p>no recent data found</p>
+              </AnimateListItem>
+            </div>
+          )}
+
+          <ul className="flex flex-col gap-x-4 w-[77vw] px-4 mx-4 max-h-[700px] overflow-y-scroll my-4 max-sm:flex-col">
+            {recognitionData.reverse().map((item) => (
+              <AnimateListItem key={item.id}>
+                <Card key={item.id} className={`min-w-[300px] my-4`}>
+                  <CardHeader>
+                    <div className="flex flex-col">
+                      <Chip variant="dot" className="ml-4 pl-2 my-3 text-tiny text-gray-400 font-medium" size="sm">{`${item.id}`}</Chip>
+                      <img
+                        src={item.image}
+                        alt="image recognition"
+                        className="max-w-[300px] max-h-[300px] rounded-md ml-4 my-2"
+                      />
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="flex flex-row w-[70vw] overflow-scroll">
+                      {item.result
+                        .sort((a, b) => b.accuracy - a.accuracy)
+                        .map((contact, sindex) => (
                           <div
-                            className={`mt-4 text-tiny text-gray-500 w-[270px] h-[30px] truncate`}
+                            key={sindex}
+                            className={`flex flex-col ml-4 my-0.5  px-8 pt-4 rounded-md bg-gray-100/50 ${
+                              sindex === 0 ? " ring-2 ring-lime-400" : ""
+                            }`}
                           >
-                            {`reference owner: ${
-                              contact.contactOwner ?? "n/a"
-                            } (${contact.result.encodedId}: ${
-                              contact.accuracy
-                            })`}
+                            {sindex === 0 ? (
+                              <Chip
+                                color="success"
+                                variant="flat"
+                                size="sm"
+                                className="my-1.5"
+                              >
+                                best accuracy
+                              </Chip>
+                            ) : (
+                              <div className="pt-8"></div>
+                            )}
+                            <div className=" border-l-4 pl-2 mt-2 text-lg font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
+                            <div className="text-md text-gray-500 mt-4">
+                              {`email: ${contact.result.email1 ?? "n/a"}`}
+                            </div>
+                            <div className="text-md text-gray-500">
+                              {`Tel: ${contact.result.mobile ?? "n/a"}`}
+                            </div>
+                            <div className="text-md text-gray-500">{`company: ${
+                              contact.result.company ?? "n/a"
+                            } `}</div>
+                            <div
+                              className={`mt-4 text-tiny text-gray-500 w-[270px] h-[30px] truncate`}
+                            >
+                              {`reference owner: ${
+                                contact.contactOwner ?? "n/a"
+                              } (${contact.result.encodedId}: ${
+                                contact.accuracy
+                              })`}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                </CardBody>
-                <CardFooter></CardFooter>
-              </Card>
+                        ))}
+                    </div>
+                  </CardBody>
+                </Card>
+              </AnimateListItem>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </>

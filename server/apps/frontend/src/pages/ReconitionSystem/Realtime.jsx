@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   Dropdown,
   DropdownTrigger,
@@ -19,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { base64toFile, convertImage } from "@/utils/ConvertImage";
 import { postImageRecognition } from "@/api/post";
 import { toast } from "react-toastify";
+import { AnimateListItem } from "@/components/Box/AnimateListItem";
 
 export default function Realtime() {
   const lockRef = useRef(false);
@@ -58,13 +60,14 @@ export default function Realtime() {
             prevData = prevData.pop()
           }
           return [
+            ...prevData,
             {
+              id: uuidv4(),
               image: image,
               contact: RecognitionData.sort(
                 (a, b) => b.accuracy - a.accuracy
               ).slice(0, 2),
             },
-            ...prevData,
           ];
         });
     },
@@ -365,9 +368,10 @@ export default function Realtime() {
                   <p className="ml-2 text-gray-600 text-md">no user found</p>
                 </div>
               )}
-              <div className="w-full min-h-full p-4">
-                {recognitionData.map((item, index) => (
-                  <Card radius="lg" key={index} className="mt-3 p-4">
+              <ul className="w-full min-h-full p-4">
+                {recognitionData.reverse().map((item) => (
+                  <AnimateListItem key={item.id}>
+                  <Card radius="lg" className="mt-3 p-4">
                     <div className="flex flex-row">
                       <img
                         alt="Card background"
@@ -402,8 +406,9 @@ export default function Realtime() {
                       </div>
                     </div>
                   </Card>
+                  </AnimateListItem>
                 ))}
-              </div>
+              </ul>
             </CardBody>
           </Card>
         </div>

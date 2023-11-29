@@ -6,6 +6,7 @@ import { textVariant, staggerContainer } from "@/utils/motion";
 import { Button } from "@nextui-org/react";
 import Pricing from "@/components/Pricing";
 import FooterBar from '@/components/Footersection';
+import { Transition } from "@/hooks/Transition";
 
 
 const Subscription = () => {
@@ -144,4 +145,4 @@ const Subscription = () => {
   );
 };
 
-export default Subscription;
+export default Transition(Subscription);

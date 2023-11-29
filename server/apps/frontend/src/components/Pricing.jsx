@@ -32,7 +32,7 @@ export default function Pricing({
 					<div className='text-4xl font-extrabold'>{subscription * month}฿</div>
 					<div className='font-semibold mt-3 text-lg'>/{month == 1 ? 'month' : 'year'}</div>
 				</div>
-					<Button className='mx-auto mt-8'>  Subscribe  </Button>
+					<Button className={`mx-auto mt-8 ${Popular ? "bg-[#9F3333] text-white hover:drop-shadow-[0_0px_15px_rgba(219,39,119,0.25)]" :  ""}`}>  Contact us  </Button>
 			</div >
 
 		</>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
-import { FallBackPage } from "@/App";
+import { FallBackPage } from "@/pages/Critical/LoadingPage";
 
 export const ProtectedUser = () => {
   const { user, userStat } = useAuth();

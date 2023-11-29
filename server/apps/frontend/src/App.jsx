@@ -1,9 +1,11 @@
 import { NextUIProvider } from "@nextui-org/react";
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProtectedUser, ProtectedOrganization } from "@/hooks/ProtectRoute";
+import { FallBackPage } from "@/pages/Critical/LoadingPage";
+import { AnimatePresence } from "framer-motion";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const Analytics = lazy(() => import("@/pages/Dashboard/Analytics"));
@@ -45,26 +47,16 @@ const router = createBrowserRouter([
   },
 ]);
 
-export const FallBackPage = () => {
-  return (
-    <>
-      <div className="-z-10 w-screen h-screen">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
-          <p className="text-white/90 font-medium">Loading data</p>
-          <img src="/loading.svg" className="w-16 h-16 ml-7" />
-        </div>
-      </div>
-    </>
-  );
-};
 export const App = () => {
   return (
     <NextUIProvider>
       <ThemeProvider>
         <AuthProvider>
+          <AnimatePresence mode="wait">
           <Suspense fallback={<FallBackPage />}>
             <RouterProvider router={router} />
           </Suspense>
+          </AnimatePresence>
         </AuthProvider>
       </ThemeProvider>
     </NextUIProvider>
