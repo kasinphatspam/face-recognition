@@ -13,7 +13,8 @@ export default function OrganizeCard(props) {
         <>  
             {/** Tool name */}
             <LinkR to={{pathname:`/organize/${props.id}`}}>
-                <Card isFooterBlurred isHeaderBlurred className="relative group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
+                <Card isFooterBlurred isHeaderBlurred 
+                className="relative group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
                     {/** Box Upper */}
                     <CardHeader className="absolute z-10 top-0 flex-col items-start bg-white/30">
                         <p className=" text-[0.6rem] text-black/60 uppercase font-bold">Total {props.employee} users</p>
@@ -30,7 +31,8 @@ export default function OrganizeCard(props) {
                         src="/default.jpg"
                     />
                     {/** Box Bottom */}
-                    <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
+                    <CardFooter className="absolute bg-black/40 bottom-0 z-10 
+                    border-t-1 border-default-600 dark:border-default-100">
                         <div className="flex flex-col ml-8">
                             <div className="flex flex-col">
                                 <p className="text-tiny text-white/60 w-[160px] h-[60px]">{props.description}</p>

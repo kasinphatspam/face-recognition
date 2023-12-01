@@ -17,13 +17,14 @@ import {
 import Employeecomponent from "@/components/Employeelist";
 import { getContacts } from "@/api/get";
 import { postNewContact } from "@/api/post";
+import { deleteContact } from "@/api/delete";
 import { messageCode } from "@/utils/errMessage";
 import { config } from "@/utils/toastConfig";
 import { toast } from "react-toastify";
 
 export default function Contact() {
   // ---------------------------------- VARIABLES ---------------------------------------
-  const { organizeData } = useAuth();
+  const { user, organizeData } = useAuth();
   const [contactData, setContactData] = useState();
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
@@ -48,8 +49,8 @@ export default function Contact() {
       return postNewContact(organizeData.id, data);
     },
     onSuccess: async () => {
+      toast.success(config('contact added', "success"));
       await fContact();
-      toast.success(config(`contact added`, "success"));
     },
     onError: (error) => {
       toast.error(
@@ -60,6 +61,20 @@ export default function Contact() {
       );
     },
   });
+
+  const delContact = useMutation({
+    mutationKey: ["deleteContact"],
+    mutationFn: async (contactId) => {
+      return deleteContact(organizeData.id, contactId)
+    },
+    onSuccess: async () => {
+      toast.success(config("contact deleted", "success"));
+      await fContact();
+    },
+    onError: async (error) => {
+      toast.error(config(`${messageCode(error.response?.data?.message ?? error.message)}`, "error"));
+    }
+  })
   // ----------------------------------- GENERAL ----------------------------------------
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -273,9 +288,10 @@ export default function Contact() {
                 <Button
                   color="primary"
                   onPress={async () => {
-                    postContact.mutate({ ...formData, owner: user.id });
+                    postContact.mutate({ ...formData, owner: `${user.firstname} ${user.lastname[0]}.` });
                     onClose();
                   }}
+                  disabled={postContact.status === 'pending'}
                 >
                   Add
                 </Button>
@@ -326,6 +342,9 @@ export default function Contact() {
                       data={contact}
                       columns={columns}
                       visible_columns={visible}
+                      handleDelete={(id) => {
+                        delContact.mutate(id);
+                      }}
                     />
                   ) : (
                     <div className="mt-8 text-center text-black/40 dark:text-white/60">

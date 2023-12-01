@@ -16,6 +16,13 @@ class FaceRecognition:
         self.file_path = f"dataset/{package_key}.npy"
         self.organ_empty = "dataset/empty_organization_for_check_empty.npy"
         self.face_data = self.load_organization_data()
+        current_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        if self.face_data == None:
+            return {
+                "statusCode": -1,
+                "checkedTime": current_time,
+                "message": "FAIL: Unable to load organization",
+            }
 
     def load_organization_data(self):
         if os.path.exists(self.file_path):

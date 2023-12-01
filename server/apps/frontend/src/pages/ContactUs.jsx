@@ -5,6 +5,7 @@ import { Button, Input } from "@nextui-org/react";
 import { useState, useRef } from "react";
 import FooterBar from '@/components/Footersection';
 import emailjs from '@emailjs/browser';
+import { Transition } from '@/hooks/Transition';
 
 const ContactUsPage = () => {
   const form = useRef()
@@ -136,4 +137,4 @@ const ContactUsPage = () => {
   );
 };
 
-export default ContactUsPage;
+export default Transition(ContactUsPage);

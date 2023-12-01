@@ -7,7 +7,7 @@ export default function Vertical({ role }) {
   let Role = role ? "Guest" : role;
   return (
     <>
-      <div className="relative mt-12 ml-4">
+      <div className="relative mt-12 ml-4 max-md:hidden">
         <div className="sticky top-[88px] min-h-[calc(100vh-6rem)] w-[240px] bg-white dark:bg-zinc-800 rounded-md shadow-md mt-[12px] flex flex-col pl-6 pr-6 pt-12">
           <Link to="/dashboard">
             <div className="flex flex-row pt-4 pb-4 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-600 duration-100 px-8">
