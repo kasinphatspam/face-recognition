@@ -3,7 +3,7 @@ import {
   NotFoundException,
   Injectable,
 } from '@nestjs/common';
-import { Organization } from '@/entity';
+import { Organization, User } from '@/entity';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -30,7 +30,14 @@ export class OrganizationService {
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
-    return this.organizationRepository.getOrganizationById(organizationId);
+    const organization = await this.organizationRepository.getOrganizationById(
+      organizationId,
+    );
+
+    if (!organization) {
+      throw new NotFoundException('Organization not found');
+    }
+    return organization;
   }
 
   public async createNewOraganization(
@@ -38,7 +45,11 @@ export class OrganizationService {
     body: CreateOrganizationDto,
   ) {
     // Check if the user account exists or not.
-    const property = await this.userService.getUserBy(userId, null);
+    const property = await this.userService.getUserBy(userId, ['organization']);
+
+    if (property.organization) {
+      throw new BadRequestException('User already has organization');
+    }
 
     // Check if client sent package id or not
     if (!body.planId) {
@@ -83,26 +94,22 @@ export class OrganizationService {
     await this.userRepository.setRole(property.id, roleId);
   }
 
-  public async update(organizationId: number, body: UpdateOrganizationDto) {
-    const organization = await this.organizationRepository.getOrganizationById(
-      organizationId,
-    );
-    if (!organization) throw new NotFoundException('Not found organization.');
-    return this.organizationRepository.update(organizationId, body);
+  public async update(user: User, body: UpdateOrganizationDto) {
+    if (!user.organization)
+      throw new NotFoundException("User didn't join organization");
+    return this.organizationRepository.update(user.organization.id, body);
   }
 
-  public async deleteOrganization(organizationId: number) {
-    const organization = await this.organizationRepository.getOrganizationById(
-      organizationId,
-    );
-    if (!organization) throw new NotFoundException('Not found organization.');
+  public async deleteOrganization(organization: Organization) {
+    if (!organization)
+      throw new NotFoundException("User didn't join organization");
     // Find the roles in this organization
-    const roleProperty = await this.roleService.findAll(organizationId);
+    const roleProperty = await this.roleService.findAll(organization.id);
     for (const i of roleProperty) {
       // Find the user account that uses this role.
       const userArray =
         await this.userRepository.findAllByOrganizationIdAndRoleId(
-          organizationId,
+          organization.id,
           i.id,
         );
       // Remove the role id and organization id in each account of this organization
@@ -113,11 +120,11 @@ export class OrganizationService {
         }
       }
       // Force delete the role
-      await this.roleService.forceDelete(organizationId, i.id);
+      await this.roleService.forceDelete(organization.id, i.id);
     }
     await this.recognitionApiService.deletePackage(organization.packageKey);
     // Delete the organization
-    return this.organizationRepository.delete(organizationId);
+    return this.organizationRepository.delete(organization.id);
   }
 
   public async getCurrentOrganization(userId: number): Promise<Organization> {
