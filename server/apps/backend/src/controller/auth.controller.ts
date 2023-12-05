@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Req,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
@@ -19,6 +20,9 @@ import {
 } from '@/utils/dtos/auth.dto';
 import { AuthService } from '@/service/auth.service';
 import { ApiTags } from '@nestjs/swagger';
+import { RequestUser } from '@/utils/decorators/auth.decorator';
+import { User } from '@/entity';
+import { AuthGuard } from '@/utils/guards/auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -81,11 +85,13 @@ export class AuthController {
   }
 
   @Put('change-password/wc')
+  @UseGuards(AuthGuard)
   public async changePasswordWithConfirmation(
+    @RequestUser() user: User,
     @Body() body: AuthChangePasswordWithConfirmation,
     @Res() res: Response,
   ) {
-    await this.authService.changePassword(body);
+    await this.authService.changePassword(user.id, body);
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Reset password successfully' });

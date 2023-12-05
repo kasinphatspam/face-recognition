@@ -71,26 +71,26 @@ export class OrganizationController {
     });
   }
 
-  @Put(':organizationId')
+  @Put()
   @UseGuards(AuthGuard)
   public async updateOrganizationInfo(
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Body() body: UpdateOrganizationDto,
     @Res() res: Response,
   ) {
-    await this.organizationService.update(organizationId, body);
+    await this.organizationService.update(user, body);
     return res.status(HttpStatus.OK).json({
       message: `Updated organization successfully`,
     });
   }
 
-  @Delete(':organizationId')
+  @Delete()
   @UseGuards(AuthGuard)
   public async deleteOrganization(
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Res() res: Response,
   ) {
-    await this.organizationService.deleteOrganization(organizationId);
+    await this.organizationService.deleteOrganization(user.organization);
     return res.status(HttpStatus.OK).json({
       message: `Deleted organization successfully`,
     });
