@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from recognition import FaceRecognition
 from file import create_file, delete_file
 import time
+
 app = Flask(__name__)
 load_dotenv()
 path = ["/api", "/data", "/dataset"]
@@ -29,6 +30,7 @@ def create_folders(folder_paths):
 def hello():
     return "Hello world!"
 
+
 # TEST
 # 1. PASS Success
 
@@ -36,6 +38,7 @@ def hello():
 @app.route("/status")
 def status():
     return jsonify({"message": "Server connected"})
+
 
 # TEST
 # 1. PASS Success
@@ -46,9 +49,10 @@ def create_package():
     packageId = create_file()
     return jsonify(packageId)
 
+
 # TEST
 # 1. PASS Success
-# 2. PASS Organization not found
+# 2. PASS Dataset not found
 
 
 @app.route("/dataset-file", methods=["DELETE"])
@@ -58,11 +62,12 @@ def delete_package():
     status = delete_file(package_key)
     return jsonify(status)
 
+
 # TEST
 # 1. PASS Success
 # 2. PASS Dataset is empty
-# 3. PASS Organization not found
-# 4. Unable to load organization
+# 3. PASS Dataset not found
+# 4. Unable to load dataset
 # 5. PASS Face not found in image
 # 6. PASS Unknown face
 
@@ -72,14 +77,15 @@ def face_recognition_service():
     data = request.json
     package_key = data["packageKey"]
     image = data["image"]
-    result = FaceRecognition(package_key).recognition(image)
+    result = FaceRecognition(package_key).recognition_base64(image)
     return jsonify(result)
+
 
 # TEST
 # 1. PASS Success
 # 2. PASS Face not found in image
-# 3. PASS Organization not found
-# 4. Unable to load organization
+# 3. PASS Dataset not found
+# 4. Unable to load dataset
 
 
 @app.route("/face-recognition", methods=["PUT"])
@@ -87,15 +93,15 @@ def encode():
     data = request.json
     package_key = data["packageKey"]
     image = data["image"]
-    encoded_id = FaceRecognition(package_key).encode(image)
+    encoded_id = FaceRecognition(package_key).encode_base64(image)
     return jsonify(encoded_id)
 
 
 # TEST
 # 1. PASS Success
 # 2. PASS Face not found in image
-# 3. PASS Organization not found
-# 4. Unable to load organization
+# 3. PASS Dataset not found
+# 4. Unable to load dataset
 @app.route("/face-recognition-file", methods=["PUT"])
 def encode_file():
     package_key = request.form["packageKey"]
@@ -103,11 +109,12 @@ def encode_file():
     encoded_id = FaceRecognition(package_key).encode_file(image)
     return jsonify(encoded_id)
 
+
 # TEST
 # 1. PASS Success
 # 2. PASS Face not found in image
-# 3. PASS Organization not found
-# 4. Unable to load organization
+# 3. PASS Dataset not found
+# 4. Unable to load dataset
 
 
 @app.route("/face-recognition-file", methods=["POST"])
@@ -117,11 +124,12 @@ def face_recognition_service_file():
     result = FaceRecognition(package_key).recognition_file(image)
     return jsonify(result)
 
+
 # TEST
 # 1. PASS Success
-# 2. PASS Organization is empty
-# 3. PASS Organization not found
-# 4. PASS Encode id not found in organization
+# 2. PASS Dataset is empty
+# 3. PASS Dataset not found
+# 4. PASS Encode id not found in dataset
 
 
 @app.route("/face-recognition", methods=["DELETE"])
