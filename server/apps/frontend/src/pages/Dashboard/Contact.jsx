@@ -49,7 +49,7 @@ export default function Contact() {
       return postNewContact(organizeData.id, data);
     },
     onSuccess: async () => {
-      toast.success(config('contact added', "success"));
+      toast.success(config("contact added", "success"));
       await fContact();
     },
     onError: (error) => {
@@ -65,21 +65,35 @@ export default function Contact() {
   const delContact = useMutation({
     mutationKey: ["deleteContact"],
     mutationFn: async (contactId) => {
-      return deleteContact(organizeData.id, contactId)
+      return deleteContact(organizeData.id, contactId).then(
+        setContactData((prevData) =>
+          prevData.filter((item) => item.id !== contactId)
+        )
+      );
     },
     onSuccess: async () => {
       toast.success(config("contact deleted", "success"));
       await fContact();
     },
     onError: async (error) => {
-      toast.error(config(`${messageCode(error.response?.data?.message ?? error.message)}`, "error"));
-    }
-  })
+      toast.error(
+        config(
+          `${messageCode(error.response?.data?.message ?? error.message)}`,
+          "error"
+        )
+      );
+    },
+  });
   // ----------------------------------- GENERAL ----------------------------------------
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  if (contactStatus === "success" && !contactData) setContactData(contact);
+  if (contactStatus === "success" && !contactData)
+    setContactData(
+      contact.map((item) => {
+        return { ...item, status: !!item.encodedId ? "masked" : "unmasked" };
+      })
+    );
 
   const handleOnChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -147,8 +161,7 @@ export default function Contact() {
     { name: "STATUS", uid: "status" },
     { name: "ACTIONS", uid: "actions" },
   ];
-  const visible = ["name", "email", "owner", "phone", "actions"];
-
+  const visible = ["name", "email", "phone", "status", "actions"];
   return (
     <>
       {/** Modal add customer*/}
@@ -288,10 +301,13 @@ export default function Contact() {
                 <Button
                   color="primary"
                   onPress={async () => {
-                    postContact.mutate({ ...formData, owner: `${user.firstname} ${user.lastname[0]}.` });
+                    await postContact.mutateAsync({
+                      ...formData,
+                      owner: `${user.firstname} ${user.lastname[0]}.`,
+                    });
                     onClose();
                   }}
-                  disabled={postContact.status === 'pending'}
+                  disabled={postContact.status === "pending"}
                 >
                   Add
                 </Button>
@@ -339,7 +355,7 @@ export default function Contact() {
                 <div className="mt-4">
                   {contactData ? (
                     <Employeecomponent
-                      data={contact}
+                      data={contactData}
                       columns={columns}
                       visible_columns={visible}
                       handleDelete={(id) => {

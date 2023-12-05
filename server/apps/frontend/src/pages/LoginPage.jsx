@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { ArrowLeft, Eye, EyeOff } from "react-feather";
 import { Button, Input, Link as Nextlink } from "@nextui-org/react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Loginpage() {
-  const { useLogin, fetchOrg, fetchUser, user } = useAuth();
+  const { useLogin, fetchUser, user } = useAuth();
   const loginToast = useRef(null);
   const navigate = useNavigate();
   {
@@ -29,12 +29,21 @@ export default function Loginpage() {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )
     ) {
-      const id = toast.loading("Please wait ..", { containerId: "main" });
+      const id = toast.loading("Please wait ..", { containerId: "main", autoClose: 8000, hideProgressBar: true });
       loginToast.current = id;
       try {
-        await useLogin.mutateAsync({ email, password });
-        await fetchUser();
-        await fetchOrg();
+        await useLogin.mutateAsync({ email, password }, 
+          { onSuccess: async (data) => {
+            await fetchUser();
+            toast.update(id, config(`welcome back ${data.email}`, "success"))
+            loginToast.current == null
+            if (data.organization != null) {
+              navigate("/dashboard")
+          } else {
+              navigate("/new")
+          }
+        }});
+        
       } catch (err) {
         toast.update(
           id,
@@ -57,17 +66,6 @@ export default function Loginpage() {
       /* ... */
     }
   };
-
-  useEffect(() => {
-    if (user != undefined && loginToast.current != null) {
-      toast.update(
-        loginToast.current,
-        config(`welcome, ${user.email}`, "success")
-      );
-      loginToast.current = null;
-      navigate('/')
-    }
-  }, [user]);
 
   {
     /* Password visibility */

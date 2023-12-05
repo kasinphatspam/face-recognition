@@ -23,18 +23,26 @@ const statusColorMap = {
   active: "success",
   paused: "danger",
   vacation: "warning",
+  masked: "success",
+  unmasked: "danger",
 };
 
-const statusOptions = [
+const STATUS_OPTIONS = [
   {name: "Active", uid: "active"},
   {name: "Paused", uid: "paused"},
   {name: "Vacation", uid: "vacation"},
+];
+
+const CONTACT_OPTIONS = [
+  {name: "Masked", uid: "masked"},
+  {name: "Unmasked", uid: "unmasked"},
 ];
 
 export default function Employeecomponent({data, columns, visible_columns, isEmployee , handleDelete}) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [filterValue, setFilterValue] = React.useState("");
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(visible_columns));
+  const [statusOptions, setStatusOptions] = React.useState(isEmployee ? STATUS_OPTIONS : CONTACT_OPTIONS);
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({

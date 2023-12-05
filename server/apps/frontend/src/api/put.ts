@@ -14,6 +14,6 @@ export function updateEncode(orgId: number, contactId: number, data: Image): Pro
   return fetch.put(`/organization/${orgId}/contact/${contactId}/encode`, data)
 }
 
-export function updateOrg(orgId: number, data: Org): Promise<AxiosResponse> {
-  return fetch.put(`/organization/${orgId}`, data)
+export function updateOrg(data: Org): Promise<AxiosResponse> {
+  return fetch.put(`/organization/`, data)
 }

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { textVariant, staggerContainer } from "@/utils/motion";
 import FooterBar from '@/components/Footersection';
 import { HeadText } from "@/components/Section/Headsection";
-import { Transition } from "@/hooks/Transition";
 
 const FeaturePage = () => {
 
@@ -58,4 +57,4 @@ const FeaturePage = () => {
   );
 }
 
-export default Transition(FeaturePage);
+export default FeaturePage;

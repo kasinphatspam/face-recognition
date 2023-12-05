@@ -22,7 +22,6 @@ import {
 } from "react-feather";
 import Pricing from "@/components/Pricing";
 import FooterBar from "@/components/Footersection";
-import { Transition } from "@/hooks/Transition";
 
 const HomePage = () => {
   const [month, setMonth] = useState(1);
@@ -138,14 +137,14 @@ const HomePage = () => {
             Features
           </motion.div>
           <motion.div
-            variants={textVariant(0.25)}
+            variants={textVariant(0.15)}
             className="mx-auto max-w-[820px] font-medium text-black/40 dark:text-white/70 px-12 mb-12"
           >
             There are several features using this service application click
             learn more to see all features.
           </motion.div>
           <motion.div
-            variants={textVariant(0.35)}
+            variants={textVariant(0.25)}
             className="mt-8 sm:grid max-sm:flex max-sm:flex-col sm:grid-cols-2 md:grid-cols-3 gap-5 align-middle px-[16vw] pb-32"
           >
             <FeaturesCard
@@ -220,13 +219,13 @@ const HomePage = () => {
             title="Comprehensive"
           />
           <motion.div
-            variants={textVariant(0.3)}
+            variants={textVariant(0.2)}
             className="mx-auto items-center font-bold text-[60px] max-sm:text-[40px] -mt-3 mb-4 px-12 leading-tight"
           >
             Supported Devices
           </motion.div>
           <motion.div
-            variants={textVariant(0.5)}
+            variants={textVariant(0.35)}
             className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12"
           >
             Our application effortlessly adapts to multiple platforms, providing
@@ -295,7 +294,7 @@ const HomePage = () => {
             Enterprise Management
           </motion.div>
           <motion.div
-            variants={textVariant(0.5)}
+            variants={textVariant(0.35)}
             className="mx-auto max-w-[820px] min-h-[40px] font-medium text-black/40 dark:text-white/70 px-12"
           >
             The Organization Management system's user-friendly interface makes
@@ -343,17 +342,19 @@ const HomePage = () => {
               your business.
             </motion.div>
           </div>
-          <div className="ml-[8vw]">
+          <motion.div className="ml-[8vw]"
+            variants={slideInVariant('right','tween',0.325,0.5,[0.45, 0.45, 0, 1])}
+          >
             <img
               src="/OrgPage.webp"
               loading="lazy"
               className="mx-auto my-16 max-w-[1000px] h-[550px] bg-cover drop-shadow-2xl"
               alt="page picture"
             />
-          </div>
+          </motion.div>
         </motion.div>
         <motion.div
-          className="flex flex-col bg-zinc-100/10 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
+          className="flex flex-col bg-zinc-50 dark:bg-zinc-800 min-h-[800px] pt-24 pb-8 max-sm:pt-8"
           id="subscriptionSection"
           variants={staggerContainer}
           initial="hidden"
@@ -443,4 +444,4 @@ const HomePage = () => {
   );
 };
 
-export default Transition(HomePage);
+export default HomePage;
