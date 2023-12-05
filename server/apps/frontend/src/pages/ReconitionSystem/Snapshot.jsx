@@ -105,13 +105,13 @@ export default function Snapshot() {
       }
       if (rdata.statusCode === 1)
         setRecognitionData((prevData) => [
-          ...prevData,
           {
             id: uuidv4(),
             image: image,
             date: date,
             result: [...RecognitionData],
           },
+          ...prevData,
         ]);
       toast.update(
         toastsnap.current,
@@ -591,7 +591,7 @@ export default function Snapshot() {
           )}
 
           <ul className="flex flex-col gap-x-4 w-[77vw] px-4 mx-4 max-h-[700px] overflow-y-scroll my-4 max-sm:flex-col">
-            {recognitionData.reverse().map((item) => (
+            {recognitionData.map((item) => (
               <AnimateListItem key={item.id}>
                 <Card key={item.id} className={`min-w-[300px] my-4`}>
                   <CardHeader>

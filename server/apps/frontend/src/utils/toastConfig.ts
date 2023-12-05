@@ -1,10 +1,17 @@
-export const config = (message: string, type: string) => {
+export const config = (
+  message: string,
+  type: string,
+  isLoading: boolean = false,
+  containerId: string = "main",
+  closeButton: boolean = true,
+  autoClose: number = 3000
+) => {
   return {
     render: `${message}`,
     type: `${type}`,
-    isLoading: false,
-    containerId: "main",
-    closeButton: true,
-    autoClose: 3000,
-  }
-}
+    isLoading: isLoading,
+    containerId: containerId,
+    closeButton: closeButton,
+    autoClose: autoClose,
+  };
+};

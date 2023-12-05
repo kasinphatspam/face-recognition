@@ -14776,7 +14776,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:9.0.1, uuid@npm:^9.0.0":
+"uuid@npm:9.0.1, uuid@npm:^9.0.0, uuid@npm:^9.0.1":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
   bin:
@@ -14862,6 +14862,7 @@ __metadata:
     react-webcam: ^7.1.1
     sweetalert2: ^11.7.28
     tailwindcss: ^3.3.3
+    uuid: ^9.0.1
     vite: ^4.4.0
   languageName: unknown
   linkType: soft

@@ -19,7 +19,7 @@ import {
   Switch,
 } from "@nextui-org/react";
 import Employeecomponent from "@/components/Employeelist";
-import { getOrg, getAllEmployees, getContacts } from "@/api/get";
+import { getAllEmployees, getContacts } from "@/api/get";
 import { ColumnText } from "@/components/Section/ColumnText";
 import { updateOrg } from "@/api/put";
 import { toast } from "react-toastify";
@@ -37,32 +37,27 @@ export default function OrganizationInfo() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // ------------------------------------ API ------------------------------------------
-  const { id } = useParams();
-  const { data: organization, status: orgStatus } = useQuery({
-    queryKey: ["organize", id],
-    queryFn: async () => {
-      return getOrg(id);
-    },
-  });
+  const { user, userStat } = useAuth()
+  
   const { data: employees, status: empStatus } = useQuery({
-    enabled: !!organization,
+    enabled: !!user,
     queryKey: ["getEmployees"],
     queryFn: async () => {
-      return getAllEmployees(id);
+      return getAllEmployees(user.organization);
     },
   });
   const { data: contacts, status: conStatus } = useQuery({
-    enabled: !!organization,
+    enabled: !!user,
     queryKey: ["getContacts"],
     queryFn: async () => {
-      return getContacts(id);
+      return getContacts(user.organization);
     },
   });
 
   const updateOrganization = useMutation({
     mutationKey: ["updateOrganization"],
     mutationFn: async (data) => {
-      return updateOrg(organization.id, data);
+      return updateOrg(data);
     },
     onMutate: () => {
       const toastput = toast.loading("please wait...", { containerId: "main" });
@@ -92,7 +87,7 @@ export default function OrganizationInfo() {
   const DeleteOrganization = useMutation({
     mutationKey: ["deleteorganization"],
     mutationFn: async () => {
-      return deleteOrganization(organization.id);
+      return deleteOrganization();
     },
     onMutate: () => {
       const toastput = toast.loading("please wait...", { containerId: "main" });
@@ -148,19 +143,19 @@ export default function OrganizationInfo() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Delete {organization.name} organization
+                Delete {user.organization.name} organization
               </ModalHeader>
               <ModalBody>
                 <Archive className="mx-auto w-12 h-12 mt-8" strokeWidth={1.2} />
                 <p className="text-sm text-gray-500">
                   to delete this organization type{" "}
-                  <span className="font-semibold">{organization.name}</span> and
+                  <span className="font-semibold">{user.organization.name}</span> and
                   continue
                 </p>
                 <Input
                   autoFocus
                   aria-label="Email"
-                  placeholder={organization.name}
+                  placeholder={user.organization.name}
                   size="sm"
                   variant="bordered"
                   onChange={(e) => setName(e.target.value)}
@@ -172,7 +167,7 @@ export default function OrganizationInfo() {
                   className="w-1/2 mx-auto"
                   variant="ghost"
                   onPress={async () => {
-                    if (name === organization.name) {
+                    if (name === user.organization.name) {
                       DeleteOrganization.mutate();
                       onClose();
                     }
@@ -207,7 +202,7 @@ export default function OrganizationInfo() {
                   /
                 </p>
                 <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">
-                  {orgStatus === "pending" ? "loading.." : organization.name}
+                  {userStat === "pending" ? "loading.." : user.organization.name}
                 </p>
               </div>
 
@@ -226,15 +221,15 @@ export default function OrganizationInfo() {
                 <div className="flex flex-row mt-4">
                   <CornerLeftDown className="h-6 w-6 mt-8 mr-1 ml-2" />
                   <p className="font-bold text-5xl text-inherit ml-2 mt-1">
-                    {orgStatus === "pending"
+                    {userStat === "pending"
                       ? "loading.."
-                      : organization.name || "fetch failed"}
+                      : user.organization.name || "fetch failed"}
                   </p>
                 </div>
                 <p className="font-light text-gray-400 text-md ml-11 mb-4">
-                  {orgStatus === "pending"
+                  {userStat === "pending"
                     ? "loading.."
-                    : organization.description ||
+                    : user.organization.description ||
                       "Service / Production / Evaluation system for company"}
                 </p>
                 <Tabs
@@ -255,9 +250,9 @@ export default function OrganizationInfo() {
                       <div className="absolute top-1 right-14 flex flex-col">
                         <p className="font-medium ml-[68px] text-right">passcode</p>
                         <p className="font-semibold text-4xl text-right">
-                          {orgStatus === "pending"
+                          {userStat === "pending"
                             ? "loading.."
-                            : organization.passcode || "000000"}
+                            : user.organization.passcode || "000000"}
                         </p>
                       </div>
                       <div className="flex flex-col">
@@ -320,9 +315,9 @@ export default function OrganizationInfo() {
                               size="sm"
                               variant="underlined"
                               defaultValue={
-                                orgStatus === "pending"
+                                userStat === "pending"
                                   ? "loading.."
-                                  : organization.name
+                                  : user.organization.name
                               }
                               className="w-80 -mt-2"
                             />
@@ -334,10 +329,10 @@ export default function OrganizationInfo() {
                               type="text"
                               variant="underlined"
                               defaultValue={
-                                orgStatus === "pending"
+                                userStat === "pending"
                                   ? "loading.."
-                                  : organization
-                                    ? organization.description
+                                  : user.organization
+                                    ? user.organization.description
                                     : "..."
                               }
                               className="w-2/3 -mt-2"
@@ -369,7 +364,7 @@ export default function OrganizationInfo() {
                           </p>
                           <Switch
                             className="mx-auto"
-                            defaultSelected={organization?.isPublic ?? false}
+                            defaultSelected={user?.organization?.isPublic ?? false}
                           />
                         </div>
                       </ColumnText>

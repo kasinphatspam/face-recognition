@@ -210,6 +210,7 @@ export default function Signuppage() {
           {/* input Email & Password*/}
           <div className="flex flex-col w-full flex-wrap md:flex-nowrap gap-4 px-20 max-sm:px-8 mt-10 max-sm:mt-4">
             <Input
+              autoFocus
               isRequired
               type="text"
               size="sm"

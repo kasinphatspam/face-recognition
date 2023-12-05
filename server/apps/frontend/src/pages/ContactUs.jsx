@@ -2,10 +2,9 @@ import React from 'react';
 import Navigation from "@/components/Navigation";
 import { motion } from "framer-motion";
 import { Button, Input } from "@nextui-org/react";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import FooterBar from '@/components/Footersection';
 import emailjs from '@emailjs/browser';
-import { Transition } from '@/hooks/Transition';
 
 const ContactUsPage = () => {
   const form = useRef()
@@ -137,4 +136,4 @@ const ContactUsPage = () => {
   );
 };
 
-export default Transition(ContactUsPage);
+export default ContactUsPage;
