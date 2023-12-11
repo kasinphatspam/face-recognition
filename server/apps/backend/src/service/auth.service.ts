@@ -97,16 +97,17 @@ export class AuthService {
     }
   }
 
-  public async changePassword(body: AuthChangePasswordWithConfirmation) {
-    const user = await this.userService.getRawUserBy(body.id);
+  public async changePassword(
+    userId: number,
+    body: AuthChangePasswordWithConfirmation,
+  ) {
+    const user = await this.userService.getRawUserBy(userId);
 
     if (!(await bcrypt.compare(body.oldPassword, user.password)))
-      throw new BadRequestException(
-        'username or password you entered incorrect.',
-      );
+      throw new BadRequestException('Password you entered incorrect.');
 
     const password = await bcrypt.hash(body.password, 12);
-    await this.userRepository.changePassword(body.id, password);
+    await this.userRepository.changePassword(userId, password);
   }
 
   public async changePasswordWithOutConfirmation(

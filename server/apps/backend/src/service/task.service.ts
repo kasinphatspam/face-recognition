@@ -36,7 +36,7 @@ export class TasksService {
       const user = await this.userRepository.findAllByOrganizationId(i.id);
       if (user.length < 1 || user == undefined) {
         Logger.log(`Organization id: ${i.id} was removed`, 'TaskSchedule');
-        await this.organizationService.deleteOrganization(i.id);
+        await this.organizationService.deleteOrganization(i);
       }
     }
   }

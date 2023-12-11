@@ -76,8 +76,6 @@ class AuthVerifyResetPassword {
 }
 
 class AuthChangePasswordWithConfirmation {
-  public id: number;
-
   @IsNotEmpty()
   @IsString()
   @MinLength(6)

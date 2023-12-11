@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
         enabled: !!user, 
         queryKey: ["organize", user?.id],
         queryFn: async () => {
-
             return organizeFn()
         },
     }) 

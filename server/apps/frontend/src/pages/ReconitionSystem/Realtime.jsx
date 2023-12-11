@@ -9,7 +9,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
 } from "@nextui-org/react";
 import Webcam from "react-webcam";
 import { useMutation } from "@tanstack/react-query";
@@ -33,7 +32,6 @@ export default function Realtime() {
   const [devices, setDevices] = useState([]);
   const [image, setImage] = useState([""]);
   const [recognitionData, setRecognitionData] = useState([]);
-  const [date, setDate] = useState(Date.now());
   const [open, setOpen] = useState(true);
   const { organizeData } = useAuth();
 
@@ -47,7 +45,7 @@ export default function Realtime() {
       const RecognitionData = [];
       for (let i = 0; i < rdata.accuracy.length; i++) {
         if (rdata.statusCode === 1) {
-          RecognitionData.unshift({
+          RecognitionData.push({
             id: rdata.result[i].id + i,
             accuracy: rdata.accuracy[i],
             result: rdata.result[i],
@@ -55,21 +53,16 @@ export default function Realtime() {
         }
       }
       if (rdata.statusCode === 1)
-        setRecognitionData((prevData) => {
-          if (prevData.length > 20) {
-            prevData = prevData.pop()
-          }
-          return [
-            ...prevData,
-            {
-              id: uuidv4(),
-              image: image,
-              contact: RecognitionData.sort(
-                (a, b) => b.accuracy - a.accuracy
-              ).slice(0, 2),
-            },
-          ];
-        });
+        setRecognitionData((prevData) => [
+          {
+            id: uuidv4(),
+            image: image,
+            contact: RecognitionData.sort(
+              (a, b) => b.accuracy - a.accuracy
+            ).slice(0, 2),
+          },
+          ...prevData,
+        ]);
     },
   });
 
@@ -176,34 +169,42 @@ export default function Realtime() {
     boundingBoxWidth,
     boundingBoxHeight,
   }) => {
-    let imageObj1 = new Image();
-    imageObj1.src = image;
-    imageObj1.onload = async function () {
-      const canvasElement = document.createElement("canvas");
-      const context = canvasElement.getContext("2d");
-      const cwidth = boundingBoxWidth + 160;
-      const cheight = boundingBoxHeight + 60;
-      canvasElement.width = cwidth;
-      canvasElement.height = cheight;
-      context.drawImage(
-        imageObj1,
-        topLeftX + 30,
-        topLeftY - 120,
-        cwidth,
-        cheight,
-        0,
-        0,
-        cwidth,
-        cheight
-      );
-      const dataURL = canvasElement.toDataURL("image/jpeg");
-      const file = base64toFile(dataURL, "image.jpeg");
-      const formatImage = await convertImage(file);
-      const formData = new FormData();
-      setImage(URL.createObjectURL(formatImage));
-      formData.append("image", formatImage, file.name);
-      await sendImg.mutateAsync(formData);
-    };
+    return new Promise((resolve, reject) => {
+      let imageObj1 = new Image();
+      imageObj1.src = image;
+      imageObj1.onload = async function () {
+        const canvasElement = document.createElement("canvas");
+        const context = canvasElement.getContext("2d");
+        const cwidth = boundingBoxWidth + 160;
+        const cheight = boundingBoxHeight + 60;
+        canvasElement.width = cwidth;
+        canvasElement.height = cheight;
+        context.drawImage(
+          imageObj1,
+          topLeftX + 30,
+          topLeftY - 120,
+          cwidth,
+          cheight,
+          0,
+          0,
+          cwidth,
+          cheight
+        );
+        const dataURL = canvasElement.toDataURL("image/jpeg");
+        const file = base64toFile(dataURL, "image.jpeg");
+        const formatImage = await convertImage(file);
+        const formData = new FormData();
+        setImage(URL.createObjectURL(formatImage));
+        formData.append("image", formatImage, file.name);
+        try {
+          await sendImg.mutateAsync(formData);
+          resolve();
+        } catch (e) {
+          console.log(e);
+          reject(e);
+        }
+      };
+    });
   };
 
   /** Send image to decode on ml  */
@@ -368,44 +369,44 @@ export default function Realtime() {
                   <p className="ml-2 text-gray-600 text-md">no user found</p>
                 </div>
               )}
-              <ul className="w-full min-h-full p-4">
-                {recognitionData.reverse().map((item) => (
+              <ul className="flex flex-col w-full max-h-[77vh] p-4 overflow-y-scroll">
+                {recognitionData.map((item) => (
                   <AnimateListItem key={item.id}>
-                  <Card radius="lg" className="mt-3 p-4">
-                    <div className="flex flex-row">
-                      <img
-                        alt="Card background"
-                        className="object-cover rounded-xl max-h-[100px] max-w-[100px]"
-                        src={item.image}
-                      />
-                      <div className="flex flex-col">
-                        {item.contact.map((contact, cindex) => (
-                          <div>
-                            <div key={cindex} className="flex flex-row">
-                              <div
-                                className={`ml-3 mt-2 text-sm font-medium p-1.5 rounded-md ${
-                                  contact.accuracy > 95
-                                    ? "text-green-800 bg-green-100"
-                                    : contact.accuracy > 90
-                                      ? "text-yellow-700 bg-yellow-100"
-                                      : "text-gray-300 bg-gray-50"
-                                }`}
-                              >{`${parseInt(contact.accuracy)}`}</div>
-                              <div className=" ml-3 pl-2 mt-2.5 text-md font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
-                            </div>
-                            <div className="flex flex-col ml-7">
-                              <div className="text-sm text-gray-500 mt-1">
-                                {`Email: ${contact.result.email1 ?? "n/a"}`}
+                    <Card radius="lg" className="mt-3 p-4" key={item.id}>
+                      <div className="flex flex-row">
+                        <img
+                          alt="Card background"
+                          className="object-cover rounded-xl max-h-[100px] max-w-[100px]"
+                          src={item.image}
+                        />
+                        <div className="flex flex-col">
+                          {item.contact.map((contact, cindex) => (
+                            <div>
+                              <div key={cindex} className="flex flex-row">
+                                <div
+                                  className={`ml-3 mt-2 text-sm font-medium p-1.5 rounded-md ${
+                                    contact.accuracy > 95
+                                      ? "text-green-800 bg-green-100"
+                                      : contact.accuracy > 90
+                                        ? "text-yellow-700 bg-yellow-100"
+                                        : "text-gray-300 bg-gray-50"
+                                  }`}
+                                >{`${parseInt(contact.accuracy)}`}</div>
+                                <div className=" ml-3 pl-2 mt-2.5 text-md font-medium w-[270px] truncate">{`${contact.result.firstname} ${contact.result.lastname}`}</div>
                               </div>
-                              <div className="text-sm text-gray-500 mb-3">
-                                {`Tel: ${contact.result.mobile ?? "n/a"}`}
+                              <div className="flex flex-col ml-7">
+                                <div className="text-sm text-gray-500 mt-1">
+                                  {`Email: ${contact.result.email1 ?? "n/a"}`}
+                                </div>
+                                <div className="text-sm text-gray-500 mb-3">
+                                  {`Tel: ${contact.result.mobile ?? "n/a"}`}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </Card>
+                    </Card>
                   </AnimateListItem>
                 ))}
               </ul>
