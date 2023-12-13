@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '@/module/app.module';
+import { AppModule } from '@/app.module';
 import * as dotenv from 'dotenv';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
