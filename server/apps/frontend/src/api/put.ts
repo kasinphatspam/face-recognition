@@ -3,7 +3,7 @@ import { AxiosResponse } from "axios";
 import { User, Image, Org } from "./types";
 
 export function updateUser(userId: number, data: User): Promise<AxiosResponse> {
-  return fetch.put(`/user/${userId}`, data);
+  return fetch.put(`/users/${userId}`, data);
 }
 
 export function updateImage(

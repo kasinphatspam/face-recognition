@@ -20,18 +20,19 @@ export class OrganizationRepository
   public async findAll(
     this: Repository<Organization>,
   ): Promise<Organization[]> {
-    return this.find({ relations: ['role'] });
+    return this.find({ relations: ['roles'] });
   }
 
   public async getOrganizationBy(key: number | string): Promise<Organization> {
     if (typeof key === 'number') {
       return this.findOne({
-        relations: ['role'],
+        relations: ['roles'],
         where: { id: key as number },
       });
     }
     return this.findOne({
       where: { passcode: key as string },
+      relations: ['roles'],
     });
   }
 

@@ -19,10 +19,7 @@ export class UserService {
   ) {}
 
   public async findAll(): Promise<User[]> {
-    return this.userRepository.getAllUsersBy([1, 2], 'both', [
-      'organization',
-      'role',
-    ]);
+    return this.userRepository.find({ relations: ['organization', 'role'] });
   }
 
   public async findAllBy(key: number): Promise<User[]> {

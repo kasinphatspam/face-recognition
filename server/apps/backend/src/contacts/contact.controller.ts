@@ -53,13 +53,12 @@ export class ContactController {
       }),
     )
     file: Express.Multer.File,
-    @Param('organizationId') organizationId: number,
     @RequestUser() user: User,
     @Body() body: EncodeContactImageDto,
     @Res() res: Response,
   ) {
     const data = await this.contactService.recognitionImage(
-      organizationId,
+      user.organization.id,
       user.id,
       body.image,
       file,
