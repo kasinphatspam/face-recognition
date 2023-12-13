@@ -1,5 +1,5 @@
 import { Plan } from '@/common/entities';
-import { PlanCreateDto, PlanEditDto } from '../dto/plan.dto';
+import { PlanCreateDto, PlanEditDto } from '@/common/dto/plan.dto';
 import { InsertResult, UpdateResult } from 'typeorm';
 
 interface PlanInterface {

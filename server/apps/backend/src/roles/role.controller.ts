@@ -10,7 +10,7 @@ import {
   UseGuards,
   Controller,
 } from '@nestjs/common';
-import { CreateNewRoleDto, EditRoleDto } from '../common/dto/role.dto';
+import { CreateNewRoleDto, EditRoleDto } from '@/common/dto/role.dto';
 import { Response } from 'express';
 import { RoleService } from './role.service';
 import { RequestUser } from '@/common/decorators/auth.decorator';

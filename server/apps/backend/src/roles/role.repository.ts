@@ -5,7 +5,7 @@ import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import {
   FindAllRoleBy,
   RoleInterface,
-} from '../common/interfaces/role.interface';
+} from '@/common/interfaces/role.interface';
 
 @Injectable()
 export class RoleRepository extends Repository<Role> implements RoleInterface {

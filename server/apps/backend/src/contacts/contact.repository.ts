@@ -1,9 +1,15 @@
 import { connection } from '@/common/helpers/connection.helper';
 import { Contact } from '@/common/entities';
-import { CreateNewContactDto, UpdateContactDto } from '@/common/dto/contact.dto';
+import {
+  CreateNewContactDto,
+  UpdateContactDto,
+} from '@/common/dto/contact.dto';
 import { Injectable } from '@nestjs/common';
 import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
-import { ContactInterface, GetContactBy } from '../common/interfaces/contact.interface';
+import {
+  ContactInterface,
+  GetContactBy,
+} from '@/common/interfaces/contact.interface';
 
 @Injectable()
 export class ContactRepository

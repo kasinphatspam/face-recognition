@@ -1,5 +1,5 @@
 import { User } from '@/common/entities';
-import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
 import { DeleteResult, InsertResult } from 'typeorm';
 
 type GetUserBySpecifyRelations =

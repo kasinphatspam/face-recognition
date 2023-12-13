@@ -22,7 +22,7 @@ import { Response } from 'express';
 import {
   CreateNewContactDto,
   EncodeContactImageDto,
-} from '../common/dto/contact.dto';
+} from '@/common/dto/contact.dto';
 import { ContactService } from './contact.service';
 import { User } from '@/common/entities';
 import { ApiTags } from '@nestjs/swagger';

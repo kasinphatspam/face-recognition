@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { OrganizationRepository } from '@/organizations/repositories/organization.repository';
 import { UserRepository } from '@/users/user.repository';
-import { OrganizationService } from '../../organizations/services/organization.service';
+import { OrganizationService } from '@/organizations/services/organization.service';
 
 @Injectable()
 export class TasksService {
@@ -40,7 +40,7 @@ export class TasksService {
       );
       if (user.length < 1 || user == undefined) {
         Logger.log(`Organization id: ${i.id} was removed`, 'TaskSchedule');
-        await this.organizationService.deleteOrganization(i.id);
+        await this.organizationService.deleteOrganization(i);
       }
     }
   }

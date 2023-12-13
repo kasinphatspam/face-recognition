@@ -52,26 +52,26 @@ export class OrganizationController {
     return res.status(HttpStatus.OK).json(organization);
   }
 
-  @Put(':organizationId')
+  @Put()
   @UseGuards(AuthGuard)
   public async updateOrganizationInfo(
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Body() body: UpdateOrganizationDto,
     @Res() res: Response,
   ) {
-    await this.organizationService.update(organizationId, body);
+    await this.organizationService.update(user.organization, body);
     return res.status(HttpStatus.OK).json({
       message: `Updated organization successfully`,
     });
   }
 
-  @Delete(':organizationId')
+  @Delete()
   @UseGuards(AuthGuard)
   public async deleteOrganization(
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Res() res: Response,
   ) {
-    await this.organizationService.deleteOrganization(organizationId);
+    await this.organizationService.deleteOrganization(user.organization);
     return res.status(HttpStatus.OK).json({
       message: `Deleted organization successfully`,
     });
@@ -90,7 +90,7 @@ export class OrganizationController {
         passcode,
       );
     return res.status(HttpStatus.OK).json({
-      message: `User id: ${user.id} joined Organiztion id: ${organization.id} successfully`,
+      message: `User id: ${user.id} joined organization id: ${organization.id} successfully`,
       organization,
     });
   }

@@ -98,9 +98,6 @@ class AuthVerifyResetPassword {
 
 class AuthChangePasswordWithConfirmation {
   @ApiProperty()
-  public id: number;
-
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @MinLength(6)

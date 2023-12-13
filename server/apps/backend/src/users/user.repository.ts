@@ -10,7 +10,7 @@ import {
   GetUserBy,
   GetUserBySpecifyRelations,
   UserInterface,
-} from '../common/interfaces/user.interface';
+} from '@/common/interfaces/user.interface';
 
 @Injectable()
 export class UserRepository extends Repository<User> implements UserInterface {

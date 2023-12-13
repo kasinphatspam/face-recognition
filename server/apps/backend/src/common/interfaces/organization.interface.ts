@@ -3,7 +3,7 @@ import { DeleteResult, InsertResult } from 'typeorm';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
-} from '../dto/organization.dto';
+} from '@/common/dto/organization.dto';
 
 interface OrganizationInterface {
   findAll(): Promise<Organization[]>;

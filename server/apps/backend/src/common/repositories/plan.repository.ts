@@ -3,7 +3,7 @@ import { Plan } from '@/common/entities';
 import { Injectable } from '@nestjs/common';
 import { PlanCreateDto, PlanEditDto } from '@/common/dto/plan.dto';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
-import { PlanInterface } from '../interfaces/plan.interface';
+import { PlanInterface } from '@/common/interfaces/plan.interface';
 
 @Injectable()
 export class PlanRepository extends Repository<Plan> implements PlanInterface {

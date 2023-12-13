@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
-import entities from '../entities';
+import entities from '@/common/entities';
 import { Logger } from '@nestjs/common';
 
 dotenv.config();

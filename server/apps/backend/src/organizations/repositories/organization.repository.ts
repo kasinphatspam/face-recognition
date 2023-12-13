@@ -6,7 +6,7 @@ import {
 } from '@/common/dto/organization.dto';
 import { Injectable } from '@nestjs/common';
 import { DeleteResult, InsertResult, Repository } from 'typeorm';
-import { OrganizationInterface } from '../../common/interfaces/organization.interface';
+import { OrganizationInterface } from '@/common/interfaces/organization.interface';
 
 @Injectable()
 export class OrganizationRepository

@@ -108,7 +108,7 @@ export class AuthController {
     @Body() body: AuthChangePasswordWithConfirmation,
     @Res() res: Response,
   ) {
-    await this.authService.changePassword(body);
+    await this.authService.changePassword(user.id, body);
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Reset password successfully' });

@@ -2,7 +2,7 @@ import { OTPRepository } from '@/common/repositories/otp.repository';
 import { Injectable } from '@nestjs/common';
 import { NotificationEmailService } from './notification.email.service';
 import { MailOptions } from 'nodemailer/lib/json-transport';
-import { UserService } from '../../users/user.service';
+import { UserService } from '@/users/user.service';
 
 @Injectable()
 export class OTPService {

@@ -1,6 +1,9 @@
 import { Contact } from '@/common/entities';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
-import { CreateNewContactDto, UpdateContactDto } from '../dto/contact.dto';
+import {
+  CreateNewContactDto,
+  UpdateContactDto,
+} from '@/common/dto/contact.dto';
 
 type GetContactBy = string | number;
 
