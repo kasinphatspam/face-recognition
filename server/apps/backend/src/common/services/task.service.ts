@@ -40,7 +40,7 @@ export class TasksService {
       );
       if (user.length < 1 || user == undefined) {
         Logger.log(`Organization id: ${i.id} was removed`, 'TaskSchedule');
-        await this.organizationService.deleteOrganization(i);
+        await this.organizationService.deleteOrganization(i.id);
       }
     }
   }
