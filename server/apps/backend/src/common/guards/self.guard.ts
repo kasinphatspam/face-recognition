@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  BadRequestException,
+} from '@nestjs/common';
 import { User } from '@/common/entities';
 import { Request } from 'express';
 
@@ -12,6 +17,12 @@ export class SelfGuard implements CanActivate {
     const { user, params } = context.switchToHttp().getRequest<Request>();
     const { userId } = params as unknown as Params;
 
-    return (user as User).id === +userId;
+    if ((user as User).id !== +userId) {
+      throw new BadRequestException(
+        'This user is not the owner of the data that want to access',
+      );
+    }
+
+    return true;
   }
 }

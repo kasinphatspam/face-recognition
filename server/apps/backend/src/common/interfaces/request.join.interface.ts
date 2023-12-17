@@ -7,7 +7,7 @@ interface RequestJoinInterface {
   getRequestById(requestId: number): Promise<RequestJoin>;
   createNewRequest(organization: Organization, user: User);
   deleteById(requestId: number);
-  deletAllBy(id: number, selection: RequestSelectionBy);
+  deleteAllBy(id: number, selection: RequestSelectionBy);
 }
 
 export { RequestJoinInterface, RequestSelectionBy };

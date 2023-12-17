@@ -17,7 +17,7 @@ import { OrganizationRepository } from '@/organizations/repositories/organizatio
 import { UserRepository } from '@/users/user.repository';
 import { PlanRepository } from '@/common/repositories/plan.repository';
 import { RoleRepository } from '@/roles/role.repository';
-import { RequestJoinRepository } from '../repositories/request.join.repository';
+import { RequestJoinRepository } from '@/organizations/repositories/request.join.repository';
 
 @Injectable()
 export class OrganizationService {
@@ -172,10 +172,10 @@ export class OrganizationService {
     // Join organization directly while oragnization is public corporation
     if (organization.isPublic == true) {
       // Find user role id in organization
-      const roleId = await this.roleService.findAll(organization.id);
+      const roles = await this.roleService.findAll(organization.id);
       // Add orgnaization id to user account
       await this.userRepository.updateById(user.id, {
-        roleId: roleId[1].id,
+        roleId: roles.find((r) => r.name === 'user').id,
         organizationId: organization.id,
       });
       response.type = 1;
@@ -200,14 +200,13 @@ export class OrganizationService {
   public async acceptRequest(requestId: number) {
     const request = await this.requestJoinRepository.getRequestById(requestId);
     const user = request.user;
-    await this.userRepository.updateById(user.id, {
-      organizationId: request.organization.id,
-    });
+    const roles = await this.roleService.findAll(request.organization.id);
 
     await this.userRepository.updateById(user.id, {
+      roleId: roles.find((r) => r.name === 'user').id,
       organizationId: request.organization.id,
     });
-    await this.requestJoinRepository.deletAllBy(user.id, 'users');
+    await this.requestJoinRepository.deleteAllBy(user.id, 'users');
   }
 
   public async rejectRequest(requestId: number) {
@@ -215,7 +214,10 @@ export class OrganizationService {
   }
 
   public async rejectAllRequest(organizationId: number) {
-    await this.requestJoinRepository.deletAllBy(organizationId, 'organization');
+    await this.requestJoinRepository.deleteAllBy(
+      organizationId,
+      'organization',
+    );
   }
 
   public async generateNewPasscode(organizationId: number): Promise<string> {

@@ -9,7 +9,7 @@ import {
   Length,
   MaxLength,
 } from 'class-validator';
-import { Organization } from '../entities';
+import { Organization } from '@/common/entities';
 
 class CreateOrganizationDto {
   @ApiProperty()
@@ -116,7 +116,7 @@ class RequestJoinResponse {
    * 0: The user cannot join the organization directly because the organization is a private corporation.
    * 1: The user joined the organization successfully.
    */
-  public type: number;
+  public type: 0 | 1;
 }
 
 export { CreateOrganizationDto, UpdateOrganizationDto, RequestJoinResponse };

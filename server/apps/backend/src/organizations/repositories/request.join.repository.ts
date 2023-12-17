@@ -46,7 +46,7 @@ export class RequestJoinRepository
     });
   }
 
-  public deletAllBy(id: number, selection: RequestSelectionBy) {
+  public deleteAllBy(id: number, selection: RequestSelectionBy) {
     if (selection == 'organization') {
       return this.delete({ organization: { id: id } });
     } else if (selection == 'users') {

@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   HttpStatus,
-  NotAcceptableException,
   Param,
   Post,
   Put,
@@ -22,6 +21,7 @@ import { AuthGuard } from '@/common/guards/auth.guard';
 import { RequestUser } from '@/common/decorators/auth.decorator';
 import { User } from '@/common/entities';
 import { ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '@/common/guards/admin.guard';
 
 @ApiTags('Organizations')
 @Controller()
@@ -103,15 +103,11 @@ export class OrganizationController {
   }
 
   @Get('requests/:requestId/:reply')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   public async responseRequest(
-    @RequestUser() user: User,
     @Param('requestId') requestId: number,
     @Param('reply') reply: string,
   ) {
-    if (user.role.name === 'administrator') {
-      throw new NotAcceptableException('Permission Denied');
-    }
     if (reply === 'accept') {
       await this.organizationService.acceptRequest(requestId);
     } else if (reply === 'reject') {
