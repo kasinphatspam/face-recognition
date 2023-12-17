@@ -11,6 +11,7 @@ import { UserModule } from '@/users/user.module';
 import { RoleModule } from '@/roles/role.module';
 import { EmployeeModule } from '@/employees/employee.module';
 import { ContactModule } from '@/contacts/contact.module';
+import { RequestJoinRepository } from './repositories/request.join.repository';
 
 @Module({
   imports: [
@@ -24,12 +25,14 @@ import { ContactModule } from '@/contacts/contact.module';
   providers: [
     OrganizationService,
     OrganizationRepository,
+    RequestJoinRepository,
     HistoryRepository,
     PlanRepository,
   ],
   exports: [
     OrganizationService,
     OrganizationRepository,
+    RequestJoinRepository,
     HistoryRepository,
     PlanRepository,
   ],

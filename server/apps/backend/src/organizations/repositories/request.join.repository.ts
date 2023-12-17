@@ -1,43 +1,56 @@
-import { RequestJoin } from '@/common/entities';
+import { Organization, RequestJoin, User } from '@/common/entities';
 import { connection } from '@/common/helpers/connection.helper';
+import {
+  RequestJoinInterface,
+  RequestSelectionBy,
+} from '@/common/interfaces/request.join.interface';
+import { Repository } from 'typeorm';
 
-type RequestSelectionBy = 'organization' | 'users';
+export class RequestJoinRepository
+  extends Repository<RequestJoin>
+  implements RequestJoinInterface
+{
+  constructor() {
+    super(RequestJoin, connection.createEntityManager());
+  }
 
-export class RequestJoinOrganizationRepository {
   public async getAll(
     id: number,
     selection: RequestSelectionBy,
   ): Promise<RequestJoin[]> {
     if (selection == 'organization') {
-      return connection
-        .getRepository(RequestJoin)
-        .find({ where: { organization: { id: id } } });
+      return this.find({ where: { organization: { id: id } } });
     } else if (selection == 'users') {
-      return connection
-        .getRepository(RequestJoin)
-        .find({ where: { user: { id: id } } });
+      return this.find({ where: { user: { id: id } } });
     }
   }
 
   public async getRequestById(requestId: number): Promise<RequestJoin> {
-    return connection
-      .getRepository(RequestJoin)
-      .findOne({ relations: ['organization'], where: { id: requestId } });
+    return this.findOne({
+      relations: ['organization'],
+      where: { id: requestId },
+    });
   }
 
-  public deleteBy(organizationId: number, userId: number) {
-    return connection
-      .getRepository(RequestJoin)
-      .delete({ organization: { id: organizationId }, user: { id: userId } });
+  public async createNewRequest(organization: Organization, user: User) {
+    return this.createQueryBuilder()
+      .insert()
+      .into(RequestJoin)
+      .values({ organization: organization, user: user })
+      .execute();
+  }
+
+  public deleteById(requestId: number) {
+    return this.delete({
+      id: requestId,
+    });
   }
 
   public deletAllBy(id: number, selection: RequestSelectionBy) {
     if (selection == 'organization') {
-      return connection
-        .getRepository(RequestJoin)
-        .delete({ organization: { id: id } });
+      return this.delete({ organization: { id: id } });
     } else if (selection == 'users') {
-      return connection.getRepository(RequestJoin).delete({ user: { id: id } });
+      return this.delete({ user: { id: id } });
     }
   }
 }

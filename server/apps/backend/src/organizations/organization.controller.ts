@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpStatus,
+  NotAcceptableException,
   Param,
   Post,
   Put,
@@ -84,15 +86,45 @@ export class OrganizationController {
     @Param('passcode') passcode: string,
     @Res() res: Response,
   ) {
-    const organization =
-      await this.organizationService.joinOrganizationWithPasscode(
-        user.id,
-        passcode,
-      );
+    const response = await this.organizationService.joinWithPasscode(
+      user,
+      passcode,
+    );
+    const organization = response.organization;
+    if (response.type == 0) {
+      return res.status(HttpStatus.OK).json({
+        message: `User with ID ${user.id} successfully sent the join request to Organization with ID ${organization.id}`,
+      });
+    }
     return res.status(HttpStatus.OK).json({
-      message: `User id: ${user.id} joined organization id: ${organization.id} successfully`,
+      message: `User with ID ${user.id} successfully join to Organization :with ID ${organization.id}`,
       organization,
     });
+  }
+
+  @Get('requests/:requestId/:reply')
+  @UseGuards(AuthGuard)
+  public async responseRequest(
+    @RequestUser() user: User,
+    @Param('requestId') requestId: number,
+    @Param('reply') reply: string,
+  ) {
+    if (user.role.name === 'administrator') {
+      throw new NotAcceptableException('Permission Denied');
+    }
+    if (reply === 'accept') {
+      await this.organizationService.acceptRequest(requestId);
+    } else if (reply === 'reject') {
+      await this.organizationService.rejectRequest(requestId);
+    } else {
+      throw new BadRequestException('Incorrect input in the reply parameters');
+    }
+  }
+
+  @Delete('requests/reject/all')
+  @UseGuards(AuthGuard)
+  public async rejectAllRequest(@RequestUser() user: User) {
+    await this.organizationService.rejectAllRequest(user.organization.id);
   }
 
   @Put(':organizationId/passcode')

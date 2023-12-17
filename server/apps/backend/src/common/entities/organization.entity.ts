@@ -39,6 +39,7 @@ class Organization {
   @Column({
     type: 'datetime',
     nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
   })
   public codeCreatedTime: Date;
 

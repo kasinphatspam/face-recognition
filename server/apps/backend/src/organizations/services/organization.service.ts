@@ -2,10 +2,12 @@ import {
   BadRequestException,
   NotFoundException,
   Injectable,
+  ConflictException,
 } from '@nestjs/common';
-import { Organization } from '@/common/entities';
+import { Organization, User } from '@/common/entities';
 import {
   CreateOrganizationDto,
+  RequestJoinResponse,
   UpdateOrganizationDto,
 } from '@/common/dto/organization.dto';
 import { RoleService } from '@/roles/role.service';
@@ -15,12 +17,14 @@ import { OrganizationRepository } from '@/organizations/repositories/organizatio
 import { UserRepository } from '@/users/user.repository';
 import { PlanRepository } from '@/common/repositories/plan.repository';
 import { RoleRepository } from '@/roles/role.repository';
+import { RequestJoinRepository } from '../repositories/request.join.repository';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private readonly recognitionApiService: RecognitionService,
     private readonly roleService: RoleService,
+    private readonly requestJoinRepository: RequestJoinRepository,
     private readonly roleRepository: RoleRepository,
     private readonly organizationRepository: OrganizationRepository,
     private readonly userRepository: UserRepository,
@@ -150,7 +154,10 @@ export class OrganizationService {
     return user.organization;
   }
 
-  public async joinOrganizationWithPasscode(userId: number, passcode: string) {
+  public async joinWithPasscode(
+    user: User,
+    passcode: string,
+  ): Promise<RequestJoinResponse> {
     // Find the organization with passcode
     const organization = await this.organizationRepository.getOrganizationBy(
       passcode,
@@ -158,14 +165,57 @@ export class OrganizationService {
     if (!organization) {
       throw new BadRequestException('Wrong passcode');
     }
-    // Find user role id in organization
-    const roleId = await this.roleService.findAll(organization.id);
-    // Add orgnaization id to user account
-    await this.userRepository.updateById(userId, {
-      roleId: roleId[1].id,
-      organizationId: organization.id,
+
+    const response = new RequestJoinResponse();
+    response.organization = organization;
+
+    // Join organization directly while oragnization is public corporation
+    if (organization.isPublic == true) {
+      // Find user role id in organization
+      const roleId = await this.roleService.findAll(organization.id);
+      // Add orgnaization id to user account
+      await this.userRepository.updateById(user.id, {
+        roleId: roleId[1].id,
+        organizationId: organization.id,
+      });
+      response.type = 1;
+      return response;
+    }
+
+    /* while the organization is private corporation,
+     * system will send the request to organization leader to decision
+     */
+    const request = await this.requestJoinRepository.find({
+      where: { organization: { id: organization.id }, user: { id: user.id } },
     });
-    return organization;
+
+    if (request.length != 0) {
+      throw new ConflictException('Already request to join this organization');
+    }
+    await this.requestJoinRepository.createNewRequest(organization, user);
+    response.type = 0;
+    return response;
+  }
+
+  public async acceptRequest(requestId: number) {
+    const request = await this.requestJoinRepository.getRequestById(requestId);
+    const user = request.user;
+    await this.userRepository.updateById(user.id, {
+      organizationId: request.organization.id,
+    });
+
+    await this.userRepository.updateById(user.id, {
+      organizationId: request.organization.id,
+    });
+    await this.requestJoinRepository.deletAllBy(user.id, 'users');
+  }
+
+  public async rejectRequest(requestId: number) {
+    await this.requestJoinRepository.deleteById(requestId);
+  }
+
+  public async rejectAllRequest(organizationId: number) {
+    await this.requestJoinRepository.deletAllBy(organizationId, 'organization');
   }
 
   public async generateNewPasscode(organizationId: number): Promise<string> {
