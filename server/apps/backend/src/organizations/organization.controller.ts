@@ -55,7 +55,7 @@ export class OrganizationController {
   }
 
   @Put()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   public async updateOrganizationInfo(
     @RequestUser() user: User,
     @Body() body: UpdateOrganizationDto,
@@ -68,7 +68,7 @@ export class OrganizationController {
   }
 
   @Delete()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   public async deleteOrganization(
     @RequestUser() user: User,
     @Res() res: Response,
@@ -107,24 +107,33 @@ export class OrganizationController {
   public async responseRequest(
     @Param('requestId') requestId: number,
     @Param('reply') reply: string,
+    @Res() res: Response,
   ) {
     if (reply === 'accept') {
       await this.organizationService.acceptRequest(requestId);
+      return res
+        .status(HttpStatus.OK)
+        .json({ message: 'Accept request successfully' });
     } else if (reply === 'reject') {
       await this.organizationService.rejectRequest(requestId);
+      return res.status(HttpStatus.NO_CONTENT).json();
     } else {
       throw new BadRequestException('Incorrect input in the reply parameters');
     }
   }
 
   @Delete('requests/reject/all')
-  @UseGuards(AuthGuard)
-  public async rejectAllRequest(@RequestUser() user: User) {
+  @UseGuards(AuthGuard, AdminGuard)
+  public async rejectAllRequest(
+    @RequestUser() user: User,
+    @Res() res: Response,
+  ) {
     await this.organizationService.rejectAllRequest(user.organization.id);
+    return res.status(HttpStatus.NO_CONTENT).json();
   }
 
   @Put(':organizationId/passcode')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   public async generateNewPasscode(
     @Param('organizationId') organizationId: number,
     @Res() res: Response,

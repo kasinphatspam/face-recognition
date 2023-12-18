@@ -27,7 +27,7 @@ export class RequestJoinRepository
 
   public async getRequestById(requestId: number): Promise<RequestJoin> {
     return this.findOne({
-      relations: ['organization'],
+      relations: ['user', 'organization'],
       where: { id: requestId },
     });
   }

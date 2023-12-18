@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AdminGuard } from '@/common/guards/admin.guard';
 
 @ApiTags('Employees')
 @Controller()
@@ -41,6 +42,7 @@ export class EmployeeController {
   }
 
   @Put(':userId/role/:roleId')
+  @UseGuards(AuthGuard, AdminGuard)
   public async changeEmployeeRole(
     @Param('roleId') roleId: number,
     @Param('userId') userId: number,
@@ -53,7 +55,7 @@ export class EmployeeController {
   }
 
   @Delete(':userId')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   public async deleteEmployeeById(
     @Param('userId') userId: number,
     @Res() res: Response,

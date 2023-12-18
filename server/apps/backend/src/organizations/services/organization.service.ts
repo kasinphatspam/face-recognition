@@ -158,6 +158,12 @@ export class OrganizationService {
     user: User,
     passcode: string,
   ): Promise<RequestJoinResponse> {
+    // Check user has organization or not
+    if (user.organization) {
+      throw new BadRequestException(
+        'This user has already joined organization',
+      );
+    }
     // Find the organization with passcode
     const organization = await this.organizationRepository.getOrganizationBy(
       passcode,
@@ -199,6 +205,9 @@ export class OrganizationService {
 
   public async acceptRequest(requestId: number) {
     const request = await this.requestJoinRepository.getRequestById(requestId);
+    if (!request) {
+      throw new BadRequestException("Don't have a request from this ID");
+    }
     const user = request.user;
     const roles = await this.roleService.findAll(request.organization.id);
 
