@@ -92,7 +92,7 @@ class Organization {
   @OneToMany(() => User, (user) => user.organization)
   public users: User[];
 
-  @OneToMany(() => Role, (role) => role.organization)
+  @OneToMany(() => Role, (role) => role.organization, { cascade: true })
   public roles: Role[];
 
   @OneToMany(() => History, (history) => history.organization)

@@ -81,11 +81,15 @@ export class User {
   })
   public image: string;
 
-  @ManyToOne(() => Organization, (organization) => organization.users)
+  @ManyToOne(() => Organization, (organization) => organization.users, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @ManyToOne(() => Role, (role) => role.users, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'roleId' })
   public role: Role;
 

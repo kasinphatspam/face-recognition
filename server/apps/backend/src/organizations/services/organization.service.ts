@@ -113,30 +113,6 @@ export class OrganizationService {
     if (!organization)
       throw new NotFoundException("User didn't join organization");
 
-    // Find the roles in this organization
-    const roleProperty = await this.roleRepository.findAllBy(
-      organization.id,
-      'organization',
-    );
-    for (const i of roleProperty) {
-      // Find the user account that uses this role.
-      const userArray = await this.userRepository.getAllUsersBy(
-        [organization.id, i.id],
-        'both',
-        ['organization', 'role'],
-      );
-      // Remove the role id and organization id in each account of this organization
-      for (const j of userArray) {
-        if (j != null) {
-          await this.userRepository.updateById(j.id, {
-            roleId: null,
-            organizationId: null,
-          });
-        }
-      }
-      // Force delete the role
-      await this.roleService.forceDelete(organization.id, i.id);
-    }
     await this.recognitionApiService.deletePackage(organization.packageKey);
     // Delete the organization
     return this.organizationRepository.delete(organization.id);

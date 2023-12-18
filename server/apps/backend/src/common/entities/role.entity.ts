@@ -20,7 +20,9 @@ class Role {
   })
   public name: string;
 
-  @ManyToOne(() => Organization, (organization) => organization.roles)
+  @ManyToOne(() => Organization, (organization) => organization.roles, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
