@@ -78,13 +78,14 @@ export class ContactController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   public async createNewContact(
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Body() body: CreateNewContactDto,
     @Res() res: Response,
   ) {
     const contactId = await this.contactService.createNewContact(
-      organizationId,
+      user.organization.id,
       body,
     );
 
