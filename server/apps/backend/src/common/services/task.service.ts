@@ -4,6 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { OrganizationRepository } from '@/organizations/repositories/organization.repository';
 import { UserRepository } from '@/users/user.repository';
 import { OrganizationService } from '@/organizations/services/organization.service';
+import { UploadService } from '@/common/services/upload.service';
 
 @Injectable()
 export class TasksService {
@@ -12,10 +13,11 @@ export class TasksService {
     private readonly organizationRepository: OrganizationRepository,
     private readonly organizationService: OrganizationService,
     private readonly userRepository: UserRepository,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Cron(CronExpression.EVERY_10_MINUTES)
-  async handleCron() {
+  public async handleCron() {
     const otp = await this.otpRepository.findAll();
     for (const i of otp) {
       if (i.expireTime < new Date()) {
@@ -26,7 +28,7 @@ export class TasksService {
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_10PM)
-  async checkOrganizationMember() {
+  public async checkOrganizationMember() {
     Logger.log(
       'Removing empty organization services is currently running',
       'TaskSchedule',
@@ -42,6 +44,21 @@ export class TasksService {
         Logger.log(`Organization id: ${i.id} was removed`, 'TaskSchedule');
         await this.organizationService.deleteOrganization(i);
       }
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  public async realDeleteUsers() {
+    const users = await this.userRepository.find({ where: { isDelete: true } });
+    if (users.length > 0) {
+      await this.userRepository.realDeleteUsers();
+      const deleteImageArray: Promise<void>[] = [];
+      users.forEach((user) => {
+        deleteImageArray.push(
+          this.uploadService.deleteImageFromStorage('users', user.id),
+        );
+      });
+      Promise.all(deleteImageArray);
     }
   }
 }

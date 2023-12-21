@@ -1,6 +1,6 @@
 import { User } from '@/common/entities';
 import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
-import { DeleteResult, InsertResult } from 'typeorm';
+import { UpdateResult, InsertResult, DeleteResult } from 'typeorm';
 
 type GetUserBySpecifyRelations =
   | null
@@ -26,7 +26,8 @@ interface UserInterface {
   ): Promise<User>;
   createUser(payload: CreateUserDto): Promise<InsertResult>;
   updateById(id: number, payload: UpdateUserDto): Promise<void>;
-  deleteById(id: number): Promise<DeleteResult>;
+  deleteById(id: number): Promise<UpdateResult>;
+  realDeleteUsers(): Promise<DeleteResult>;
 }
 
 export { UserInterface };

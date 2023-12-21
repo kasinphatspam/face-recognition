@@ -111,7 +111,8 @@ export class UserController {
   public async delete(@Param('userId') userId: number, @Res() res: Response) {
     await this.userService.delete(userId);
     return res.status(HttpStatus.OK).json({
-      message: 'Delete user account successfully',
+      message:
+        'Delete user account successfully. You can cancel before midnight today.',
     });
   }
 }

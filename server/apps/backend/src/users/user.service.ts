@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { User } from '@/common/entities';
 import { UpdateUserDto } from '@/common/dto/user.dto';
-import { ImageService } from '@/common/services/image.service';
 import { UserRepository } from '@/users/user.repository';
 import { UploadService } from '@/common/services/upload.service';
 import { GetUserBySpecifyRelations } from '@/common/interfaces/user.interface';
@@ -13,7 +12,6 @@ import { GetUserBySpecifyRelations } from '@/common/interfaces/user.interface';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly imageService: ImageService,
     private readonly uploadService: UploadService,
     private readonly userRepository: UserRepository,
   ) {}
@@ -69,7 +67,6 @@ export class UserService {
   }
 
   public async delete(userId: number) {
-    this.imageService.delete('users', `${userId}.png`);
     return this.userRepository.deleteById(userId);
   }
 }

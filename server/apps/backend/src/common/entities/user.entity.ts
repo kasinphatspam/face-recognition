@@ -77,9 +77,16 @@ export class User {
   @Column({
     nullable: false,
     length: 255,
-    default: `${process.env.BACKEND_URL}/images/users/default.png`,
+    default: `${process.env.AWS_SPACE_URL}/images/users/default.png`,
   })
   public image: string;
+
+  @Column({
+    nullable: false,
+    default: false,
+    select: false,
+  })
+  public isDelete: boolean;
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
     onDelete: 'SET NULL',

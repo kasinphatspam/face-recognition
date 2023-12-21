@@ -55,30 +55,15 @@ export class AuthService {
         'This email or personal ID  already exists.',
       );
     }
-    const { image, password, ...newObject } = body;
+    const { password, ...newObject } = body;
 
     const encryptedPassword = await bcrypt.hash(password, 12);
-
-    let imagePath = this.imageService.defaultImagePath('users');
 
     const payload = {
       ...newObject,
       password: encryptedPassword,
-      image: imagePath,
     };
     const newUser = await this.userRepository.createUser(payload);
-
-    if (image) {
-      imagePath = this.imageService.saveImageFromBase64(
-        image,
-        'users',
-        `${newUser.raw.insertId}.png`,
-      );
-      await this.userRepository.save({
-        id: newUser.raw.insertId,
-        image: imagePath,
-      });
-    }
 
     const jwt = await this.jwtService.signAsync({ id: newUser.raw.insertId });
     return jwt;

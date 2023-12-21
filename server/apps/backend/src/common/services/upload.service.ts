@@ -4,10 +4,16 @@ import {
   Injectable,
   Provider,
 } from '@nestjs/common';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+
+type Folder = 'users' | 'contacts';
 
 const DoSpacesServiceLib = 'lib:do-spaces-service';
 
@@ -34,7 +40,7 @@ export class UploadService {
 
   public async uploadImageToStorage(
     file: Express.Multer.File,
-    folder: 'users' | 'contacts',
+    folder: Folder,
     userId: number,
   ): Promise<string> {
     try {
@@ -48,8 +54,23 @@ export class UploadService {
         }),
       );
 
-      const urlSplit = process.env.AWS_SPACE_ENDPOINT.split('//');
-      return `${urlSplit[0]}//${process.env.AWS_SPACE_BUCKET}.${urlSplit[1]}/images/${folder}/${userId}.jpg`;
+      return `${process.env.AWS_SPACE_URL}/images/${folder}/${userId}.jpg`;
+    } catch (error) {
+      throw new BadRequestException(`${error}`);
+    }
+  }
+
+  public async deleteImageFromStorage(
+    folder: Folder,
+    userId: number,
+  ): Promise<void> {
+    try {
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.AWS_SPACE_BUCKET,
+          Key: `images/${folder}/${userId}.jpg`,
+        }),
+      );
     } catch (error) {
       throw new BadRequestException(`${error}`);
     }

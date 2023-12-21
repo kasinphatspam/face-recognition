@@ -49,12 +49,6 @@ class CreateUserDto {
   @MinLength(7)
   @MaxLength(13)
   public personalId: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  public image: string;
 }
 
 class UpdateUserDto {

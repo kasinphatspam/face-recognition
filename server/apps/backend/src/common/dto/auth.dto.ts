@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsBase64,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -69,12 +68,6 @@ class AuthRegisterDto {
   @MinLength(7)
   @MaxLength(13)
   public personalId: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsBase64()
-  public image: string;
 }
 
 class AuthForgotPasswordDto {

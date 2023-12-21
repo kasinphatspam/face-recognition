@@ -3,7 +3,7 @@ import { User } from '@/common/entities';
 import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { isArray, isString } from 'class-validator';
-import { DeleteResult, InsertResult, Repository } from 'typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 import {
   GetAllUserBy,
   GetAllUserKey,
@@ -113,7 +113,6 @@ export class UserRepository extends Repository<User> implements UserInterface {
           lastname: payload.lastname,
           gender: payload.gender,
           personalId: payload.personalId,
-          image: payload.image,
         },
       ])
       .execute();
@@ -153,8 +152,12 @@ export class UserRepository extends Repository<User> implements UserInterface {
   public async deleteById(
     this: Repository<User>,
     id: number,
-  ): Promise<DeleteResult> {
-    return this.delete({ id: id });
+  ): Promise<UpdateResult> {
+    return this.update(id, { isDelete: true });
+  }
+
+  public async realDeleteUsers(): Promise<DeleteResult> {
+    return this.delete({ isDelete: true });
   }
 
   public async isAvailable(
