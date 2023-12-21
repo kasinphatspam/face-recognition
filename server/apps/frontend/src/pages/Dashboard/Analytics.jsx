@@ -156,7 +156,7 @@ export default function Analytics() {
                         Member
                       </div>
                       <p className="font-bold text-3xl ml-4 mt-2">
-                        {formatter(members.length)}
+                        {formatter(members?.length ?? 0)}
                       </p>
                     </div>
                   </div>
