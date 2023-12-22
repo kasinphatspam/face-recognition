@@ -179,6 +179,13 @@ export class OrganizationService {
     return response;
   }
 
+  public async getAllRequest(user: User) {
+    return this.requestJoinRepository.getAll(
+      user.organization.id,
+      'organization',
+    );
+  }
+
   public async acceptRequest(requestId: number) {
     const request = await this.requestJoinRepository.getRequestById(requestId);
     if (!request) {

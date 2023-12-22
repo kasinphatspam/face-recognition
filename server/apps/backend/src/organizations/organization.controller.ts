@@ -102,7 +102,16 @@ export class OrganizationController {
     });
   }
 
-  @Get('requests/:requestId/:reply')
+  @Get('info/requests')
+  @UseGuards(AuthGuard, AdminGuard)
+  public async getAllRequest(@RequestUser() user: User, @Res() res: Response) {
+    const requests = await this.organizationService.getAllRequest(user);
+    return res.status(HttpStatus.OK).json({
+      requests: requests,
+    });
+  }
+
+  @Post('info/requests/:requestId/:reply')
   @UseGuards(AuthGuard, AdminGuard)
   public async responseRequest(
     @Param('requestId') requestId: number,
@@ -122,7 +131,7 @@ export class OrganizationController {
     }
   }
 
-  @Delete('requests/reject/all')
+  @Delete('info/requests/reject/all')
   @UseGuards(AuthGuard, AdminGuard)
   public async rejectAllRequest(
     @RequestUser() user: User,
