@@ -8,7 +8,7 @@ import {
 type GetContactBy = string | number;
 
 interface ContactInterface {
-  findAll(orgnaizationId: number): Promise<Contact[]>;
+  findAll(orgnaizationId: number, name: string): Promise<Contact[]>;
   getContactBy(key: GetContactBy, withOrg: boolean): Promise<Contact>;
   createNewContact(
     organizationId: number,

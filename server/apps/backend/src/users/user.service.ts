@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@/common/entities';
+import { Organization, User } from '@/common/entities';
 import { UpdateUserDto } from '@/common/dto/user.dto';
 import { UserRepository } from '@/users/user.repository';
 import { UploadService } from '@/common/services/upload.service';
@@ -24,6 +24,20 @@ export class UserService {
     return this.userRepository.getAllUsersBy(key as number, 'organization', [
       'role',
     ]);
+  }
+
+  public async findAllByOrgAndName(
+    organization: Organization,
+    query: string,
+  ): Promise<User[]> {
+    if (!organization) {
+      throw new NotFoundException("This user didn't join the organization");
+    }
+
+    if (!query) {
+      throw new NotFoundException('Query input not found');
+    }
+    return this.userRepository.getAllUsersByOrgAndName(organization.id, query);
   }
 
   public async getUserBy(

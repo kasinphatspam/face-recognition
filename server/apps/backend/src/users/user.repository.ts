@@ -3,7 +3,13 @@ import { User } from '@/common/entities';
 import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { isArray, isString } from 'class-validator';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  InsertResult,
+  Like,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import {
   GetAllUserBy,
   GetAllUserKey,
@@ -64,6 +70,18 @@ export class UserRepository extends Repository<User> implements UserInterface {
       default:
         throw new Error('Unknown parameter value');
     }
+  }
+
+  public async getAllUsersByOrgAndName(
+    id: number,
+    name: string,
+  ): Promise<User[]> {
+    return this.find({
+      where: [
+        { organization: { id: id }, firstname: Like(`%${name}%`) },
+        { organization: { id: id }, lastname: Like(`%${name}%`) },
+      ],
+    });
   }
 
   public async getUserBy(

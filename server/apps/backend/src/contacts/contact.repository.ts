@@ -5,7 +5,13 @@ import {
   UpdateContactDto,
 } from '@/common/dto/contact.dto';
 import { Injectable } from '@nestjs/common';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  InsertResult,
+  Like,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import {
   ContactInterface,
   GetContactBy,
@@ -37,8 +43,20 @@ export class ContactRepository
     });
   }
 
-  public async findAll(orgnaizationId: number): Promise<Contact[]> {
-    return this.find({ where: { organization: { id: orgnaizationId } } });
+  public async findAll(
+    orgnaizationId: number,
+    name: string,
+  ): Promise<Contact[]> {
+    if (!name) {
+      return this.find({ where: { organization: { id: orgnaizationId } } });
+    }
+
+    return this.find({
+      where: [
+        { organization: { id: orgnaizationId }, firstname: Like(`%${name}%`) },
+        { organization: { id: orgnaizationId }, lastname: Like(`%${name}%`) },
+      ],
+    });
   }
 
   public async createNewContact(

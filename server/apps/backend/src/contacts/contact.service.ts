@@ -30,7 +30,21 @@ export class ContactService {
 
   public async findAll(organizationId: number) {
     if (!organizationId) throw new BadRequestException('Missing parameter');
-    return this.contactRepository.findAll(organizationId);
+    return this.contactRepository.findAll(organizationId, null);
+  }
+
+  public async findAllByOrgAndName(
+    organization: Organization,
+    query: string,
+  ): Promise<Contact[]> {
+    if (!organization) {
+      throw new NotFoundException("This user didn't join the organization");
+    }
+
+    if (!query) {
+      throw new NotFoundException('Query input not found');
+    }
+    return this.contactRepository.findAll(organization.id, query);
   }
 
   public async getContactBy(contactId: number) {
