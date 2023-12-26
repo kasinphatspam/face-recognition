@@ -12,6 +12,7 @@ import {
   ParseFilePipe,
   Post,
   Put,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -67,6 +68,20 @@ export class ContactController {
     return res.status(HttpStatus.OK).json(data);
   }
 
+  @Get('history')
+  @UseGuards(AuthGuard)
+  public async getContactsHistory(
+    @RequestUser() user: User,
+    @Query('date') date: string,
+    @Res() res: Response,
+  ) {
+    const histories = await this.contactService.getContactsHistoryByOrgAndDate(
+      user.organization,
+      date,
+    );
+    return res.status(HttpStatus.OK).json(histories);
+  }
+
   @Get(':contactId')
   public async getContactById(
     @Param('contactId') contactId: number,
@@ -114,7 +129,7 @@ export class ContactController {
     @Res() res: Response,
   ) {
     const encodedId = await this.contactService.encodeImage(
-      user.organization.id,
+      user.organization,
       contactId,
       body.image,
       file,
@@ -124,7 +139,7 @@ export class ContactController {
       .json({ message: 'encode image successfully', encodedId: encodedId });
   }
 
-  @Post(':organizationId/contact/csv')
+  @Post('csv')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('csv'))
   public async readCSV(
@@ -134,10 +149,13 @@ export class ContactController {
       }),
     )
     file: Express.Multer.File,
-    @Param('organizationId') organizationId: number,
+    @RequestUser() user: User,
     @Res() res: Response,
   ) {
-    const data = await this.contactService.importFromCSV(file, organizationId);
+    const data = await this.contactService.importFromCSV(
+      file,
+      user.organization,
+    );
     return res.status(HttpStatus.OK).json({
       message: 'Add data from CSV file successfully',
       data,

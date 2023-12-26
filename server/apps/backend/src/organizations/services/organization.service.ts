@@ -18,6 +18,7 @@ import { UserRepository } from '@/users/user.repository';
 import { PlanRepository } from '@/common/repositories/plan.repository';
 import { RoleRepository } from '@/roles/role.repository';
 import { RequestJoinRepository } from '@/organizations/repositories/request.join.repository';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class OrganizationService {
@@ -85,7 +86,7 @@ export class OrganizationService {
     // Random passcode with unique result and insert data into database
     const payload = {
       ...body,
-      date: new Date(),
+      codeCreatedTime: moment.tz('Asia/Bangkok').toDate(),
       packageKey: packageKey,
       plan: plan.id,
       passcode: await this.randomPasscodeWithUniqueResult(),
@@ -223,7 +224,7 @@ export class OrganizationService {
     // Update organization passcode and return it
     const newData = {
       passcode: passcode,
-      codeCreatedTime: new Date(),
+      codeCreatedTime: moment.tz('Asia/Bangkok').format(),
     };
 
     const data: UpdateOrganizationDto = JSON.parse(JSON.stringify(newData));

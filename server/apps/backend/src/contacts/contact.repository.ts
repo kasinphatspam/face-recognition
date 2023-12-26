@@ -10,6 +10,7 @@ import {
   ContactInterface,
   GetContactBy,
 } from '@/common/interfaces/contact.interface';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ContactRepository
@@ -81,7 +82,7 @@ export class ContactRepository
   ): Promise<UpdateResult> {
     return this.update(
       { id: contactId, organization: { id: organizationId } },
-      { ...body },
+      { ...body, modifiedTime: moment.tz('Asia/Bangkok').toDate() },
     );
   }
 

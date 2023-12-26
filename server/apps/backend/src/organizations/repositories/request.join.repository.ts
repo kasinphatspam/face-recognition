@@ -4,6 +4,7 @@ import {
   RequestJoinInterface,
   RequestSelectionBy,
 } from '@/common/interfaces/request.join.interface';
+import * as moment from 'moment-timezone';
 import { Repository } from 'typeorm';
 
 export class RequestJoinRepository
@@ -36,7 +37,11 @@ export class RequestJoinRepository
     return this.createQueryBuilder()
       .insert()
       .into(RequestJoin)
-      .values({ organization: organization, user: user })
+      .values({
+        organization: organization,
+        user: user,
+        requestTime: moment.tz('Asia/Bangkok').format(),
+      })
       .execute();
   }
 

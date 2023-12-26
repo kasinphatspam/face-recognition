@@ -12,7 +12,8 @@ import * as path from 'path';
 import { HistoryRepository } from '@/organizations/repositories/history.repository';
 import { UserService } from '@/users/user.service';
 import { UploadService } from '@/common/services/upload.service';
-import { Contact } from '@/common/entities';
+import { Contact, Organization } from '@/common/entities';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class ContactService {
@@ -40,11 +41,16 @@ export class ContactService {
     organizationId: number,
     body: CreateNewContactDto,
   ) {
-    return this.contactRepository.createNewContact(organizationId, body);
+    const now = moment.tz('Asia/Bangkok').toDate();
+    return this.contactRepository.createNewContact(organizationId, {
+      ...body,
+      createdTime: now,
+      modifiedTime: now,
+    });
   }
 
   public async encodeImage(
-    organizationId: number,
+    organization: Organization,
     contactId: number,
     base64: string,
     file: Express.Multer.File,
@@ -53,37 +59,30 @@ export class ContactService {
       throw new BadRequestException('Image not found');
     }
 
-    const organization = await this.organizationRepository.getOrganizationBy(
-      organizationId,
-    );
-
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
 
     const packageKey = organization.packageKey;
-    const contactProperty = await this.contactRepository.getContactBy(
-      contactId,
-      true,
-    );
+    const contact = await this.contactRepository.getContactBy(contactId, true);
 
-    if (!contactProperty) {
+    if (!contact || contact.organization.id !== organization.id) {
       throw new NotFoundException(
         'system cannot query contact data for encoding service',
       );
     }
 
-    if (contactProperty.encodedId) {
+    if (contact.encodedId) {
       await this.recognitionApiService.deleteEncodeImage(
         packageKey,
-        contactProperty.encodedId,
+        contact.encodedId,
       );
     }
 
     const encodeId = await this.recognitionApiService.encodeImage(
       packageKey,
       file ? file : base64,
-      contactProperty,
+      contact,
     );
 
     const imagePath = await this.uploadService.uploadImageToStorage(
@@ -92,7 +91,7 @@ export class ContactService {
       contactId,
     );
 
-    await this.contactRepository.updateById(organizationId, contactId, {
+    await this.contactRepository.updateById(organization.id, contactId, {
       encodedId: encodeId,
       image: imagePath,
     });
@@ -172,19 +171,60 @@ export class ContactService {
     await this.contactRepository.deleteById(contactId);
   }
 
+  public async getContactsHistoryByOrgAndDate(
+    organization: Organization,
+    date: string,
+  ) {
+    if (!organization) {
+      throw new NotFoundException("This user didn't joined the organization");
+    }
+    if (!date) {
+      throw new NotFoundException('Date input not found');
+    }
+    // Date must in format yyyy-mm-dd
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      throw new BadRequestException('Date format must be YYYY-MM-DD');
+    }
+
+    return this.historyRepository.findAllByOrganizationId(
+      organization.id,
+      date,
+    );
+  }
+
   public async importFromCSV(
     file: Express.Multer.File,
-    organizationId: number,
+    organization: Organization,
   ) {
+    if (!organization) {
+      throw new NotFoundException("This user didn't join the organization");
+    }
     const filePath = path.join(
       this.folderPath,
       'contact',
-      `${organizationId}-${file.originalname}`,
+      `${organization.id}-${file.originalname}`,
     );
     write(filePath, file.buffer);
     const data = await readCSV<CreateNewContactDto>(filePath);
     remove(filePath);
-    await this.contactRepository.createManyContacts(organizationId, data);
+    await this.contactRepository.createManyContacts(
+      organization.id,
+      this.deleteEmptyStringAndAddData(data),
+    );
     return data;
+  }
+
+  private deleteEmptyStringAndAddData(arr: CreateNewContactDto[]) {
+    return arr.map((obj) => {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key) && obj[key] === '') {
+          obj[key] = undefined;
+        }
+      }
+      const now = moment.tz('Asia/Bangkok').toDate();
+      obj.createdTime = now;
+      obj.modifiedTime = now;
+      return obj;
+    });
   }
 }

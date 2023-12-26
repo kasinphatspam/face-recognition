@@ -2,7 +2,8 @@ import { History, Organization, User } from '@/common/entities';
 import { connection } from '@/common/helpers/connection.helper';
 import { RecognitionImageResponseJson } from '@/common/dto/contact.dto';
 import { Injectable } from '@nestjs/common';
-import { InsertResult, Repository } from 'typeorm';
+import { Between, InsertResult, Repository } from 'typeorm';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class HistoryRepository extends Repository<History> {
@@ -11,15 +12,25 @@ export class HistoryRepository extends Repository<History> {
   }
 
   public async findAllByUserId(userId: number) {
-    return connection
-      .getRepository(History)
-      .find({ relations: ['users'], where: { user: { id: userId } } });
+    return this.find({ relations: ['user'], where: { user: { id: userId } } });
   }
 
-  public async findAllByOrganizationId(organizationId: number) {
-    return connection.getRepository(History).find({
-      relations: ['users'],
-      where: { organization: { id: organizationId } },
+  public async findAllByOrganizationId(organizationId: number, date: string) {
+    if (!date) {
+      return this.find({
+        relations: ['user'],
+        where: { organization: { id: organizationId } },
+      });
+    }
+    return this.find({
+      relations: ['user'],
+      where: {
+        organization: { id: organizationId },
+        detectedTime: Between(
+          new Date(`${date}T00:00:00`),
+          new Date(`${date}T23:59:59`),
+        ),
+      },
     });
   }
 
@@ -35,6 +46,7 @@ export class HistoryRepository extends Repository<History> {
         {
           user: user,
           organization: organization,
+          detectedTime: moment.tz('Asia/Bangkok').format(),
           result: result,
         },
       ])
