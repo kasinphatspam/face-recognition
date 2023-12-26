@@ -149,6 +149,14 @@ export class UserRepository extends Repository<User> implements UserInterface {
     }
   }
 
+  public async deleteOrgIdAndRoleId(userId: number) {
+    await this.save({
+      id: userId,
+      organization: null,
+      role: null,
+    });
+  }
+
   public async deleteById(
     this: Repository<User>,
     id: number,

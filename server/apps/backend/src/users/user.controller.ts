@@ -61,6 +61,19 @@ export class UserController {
     return res.status(HttpStatus.OK).json(organization);
   }
 
+  @Delete('organization/exit')
+  @UseGuards(AuthGuard)
+  public async exitOrganization(
+    @RequestUser() user: User,
+    @Res() res: Response,
+  ) {
+    console.log('Test');
+    await this.userService.exitOrg(user.id);
+    return res
+      .status(HttpStatus.OK)
+      .json({ message: 'Exit an organization successfully' });
+  }
+
   @Get(':userId')
   @UseGuards(AuthGuard)
   public async getUserById(

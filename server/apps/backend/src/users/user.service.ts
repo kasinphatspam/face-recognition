@@ -50,10 +50,7 @@ export class UserService {
   }
 
   public async exitOrg(userId: number) {
-    await this.userRepository.update(
-      { id: userId },
-      { organization: null, role: null },
-    );
+    await this.userRepository.deleteOrgIdAndRoleId(userId);
   }
 
   public async updateImage(userId: number, file: Express.Multer.File) {
