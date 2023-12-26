@@ -20,15 +20,18 @@ export class ContactRepository
     super(Contact, connection.createEntityManager());
   }
 
-  public async getContactBy(key: GetContactBy): Promise<Contact> {
+  public async getContactBy(
+    key: GetContactBy,
+    withOrg: boolean,
+  ): Promise<Contact> {
     if (typeof key === 'number') {
       return this.findOne({
-        relations: ['organization'],
+        relations: withOrg ? ['organization'] : null,
         where: { id: key as number },
       });
     }
     return this.findOne({
-      relations: ['organization'],
+      relations: withOrg ? ['organization'] : null,
       where: { encodedId: key as string },
     });
   }

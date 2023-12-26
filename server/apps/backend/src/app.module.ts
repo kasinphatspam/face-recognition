@@ -11,12 +11,13 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './common/modules/task.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { PlanModule } from '@/common/modules/plan.module';
-import { UploadModule } from './common/modules/upload.module';
+import { UploadModule } from '@/common/modules/upload.module';
 import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { ServiceGuard } from '@/common/guards/service.guard';
-import { ContactModule } from './contacts/contact.module';
-import { EmployeeModule } from './employees/employee.module';
-import { RoleModule } from './roles/role.module';
+import { ContactModule } from '@/contacts/contact.module';
+import { EmployeeModule } from '@/employees/employee.module';
+import { RoleModule } from '@/roles/role.module';
+import { SearchModule } from '@/common/modules/search.module';
 
 dotenv.config();
 @Module({
@@ -67,6 +68,7 @@ dotenv.config();
     TaskModule,
     PlanModule,
     UploadModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [

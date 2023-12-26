@@ -120,7 +120,7 @@ export class Contact {
   @Column({
     nullable: false,
     length: 255,
-    default: `${process.env.BACKEND_URL}/images/contact/default.png`,
+    default: `${process.env.AWS_SPACE_URL}/images/contacts/default.png`,
   })
   public image: string;
 }

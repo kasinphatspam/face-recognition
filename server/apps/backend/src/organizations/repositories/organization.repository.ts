@@ -26,13 +26,13 @@ export class OrganizationRepository
   public async getOrganizationBy(key: number | string): Promise<Organization> {
     if (typeof key === 'number') {
       return this.findOne({
-        relations: ['roles'],
+        relations: ['roles', 'plan'],
         where: { id: key as number },
       });
     }
     return this.findOne({
       where: { passcode: key as string },
-      relations: ['roles'],
+      relations: ['roles', 'plan'],
     });
   }
 

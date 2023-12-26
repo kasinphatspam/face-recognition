@@ -19,6 +19,7 @@ export class TasksService {
   @Cron(CronExpression.EVERY_10_MINUTES)
   public async handleCron() {
     const otp = await this.otpRepository.findAll();
+    if (!otp) return;
     for (const i of otp) {
       if (i.expireTime < new Date()) {
         Logger.log(`OTP (${i.topic}): ${i.id} timeout`, 'TaskSchedule');
@@ -27,7 +28,7 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_10PM)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   public async checkOrganizationMember() {
     Logger.log(
       'Removing empty organization services is currently running',
@@ -47,7 +48,7 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   public async realDeleteUsers() {
     const users = await this.userRepository.find({ where: { isDelete: true } });
     if (users.length > 0) {

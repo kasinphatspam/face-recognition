@@ -12,6 +12,7 @@ import * as path from 'path';
 import { HistoryRepository } from '@/organizations/repositories/history.repository';
 import { UserService } from '@/users/user.service';
 import { UploadService } from '@/common/services/upload.service';
+import { Contact } from '@/common/entities';
 
 @Injectable()
 export class ContactService {
@@ -32,7 +33,7 @@ export class ContactService {
   }
 
   public async getContactBy(contactId: number) {
-    return this.contactRepository.getContactBy(contactId);
+    return this.contactRepository.getContactBy(contactId, true);
   }
 
   public async createNewContact(
@@ -63,11 +64,19 @@ export class ContactService {
     const packageKey = organization.packageKey;
     const contactProperty = await this.contactRepository.getContactBy(
       contactId,
+      true,
     );
 
     if (!contactProperty) {
       throw new NotFoundException(
         'system cannot query contact data for encoding service',
+      );
+    }
+
+    if (contactProperty.encodedId) {
+      await this.recognitionApiService.deleteEncodeImage(
+        packageKey,
+        contactProperty.encodedId,
       );
     }
 
@@ -115,9 +124,8 @@ export class ContactService {
       packageKey,
       file ? file : base64,
     );
-    await this.historyRepository.insert(organization, user, resultObj[0]);
-    const contactArray = [];
-    const accuracyArray = [];
+    const contactArray: Contact[] = [];
+    const accuracyArray: number[] = [];
 
     for (const i of resultObj) {
       if (i.statusCode == 0 || i.statusCode == -1) {
@@ -128,7 +136,7 @@ export class ContactService {
         return object;
       }
 
-      const contact = await this.contactRepository.getContactBy(i.id);
+      const contact = await this.contactRepository.getContactBy(i.id, false);
 
       if (contact) {
         contactArray.push(contact);
@@ -140,12 +148,12 @@ export class ContactService {
       statusCode: 1,
       result: contactArray,
     };
-    console.log(object);
+    await this.historyRepository.creaetNewHistory(organization, user, object);
     return object;
   }
 
   public async deleteContact(organizationId: number, contactId: number) {
-    const contact = await this.contactRepository.getContactBy(contactId);
+    const contact = await this.contactRepository.getContactBy(contactId, true);
 
     if (!contact) {
       throw new NotFoundException('Contact not found');

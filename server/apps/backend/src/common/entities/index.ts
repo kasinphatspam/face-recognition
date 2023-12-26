@@ -6,6 +6,7 @@ import { User } from './user.entity';
 import { RequestJoin } from './request.join.entity';
 import { OTP } from './otp.entity';
 import { Plan } from './plan.entity';
+import { Notification } from './notification.entity';
 
 const entities = [
   User,
@@ -16,8 +17,19 @@ const entities = [
   RequestJoin,
   OTP,
   Plan,
+  Notification,
 ];
 
-export { User, Organization, Contact, Role, History, RequestJoin, OTP, Plan };
+export {
+  User,
+  Organization,
+  Contact,
+  Role,
+  History,
+  RequestJoin,
+  OTP,
+  Plan,
+  Notification,
+};
 
 export default entities;

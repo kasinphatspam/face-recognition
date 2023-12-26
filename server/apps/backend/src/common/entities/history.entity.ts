@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Organization } from './organization.entity';
 import { User } from './user.entity';
-import { RecognitionImageResponseDto } from '@/common/dto/contact.dto';
+import { RecognitionImageResponseJson } from '@/common/dto/contact.dto';
 
 @Entity('history')
 class History {
@@ -29,7 +29,11 @@ class History {
   })
   public detectedTime: Date;
 
-  public result: RecognitionImageResponseDto;
+  @Column({
+    nullable: false,
+    type: 'json',
+  })
+  public result: RecognitionImageResponseJson;
 }
 
 export { History };

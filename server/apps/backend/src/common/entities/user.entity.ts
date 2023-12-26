@@ -9,8 +9,9 @@ import {
 import * as dotenv from 'dotenv';
 import { Organization } from './organization.entity';
 import { Role } from './role.entity';
-import { History } from './history.entity';
 import { RequestJoin } from './request.join.entity';
+import { Notification } from './notification.entity';
+import { History } from './history.entity';
 import { OTP } from './otp.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -100,7 +101,7 @@ export class User {
   @JoinColumn({ name: 'roleId' })
   public role: Role;
 
-  @OneToMany(() => History, (history) => history.organization)
+  @OneToMany(() => History, (history) => history.user)
   public histories: History[];
 
   @OneToMany(() => RequestJoin, (requestJoin) => requestJoin.user)
@@ -108,6 +109,9 @@ export class User {
 
   @OneToMany(() => OTP, (otp) => otp.user)
   public otp: OTP[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  public notifications: Notification[];
 
   public getFullName(): string {
     return `${this.firstname} ${this.lastname}`;

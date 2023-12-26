@@ -13,6 +13,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { Contact } from '@/common/entities';
 
 class CreateNewContactDto {
   @ApiProperty()
@@ -241,7 +242,7 @@ class RecognitionImageResponseDto {
   @ApiProperty()
   @IsArray()
   @ArrayNotEmpty()
-  public accuracy: Float32Array;
+  public accuracy: number;
 
   @ApiProperty()
   @Type(() => Date)
@@ -251,7 +252,7 @@ class RecognitionImageResponseDto {
   constructor(
     id: string,
     statusCode: number,
-    accuracy: Float32Array,
+    accuracy: number,
     checkedTime: Date,
   ) {
     this.id = id;
@@ -269,6 +270,12 @@ class CreatePackageResponseDto {
   public packageKey: string;
 }
 
+type RecognitionImageResponseJson = {
+  accuracy: number[];
+  statusCode: number;
+  result: Contact[];
+};
+
 export {
   CreateNewContactDto,
   UpdateContactDto,
@@ -276,4 +283,5 @@ export {
   EncodeImageResponseDto,
   RecognitionImageResponseDto,
   CreatePackageResponseDto,
+  RecognitionImageResponseJson,
 };
