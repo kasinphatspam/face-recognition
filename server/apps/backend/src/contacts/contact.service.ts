@@ -126,6 +126,7 @@ export class ContactService {
     );
     const contactArray: Contact[] = [];
     const accuracyArray: number[] = [];
+    const promiseArray: Promise<Contact>[] = [];
 
     for (const i of resultObj) {
       if (i.statusCode == 0 || i.statusCode == -1) {
@@ -135,14 +136,18 @@ export class ContactService {
         };
         return object;
       }
+      promiseArray.push(this.contactRepository.getContactBy(i.id, false));
+    }
 
-      const contact = await this.contactRepository.getContactBy(i.id, false);
+    const contacts = await Promise.all(promiseArray);
 
+    contacts.forEach((contact, index) => {
       if (contact) {
         contactArray.push(contact);
-        accuracyArray.push(i.accuracy);
+        accuracyArray.push(resultObj[index].accuracy);
       }
-    }
+    });
+
     const object = {
       accuracy: accuracyArray,
       statusCode: 1,
