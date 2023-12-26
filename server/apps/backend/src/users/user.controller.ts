@@ -67,7 +67,6 @@ export class UserController {
     @RequestUser() user: User,
     @Res() res: Response,
   ) {
-    console.log('Test');
     await this.userService.exitOrg(user.id);
     return res
       .status(HttpStatus.OK)
