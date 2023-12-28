@@ -24,16 +24,22 @@ export class OrganizationRepository
   }
 
   public async getOrganizationBy(key: number | string): Promise<Organization> {
-    if (typeof key === 'number') {
-      return this.findOne({
-        relations: ['roles', 'plan'],
-        where: { id: key as number },
-      });
-    }
-    return this.findOne({
-      where: { passcode: key as string },
-      relations: ['roles', 'plan'],
-    });
+    return this.createQueryBuilder('organization')
+      .leftJoinAndSelect('organization.roles', 'roles')
+      .leftJoinAndSelect('organization.plan', 'plan')
+      .loadRelationCountAndMap(
+        'organization.employeeCount',
+        'organization.users',
+      )
+      .loadRelationCountAndMap(
+        'organization.contactCount',
+        'organization.contacts',
+      )
+      .where('organization.id = :id OR organization.passcode = :key', {
+        id: key,
+        key: key,
+      })
+      .getOne();
   }
 
   public async createNewOrganization(
