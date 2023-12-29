@@ -59,24 +59,9 @@ export class OrganizationService {
       throw new BadRequestException('User already has organization');
     }
 
-    // Check if client sent package id or not
-    if (!body.planId) {
-      // Find free package
-      const plan = await this.planRepository.getPlanByCost(0);
-      if (!plan) {
-        const result = await this.planRepository.createPlan({
-          title: 'Free package',
-          cost: 0,
-          limitEmployee: 1,
-          limitContact: 50,
-        });
-        body.planId = result.raw.insertId;
-      } else {
-        body.planId = plan.id;
-      }
-    }
-
-    const plan = await this.planRepository.getPlanById(body.planId);
+    const plan = body.planId
+      ? await this.planRepository.getPlanById(body.planId)
+      : await this.planRepository.getPlanByCost(0);
     if (!plan) {
       throw new NotFoundException('Plan not found');
     }

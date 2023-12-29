@@ -12,6 +12,7 @@ import { RoleModule } from '@/roles/role.module';
 import { EmployeeModule } from '@/employees/employee.module';
 import { ContactModule } from '@/contacts/contact.module';
 import { RequestJoinRepository } from './repositories/request.join.repository';
+import { SeedService } from '@/common/services/seed.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RequestJoinRepository } from './repositories/request.join.repository';
     RequestJoinRepository,
     HistoryRepository,
     PlanRepository,
+    SeedService,
   ],
   exports: [
     OrganizationService,
@@ -35,6 +37,7 @@ import { RequestJoinRepository } from './repositories/request.join.repository';
     RequestJoinRepository,
     HistoryRepository,
     PlanRepository,
+    SeedService,
   ],
   controllers: [OrganizationController],
 })
