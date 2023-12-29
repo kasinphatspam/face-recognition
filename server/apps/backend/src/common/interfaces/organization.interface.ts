@@ -5,6 +5,8 @@ import {
   UpdateOrganizationDto,
 } from '@/common/dto/organization.dto';
 
+type GetOrganizationWiths = 'users' | 'plan' | 'contacts' | 'roles';
+
 interface OrganizationInterface {
   findAll(): Promise<Organization[]>;
   getOrganizationBy(key: number): Promise<Organization>;
@@ -13,4 +15,4 @@ interface OrganizationInterface {
   deleteById(id: number): Promise<DeleteResult>;
 }
 
-export { OrganizationInterface };
+export { OrganizationInterface, GetOrganizationWiths };

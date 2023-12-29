@@ -12,7 +12,7 @@ import * as path from 'path';
 import { HistoryRepository } from '@/organizations/repositories/history.repository';
 import { UserService } from '@/users/user.service';
 import { UploadService } from '@/common/services/upload.service';
-import { Contact, Organization } from '@/common/entities';
+import { Contact, Organization, User } from '@/common/entities';
 import * as moment from 'moment-timezone';
 
 @Injectable()
@@ -55,6 +55,18 @@ export class ContactService {
     organizationId: number,
     body: CreateNewContactDto,
   ) {
+    const organization =
+      await this.organizationRepository.getOrganizationByAndWith(
+        organizationId,
+        ['contacts', 'plan'],
+      );
+
+    if (organization.contacts.length >= organization.plan.limitContact) {
+      throw new BadRequestException(
+        'The quantity limit for this package has been reached',
+      );
+    }
+
     const now = moment.tz('Asia/Bangkok').toDate();
     return this.contactRepository.createNewContact(organizationId, {
       ...body,
@@ -206,29 +218,54 @@ export class ContactService {
     );
   }
 
-  public async importFromCSV(
-    file: Express.Multer.File,
-    organization: Organization,
-  ) {
-    if (!organization) {
+  public async importFromCSV(file: Express.Multer.File, user: User) {
+    if (!user.organization) {
       throw new NotFoundException("This user didn't join the organization");
     }
-    const filePath = path.join(
-      this.folderPath,
-      'contact',
-      `${organization.id}-${file.originalname}`,
-    );
-    write(filePath, file.buffer);
-    const data = await readCSV<CreateNewContactDto>(filePath);
-    remove(filePath);
-    await this.contactRepository.createManyContacts(
-      organization.id,
-      this.deleteEmptyStringAndAddData(data),
-    );
-    return data;
+    try {
+      const filePath = path.join(
+        this.folderPath,
+        'contact',
+        `${user.organization.id}-${file.originalname}`,
+      );
+      write(filePath, file.buffer);
+      const data = await readCSV<CreateNewContactDto>(filePath);
+      remove(filePath);
+      const haveTemplate = data.some((d) => {
+        return d.firstname === 'John' && d.lastname === 'Doe';
+      });
+      if (haveTemplate) {
+        throw new BadRequestException('Data from templates should not be used');
+      }
+
+      const filterData = data.filter((d) => d.firstname && d.lastname);
+
+      const organization =
+        await this.organizationRepository.getOrganizationByAndWith(
+          user.organization.id,
+          ['contacts', 'plan'],
+        );
+
+      if (
+        organization.contacts.length + filterData.length >
+        organization.plan.limitContact
+      ) {
+        throw new BadRequestException(
+          'The quantity limit for this package has been reached',
+        );
+      }
+
+      await this.contactRepository.createManyContacts(
+        user.organization.id,
+        this.deleteEmptyStringAndAddData(filterData, user),
+      );
+      return filterData;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  private deleteEmptyStringAndAddData(arr: CreateNewContactDto[]) {
+  private deleteEmptyStringAndAddData(arr: CreateNewContactDto[], user: User) {
     return arr.map((obj) => {
       for (const key in obj) {
         if (obj.hasOwnProperty(key) && obj[key] === '') {
@@ -238,6 +275,12 @@ export class ContactService {
       const now = moment.tz('Asia/Bangkok').toDate();
       obj.createdTime = now;
       obj.modifiedTime = now;
+      obj.owner = `${user.firstname} ${user.lastname.charAt(0).toUpperCase()}.`;
+      const date = obj.dob as unknown as string;
+      if (/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[0-2])\/\d{4}$/.test(date)) {
+        const dateSplit = date.split('/');
+        obj.dob = new Date(`${dateSplit[2]}/${dateSplit[1]}/${dateSplit[0]}`);
+      }
       return obj;
     });
   }

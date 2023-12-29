@@ -6,7 +6,10 @@ import {
 } from '@/common/dto/organization.dto';
 import { Injectable } from '@nestjs/common';
 import { DeleteResult, InsertResult, Repository } from 'typeorm';
-import { OrganizationInterface } from '@/common/interfaces/organization.interface';
+import {
+  GetOrganizationWiths,
+  OrganizationInterface,
+} from '@/common/interfaces/organization.interface';
 
 @Injectable()
 export class OrganizationRepository
@@ -40,6 +43,23 @@ export class OrganizationRepository
         key: key,
       })
       .getOne();
+  }
+
+  public async getOrganizationByAndWith(
+    by: number | string,
+    withs: GetOrganizationWiths[],
+  ) {
+    if (typeof by === 'number') {
+      return this.findOne({
+        where: { id: by },
+        relations: withs,
+      });
+    }
+
+    return this.findOne({
+      where: { passcode: by },
+      relations: withs,
+    });
   }
 
   public async createNewOrganization(

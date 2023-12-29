@@ -78,7 +78,7 @@ class Organization {
   @ApiProperty()
   @Column({
     nullable: false,
-    default: false,
+    default: true,
   })
   public isPublic: boolean;
 

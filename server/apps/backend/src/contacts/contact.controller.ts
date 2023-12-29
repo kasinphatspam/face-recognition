@@ -152,10 +152,7 @@ export class ContactController {
     @RequestUser() user: User,
     @Res() res: Response,
   ) {
-    const data = await this.contactService.importFromCSV(
-      file,
-      user.organization,
-    );
+    const data = await this.contactService.importFromCSV(file, user);
     return res.status(HttpStatus.OK).json({
       message: 'Add data from CSV file successfully',
       data,

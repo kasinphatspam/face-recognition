@@ -32,6 +32,10 @@ export class OrganizationService {
     private readonly planRepository: PlanRepository,
   ) {}
 
+  public async getAllOrganizations(): Promise<Organization[]> {
+    return this.organizationRepository.findAll();
+  }
+
   public async getOrganizationById(
     organizationId: number,
   ): Promise<Organization> {
@@ -44,6 +48,35 @@ export class OrganizationService {
     }
 
     return organization;
+  }
+
+  public async adminCreateOrganization(
+    body: CreateOrganizationDto,
+  ): Promise<string> {
+    const plan = body.planId
+      ? await this.planRepository.getPlanById(body.planId)
+      : await this.planRepository.getPlanByCost(0);
+    if (!plan) {
+      throw new NotFoundException('Plan not found');
+    }
+
+    const packageKey = await this.recognitionApiService.createPackage();
+    const passcode = await this.randomPasscodeWithUniqueResult();
+
+    const payload = {
+      ...body,
+      codeCreatedTime: moment.tz('Asia/Bangkok').toDate(),
+      packageKey: packageKey,
+      plan: plan.id,
+      passcode: passcode,
+    } as CreateOrganizationDto;
+
+    const organization =
+      await this.organizationRepository.createNewOrganization(payload);
+
+    await this.createSimpleRole(organization);
+
+    return passcode;
   }
 
   public async createNewOraganization(
@@ -127,9 +160,12 @@ export class OrganizationService {
       );
     }
     // Find the organization with passcode
-    const organization = await this.organizationRepository.getOrganizationBy(
-      passcode,
-    );
+    const organization =
+      await this.organizationRepository.getOrganizationByAndWith(passcode, [
+        'users',
+        'plan',
+        'roles',
+      ]);
     if (!organization) {
       throw new BadRequestException('Wrong passcode');
     }
@@ -139,11 +175,18 @@ export class OrganizationService {
 
     // Join organization directly while oragnization is public corporation
     if (organization.isPublic == true) {
-      // Find user role id in organization
-      const roles = await this.roleService.findAll(organization.id);
       // Add orgnaization id to user account
+      const roleName =
+        organization.users.length === 0 ? 'administrator' : 'user';
+
+      if (organization.users.length >= organization.plan.limitEmployee) {
+        throw new BadRequestException(
+          'The quantity limit for this package has been reached',
+        );
+      }
+
       await this.userRepository.updateById(user.id, {
-        roleId: roles.find((r) => r.name === 'user').id,
+        roleId: organization.roles.find((r) => r.name === roleName).id,
         organizationId: organization.id,
       });
       response.type = 1;
@@ -178,10 +221,23 @@ export class OrganizationService {
       throw new BadRequestException("Don't have a request from this ID");
     }
     const user = request.user;
-    const roles = await this.roleService.findAll(request.organization.id);
+
+    const organization =
+      await this.organizationRepository.getOrganizationByAndWith(
+        request.organization.id,
+        ['users', 'plan', 'roles'],
+      );
+
+    const roleName = organization.users.length === 0 ? 'administrator' : 'user';
+
+    if (organization.users.length >= organization.plan.limitEmployee) {
+      throw new BadRequestException(
+        'The quantity limit for this package has been reached',
+      );
+    }
 
     await this.userRepository.updateById(user.id, {
-      roleId: roles.find((r) => r.name === 'user').id,
+      roleId: organization.roles.find((r) => r.name === roleName).id,
       organizationId: request.organization.id,
     });
     await this.requestJoinRepository.deleteAllBy(user.id, 'users');

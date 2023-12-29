@@ -18,6 +18,7 @@ import { ContactModule } from '@/contacts/contact.module';
 import { EmployeeModule } from '@/employees/employee.module';
 import { RoleModule } from '@/roles/role.module';
 import { SearchModule } from '@/common/modules/search.module';
+import { AdminModule } from '@/admin/admin.module';
 
 dotenv.config();
 @Module({
@@ -69,6 +70,7 @@ dotenv.config();
     PlanModule,
     UploadModule,
     SearchModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
