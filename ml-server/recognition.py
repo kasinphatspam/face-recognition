@@ -21,7 +21,7 @@ class FaceRecognition:
         current_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         if self.face_data == None:
             return {
-                "statusCode": -1,
+                "statusCode": -2,
                 "checkedTime": current_time,
                 "message": "FAIL: Unable to load organization",
             }
@@ -75,7 +75,7 @@ class FaceRecognition:
             if self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
                 # Case 2: PASS Dataset is empty
                 return {
-                    "statusCode": -1,
+                    "statusCode": -3,
                     "message": "FAIL: Dataset is empty",
                 }
 
@@ -112,13 +112,13 @@ class FaceRecognition:
         except FileNotFoundError:
             # Case 3: PASS Dataset not found
             return {
-                "statusCode": -1,
+                "statusCode": -4,
                 "message": "FAIL: Dataset not found",
             }
         except Exception as e:
             # Case 5: Error during deletion
             return {
-                "statusCode": -1,
+                "statusCode": -5,
                 "message": f"FAIL: Error deleting encoding: {str(e)}",
             }
 
@@ -127,7 +127,7 @@ class FaceRecognition:
             if self.load_and_compare_files(self.file_path, self.organ_empty) == 1:
                 print("ERROR: Dataset is empty.")
                 return {
-                    "statusCode": -1,
+                    "statusCode": -3,
                     "checkedTime": timestamp,
                     "message": "FAIL: Dataset is empty",
                 }
@@ -136,7 +136,7 @@ class FaceRecognition:
         else:
             print("ERROR: Dataset not found")
             return {
-                "statusCode": -1,
+                "statusCode": -4,
                 "checkedTime": timestamp,
                 "message": "FAIL: Dataset not found",
             }
@@ -147,7 +147,7 @@ class FaceRecognition:
         else:
             print("ERROR: Dataset not found")
             return {
-                "statusCode": -1,
+                "statusCode": -4,
                 "checkedTime": current_time,
                 "message": "FAIL: Dataset not found",
             }
@@ -165,7 +165,7 @@ class FaceRecognition:
         except (FileNotFoundError, ValueError):
             print("ERROR: Unable to load dataset.")
             return {
-                "statusCode": -1,
+                "statusCode": -2,
                 "checkedTime": current_time,
                 "message": "FAIL: Unable to load dataset",
             }
