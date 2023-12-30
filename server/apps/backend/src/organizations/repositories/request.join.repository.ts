@@ -20,9 +20,15 @@ export class RequestJoinRepository
     selection: RequestSelectionBy,
   ): Promise<RequestJoin[]> {
     if (selection == 'organization') {
-      return this.find({ where: { organization: { id: id } } });
+      return this.find({
+        relations: ['user', 'organization'],
+        where: { organization: { id: id } },
+      });
     } else if (selection == 'users') {
-      return this.find({ where: { user: { id: id } } });
+      return this.find({
+        relations: ['user', 'organization'],
+        where: { user: { id: id } },
+      });
     }
   }
 
