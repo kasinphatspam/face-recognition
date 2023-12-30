@@ -149,12 +149,20 @@ export class ContactService {
       packageKey,
       file ? file : base64,
     );
+    console.log(resultObj);
     const contactArray: Contact[] = [];
     const accuracyArray: number[] = [];
     const promiseArray: Promise<Contact>[] = [];
 
     for (const i of resultObj) {
-      if (i.statusCode == 0 || i.statusCode == -1) {
+      if (
+        i.statusCode == 0 ||
+        i.statusCode == -1 ||
+        i.statusCode == -2 ||
+        i.statusCode == -3 ||
+        i.statusCode == -4 ||
+        i.statusCode == -5
+      ) {
         const object = {
           accuracy: [0.0],
           statusCode: i.statusCode,
