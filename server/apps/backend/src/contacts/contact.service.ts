@@ -149,7 +149,6 @@ export class ContactService {
       packageKey,
       file ? file : base64,
     );
-    console.log(resultObj);
     const contactArray: Contact[] = [];
     const accuracyArray: number[] = [];
     const promiseArray: Promise<Contact>[] = [];
