@@ -92,7 +92,7 @@ export class OrganizationController {
     );
     const organization = response.organization;
     if (response.type == 0) {
-      return res.status(HttpStatus.OK).json({
+      return res.status(HttpStatus.ACCEPTED).json({
         message: `User with ID ${user.id} successfully sent the join request to Organization with ID ${organization.id}`,
       });
     }
