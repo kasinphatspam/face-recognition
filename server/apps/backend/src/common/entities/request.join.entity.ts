@@ -13,11 +13,15 @@ class RequestJoin {
   @PrimaryGeneratedColumn('increment')
   public id: number;
 
-  @ManyToOne(() => Organization, (organization) => organization.requestJoins)
+  @ManyToOne(() => Organization, (organization) => organization.requestJoins, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
-  @ManyToOne(() => User, (user) => user.requestJoins)
+  @ManyToOne(() => User, (user) => user.requestJoins, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   public user: User;
 
