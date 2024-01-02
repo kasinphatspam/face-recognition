@@ -31,15 +31,8 @@ export class AuthService {
     const { email, password } = body;
     const user = await this.userRepository.getUserWithPasswordBy(email);
 
-    if (!user)
-      throw new BadRequestException(
-        'the provided email address does not appear to be registered in our system',
-      );
-
-    if (!(await bcrypt.compare(password, user.password)))
-      throw new BadRequestException(
-        'username or password you entered incorrect.',
-      );
+    if (!user || !(await bcrypt.compare(password, user.password)))
+      throw new BadRequestException('Sorry, your password was incorrect');
 
     const jwt = await this.jwtService.signAsync({ id: user.id });
     return jwt;
