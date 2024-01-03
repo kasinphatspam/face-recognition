@@ -350,7 +350,7 @@ export default function Realtime() {
                     variant={open ? "ghost" : "flat"}
                     onClick={handleOnclose}
                   >
-                    {open ? "Open camera" : "Close camera"}
+                    {open ? "Close camera" : "Open camera"}
                   </Button>
                 </div>
               </div>

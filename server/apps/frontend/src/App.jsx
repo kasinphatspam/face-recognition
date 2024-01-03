@@ -3,12 +3,11 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { ProtectedUser, ProtectedOrganization } from "@/hooks/ProtectRoute";
+import { ProtectedUser, ProtectedOrganization, ProtectedAdmin } from "@/hooks/ProtectRoute";
 import { FallBackPage } from "@/pages/Critical/LoadingPage";
 import { AnimatePresence } from "framer-motion";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
-const Analytics = lazy(() => import("@/pages/Dashboard/Analytics"));
 const Loginpage = lazy(() => import("@/pages/LoginPage"));
 const Signuppage = lazy(() => import("@/pages/SignUpPage"));
 const Settings = lazy(() => import("@/pages/Dashboard/Settings"));
@@ -22,15 +21,18 @@ const Featurepage = lazy(() => import("@/pages/FeaturePage"));
 const Animate = lazy(() => import("@/hooks/Animate"));
 const NotFoundPage = lazy(() => import("@/pages/Critical/NotFound"));
 const ErrorPage = lazy(() => import("@/pages/Critical/ErrorPage"));
+const ForgotPwdPage = lazy(() => import("@/pages/forgotpwd"));
+const AdminPage = lazy(() => import("@/pages/dashboard/AdminPage"));
 
 const router = createBrowserRouter([
   {
     element: <Animate />,
-    errorElement: <ErrorPage/>,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, path: "/", element: <HomePage /> },
       { path: "login", element: <Loginpage /> },
       { path: "signup", element: <Signuppage /> },
+      { path: "forgot", element: <ForgotPwdPage /> },
       { path: "contactus", element: <ContactUs /> },
       { path: "subscription", element: <Subscription /> },
       { path: "featurepage", element: <Featurepage /> },
@@ -38,20 +40,26 @@ const router = createBrowserRouter([
   },
   {
     element: <ProtectedUser />,
-    errorElement: <ErrorPage/>,
+    errorElement: <ErrorPage />,
     children: [
       { path: "new", element: <CreateTeam /> },
       {
         element: <ProtectedOrganization />,
         children: [
-          { path: "dashboard", element: <Analytics /> },
-          { path: "organize", element: <OrganizationInfo /> },
+          { path: "organization", element: <OrganizationInfo /> },
           { path: "recognition", element: <Recognition /> },
           { path: "setting", element: <Settings /> },
           { path: "contact", element: <Contact /> },
         ],
       },
     ],
+  },
+  {
+    element: <ProtectedAdmin />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: "admin", element: <AdminPage /> },
+    ]
   },
   {
     element: <NotFoundPage />,

@@ -22,6 +22,11 @@ export const ProtectedOrganization = () => {
 };
 
 export const ProtectedAdmin = () => {
-  const { admin } = useAuth();
-  return !!admin ? <Outlet /> : <Navigate to="/dashboard" replace />;
+  const { user, userStat } = useAuth();
+  if (userStat !== "success") {
+    return (
+      <FallBackPage />
+    )
+  }
+  return (user.role.name === 'god') ? <Outlet /> : <Navigate to="/" replace />;
 };

@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import Employeecomponent from "@/components/Employeelist";
 import { getContacts } from "@/api/get";
-import { postNewContact } from "@/api/post";
+import { postContactCSV, postNewContact } from "@/api/post";
 import { deleteContact } from "@/api/delete";
 import { messageCode } from "@/utils/errMessage";
 import { config } from "@/utils/toastConfig";
@@ -24,11 +24,11 @@ import { toast } from "react-toastify";
 
 export default function Contact() {
   // ---------------------------------- VARIABLES ---------------------------------------
-  const { user, organizeData } = useAuth();
+  const { user } = useAuth();
   const [contactData, setContactData] = useState();
   const [formData, setFormData] = useState({});
   const [file, setFile] = useState(null);
-  const formdata = new FormData();
+  const [date, setDate] = useState(new Date("1970-01-01"));
 
   // ------------------------------------ API ------------------------------------------
   const {
@@ -36,17 +36,17 @@ export default function Contact() {
     status: contactStatus,
     refetch: fContact,
   } = useQuery({
-    enabled: !!organizeData,
+    enabled: !!user?.organization,
     queryKey: ["getContacts"],
     queryFn: async () => {
-      return getContacts(organizeData.id);
+      return getContacts(user?.organization?.id);
     },
   });
 
   const postContact = useMutation({
     mutationkey: ["postContact"],
     mutationFn: async (data) => {
-      return postNewContact(organizeData.id, data);
+      return postNewContact(user?.organization?.id, data);
     },
     onSuccess: async () => {
       toast.success(config("contact added", "success"));
@@ -62,10 +62,26 @@ export default function Contact() {
     },
   });
 
+  const postCSV = useMutation({
+    mutationkey: ["postCSV"],
+    mutationFn: async (file) => {
+      return postContactCSV(file);
+    },
+    onSuccess: async () => {
+      toast.success("contact added successfully");
+      await fContact();
+    },
+    onError: async (error) => {
+      toast.error(
+        `${messageCode(error.response?.data?.message ?? error.message)}`
+      );
+    },
+  });
+
   const delContact = useMutation({
     mutationKey: ["deleteContact"],
     mutationFn: async (contactId) => {
-      return deleteContact(organizeData.id, contactId).then(
+      return deleteContact(user?.organization?.id, contactId).then(
         setContactData((prevData) =>
           prevData.filter((item) => item.id !== contactId)
         )
@@ -97,6 +113,25 @@ export default function Contact() {
 
   const handleOnChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handleInputChange = (e) => {
+    let inputValue = e.target.value;
+    inputValue = inputValue.replace(/\D/g, "");
+
+    // Add slashes to the input value based on the DD/MM/YYYY format
+    if (inputValue.length <= 2) {
+      setDate(inputValue);
+    } else if (inputValue.length <= 4) {
+      setDate(`${inputValue.slice(0, 2)}/${inputValue.slice(2)}`);
+    } else {
+      setDate(
+        `${inputValue.slice(0, 2)}/${inputValue.slice(2, 4)}/${inputValue.slice(
+          4,
+          8
+        )}`
+      );
+    }
   };
 
   const getFileType = (file) => {
@@ -149,6 +184,17 @@ export default function Contact() {
       } catch (error) {
         toast.error(`error files type: ${error}`);
       }
+    }
+  };
+
+  const handleSubmitFiles = async (e) => {
+    e.preventDefault();
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      postCSV.mutate(formData);
+    } else {
+      toast.error("Not file found");
     }
   };
 
@@ -213,26 +259,50 @@ export default function Contact() {
                     onChange={handleOnChange}
                   />
                 </div>
-                <Input
-                  isRequired
-                  label="Phone number"
-                  placeholder="ex. 000-0000-000"
-                  type="text"
-                  className="w-full px-1.5"
-                  variant="bordered"
-                  name="mobile"
-                  onChange={handleOnChange}
-                />
-                <Input
-                  isRequired
-                  label="Email address"
-                  placeholder="ex. example@example.com"
-                  type="text"
-                  className="w-full px-1.5"
-                  variant="bordered"
-                  name="email1"
-                  onChange={handleOnChange}
-                />
+                <div className="flex flex-row w-full">
+                  <Input
+                    isRequired
+                    label="Phone number"
+                    placeholder="ex. 000-0000-000"
+                    type="text"
+                    className="w-full px-1.5"
+                    variant="bordered"
+                    name="mobile"
+                    onChange={handleOnChange}
+                  />
+                  <Input
+                    isRequired
+                    label="Office phone number"
+                    placeholder="ex. 000-0000-000"
+                    type="text"
+                    className="w-full px-1.5"
+                    variant="bordered"
+                    name="officePhone"
+                    onChange={handleOnChange}
+                  />
+                </div>
+                <div className="w-full flex flex-row">
+                  <Input
+                    isRequired
+                    label="Email address"
+                    placeholder="ex. example@example.com"
+                    type="text"
+                    className="w-1/2 px-1.5"
+                    variant="bordered"
+                    name="email1"
+                    onChange={handleOnChange}
+                  />
+                  <Input
+                    isRequired
+                    label="Email address 2 (optional)"
+                    placeholder="ex. example@example.com"
+                    type="text"
+                    className="w-1/2 px-1.5"
+                    variant="bordered"
+                    name="email2"
+                    onChange={handleOnChange}
+                  />
+                </div>
                 <div className="w-full flex flex-row">
                   <Input
                     label="Line Id (optional)"
@@ -255,7 +325,7 @@ export default function Contact() {
                 </div>
                 <Input
                   isRequired
-                  label="company name"
+                  label="Company name"
                   placeholder="enter your company name here"
                   type="text"
                   className="w-full px-1.5"
@@ -270,7 +340,7 @@ export default function Contact() {
                   className="w-full px-1.5"
                   variant="bordered"
                   name="dob"
-                  onChange={handleOnChange}
+                  onChange={handleInputChange}
                 />
                 <Divider className="mt-4" />
                 <p className="text-sm mt-2 ml-2 text-black/60 dark:text-white/90 font-semibold">
@@ -284,12 +354,19 @@ export default function Contact() {
                     placeholder=".xlsx"
                     type="file"
                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    className="w-full px-1.5 file:rounded-md dark:text-white/40 file:text-md file:px-3 dark:file:text-black/60 file:border-none file:bg-zinc-50 file:shadow-md text-black/50"
+                    className="w-full px-1.5 file:rounded-md dark:text-white/40 
+                    file:text-md file:px-3 dark:file:text-black/60 file:border-none 
+                    file:bg-zinc-50 file:shadow-md text-black/50"
                     variant="bordered"
                     name="csv"
                     onChange={handleUploadfiles}
                   />
-                  <Button className="ml-4" disabled={!!file} size="sm">
+                  <Button
+                    className="ml-4"
+                    disabled={!!file}
+                    size="sm"
+                    onClick={(e) => handleSubmitFiles(e)}
+                  >
                     ok
                   </Button>
                 </div>
@@ -303,6 +380,7 @@ export default function Contact() {
                   onPress={async () => {
                     await postContact.mutateAsync({
                       ...formData,
+                      dob: date,
                       owner: `${user.firstname} ${user.lastname[0]}.`,
                     });
                     onClose();
@@ -324,7 +402,7 @@ export default function Contact() {
           <div className="relative flex flex-row mt-12 ml-[80px] mb-6 w-full">
             <div className="flex flex-col">
               <p className="text-inherit font-bold text-4xl align-bottom ">
-                Dashboard
+                Customer
               </p>
               {/* Head text display forum */}
               <div className="flex flex-row mt-6 ml-1">
@@ -337,7 +415,7 @@ export default function Contact() {
                 <p className="text-inherit font-light text-md align-bottom ml-2 hover:underline">
                   {contactStatus === "pending"
                     ? "loading.."
-                    : organizeData?.name}
+                    : user?.organization?.name}
                 </p>
                 <p className="text-inherit font-light text-md align-bottom ml-2">
                   /
@@ -364,7 +442,7 @@ export default function Contact() {
                     />
                   ) : (
                     <div className="mt-8 text-center text-black/40 dark:text-white/60">
-                      no contact found on {organizeData?.name}
+                      no contact found on {user?.organization?.name}
                     </div>
                   )}
                 </div>

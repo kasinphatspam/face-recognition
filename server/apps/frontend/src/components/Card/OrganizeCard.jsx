@@ -12,7 +12,7 @@ export default function OrganizeCard(props) {
     return (
         <>  
             {/** Tool name */}
-            <LinkR to={{pathname:`/organize/${props.id}`}}>
+            <LinkR to={{pathname:`/organization/${props.id}`}}>
                 <Card isFooterBlurred isHeaderBlurred 
                 className="relative group min-w-[240px] h-[240px] max-w-[420px] col-span-12 sm:col-span-7">
                     {/** Box Upper */}

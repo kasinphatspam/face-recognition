@@ -48,7 +48,7 @@ import { AnimateListItem } from "@/components/Box/AnimateListItem";
 export default function Snapshot() {
   // -------------------------------- VARIABLES --------------------------------
   const statusFilter = "all";
-  const { user, organizeData } = useAuth();
+  const { user } = useAuth();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const webcamRef = useRef(null);
   const toastsnap = useRef(null);
@@ -67,10 +67,10 @@ export default function Snapshot() {
 
   // ------------------------------    API    -------------------------------------
   const { data: contact, status: contactStatus } = useQuery({
-    enabled: !!organizeData,
+    enabled: !!user?.organization,
     queryKey: ["getContacts"],
     queryFn: async () => {
-      return getContacts(organizeData.id);
+      return getContacts(user?.organization?.id);
     },
   });
 
@@ -83,7 +83,7 @@ export default function Snapshot() {
   const sendImg = useMutation({
     mutationKey: ["recimage"],
     mutationFn: async (image) => {
-      return postImageRecognition(organizeData.id, image);
+      return postImageRecognition(user?.organization?.id, image);
     },
     onMutate: () => {
       const snapid = toast.loading("sending image ...", {
@@ -134,7 +134,7 @@ export default function Snapshot() {
   const encodeImg = useMutation({
     mutationKey: ["encodeimage"],
     mutationFn: async (Id) => {
-      return updateEncode(organizeData.id, Id, imageData);
+      return updateEncode(user?.organization?.id, Id, imageData);
     },
     onMutate: () => {
       const encodeid = toast.loading("sending image ...", {
@@ -490,7 +490,7 @@ export default function Snapshot() {
                     variant={open ? "ghost" : "flat"}
                     onClick={handleOnclose}
                   >
-                    {open ? "Open camera" : "Close camera"}
+                    {open ? "Close camera" : "Open camera"}
                   </Button>
                 </div>
               </div>

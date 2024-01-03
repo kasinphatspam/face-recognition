@@ -11,20 +11,20 @@ import ActivityCard from "@/components/Card/ActivityCard";
 
 export default function Analytics() {
   const date = new Date().toLocaleDateString();
-  const { user, organizeData } = useAuth();
+  const { user } = useAuth();
 
   const { data: contact } = useQuery({
-    enabled: !!organizeData,
+    enabled: !!user?.organization,
     queryKey: ["getContacts"],
     queryFn: async () => {
-      return getContacts(organizeData.id);
+      return getContacts(user?.organization?.id);
     },
   });
 
   const { data: members } = useQuery({
     queryKey: ["getEmployees"],
     queryFn: async () => {
-      return getAllEmployees(organizeData.id);
+      return getAllEmployees(user?.organization?.id);
     },
   });
 
@@ -56,7 +56,7 @@ export default function Analytics() {
               </div>
 
               {/* Employee list */}
-              <div className="relative flex flex-col w-[70vw] min-h-[300px] -ml-4 mt-8 bg-gray-50 dark:bg-zinc-800 shadow-md rounded-md py-8 px-12">
+              <div className="relative flex flex-col w-[70vw] min-h-[300px] -ml-4 mt-8 bg-white/60 dark:bg-zinc-800 shadow-md rounded-md py-8 px-12">
                 <div className="flex flex-row">
                   <div className="absolute right-16 flex flex-row rounded-md px-4 py-1 border-1 dark:border-white/70 h-[34px] bg-black/5">
                     <Calendar className="h-5 w-5 mr-3 mt-0.5" /> {date}
@@ -129,17 +129,17 @@ export default function Analytics() {
                     <div className="px-2.5 h-[400px] overflow-y-scroll mt-3">
                       <ActivityCard
                         type="newuser"
-                        text={`New user join ${organizeData.name}`}
+                        text={`New user join ${user.organization.name}`}
                         time={new Date("2023-11-20").toDateString()}
                       />
                       <ActivityCard
                         type="newcontact"
-                        text={`12 customer is import to ${organizeData.name}`}
+                        text={`12 customer is import to ${user.organization.name}`}
                         time={new Date("2023-11-20").toDateString()}
                       />
                       <ActivityCard
                         type="editorganization"
-                        text={`someone edit ${organizeData.name} settings`}
+                        text={`someone edit ${user.organization.name} settings`}
                         time={new Date("2023-11-20").toDateString()}
                       />
                     </div>

@@ -42,6 +42,8 @@ const noOrgMenuItems = [
   "Log Out",
 ];
 
+const unKnownGodMenuItems = ["Admin", "My Settings", "Log Out"];
+
 export default function Navigation(props) {
   const { user } = useAuth();
   {
@@ -155,7 +157,7 @@ export default function Navigation(props) {
 
       {/* Menu Toggle for small devices */}
       <NavbarMenu>
-        <BurgerItem/>
+        <BurgerItem />
         <NavbarMenuItem>
           <Switchthemebutton />
         </NavbarMenuItem>
@@ -292,36 +294,40 @@ export function AnalyticsNavigation(props) {
 }
 
 function BurgerItem() {
-  const { user, organizeData, useLogout } = useAuth();
-  const arr = user ? organizeData ? menuItems : noOrgMenuItems : guestMenuItems
+  const { user, useLogout } = useAuth();
+  const arr = user
+    ? user.role.name !== "god"
+      ? user.organization
+        ? menuItems
+        : noOrgMenuItems
+      : unKnownGodMenuItems
+    : guestMenuItems;
 
   const handleClick = () => {
     if (item === "Log Out") {
       useLogout();
     }
-  }
+  };
 
   const mapLink = {
-    "Login": "/login",
+    Login: "/login",
     "Sign Up": "/signup",
     "Create / Join": "/new",
-    "Recognition": "/recognition",
-    "Dashboard": "/dashboard",
-    "Organization": "/organize",
-    "Customer": "/contact",
-    "My Settings": "/setting"
-  }
+    Admin: "/admin",
+    "Help & Feedback": "/contactus",
+    Recognition: "/recognition",
+    Dashboard: "/organization",
+    Organization: "/organization",
+    Customer: "/contact",
+    "My Settings": "/setting",
+  };
   return (
     <NavbarMenu>
       {arr.map((item, index) => (
         <NavbarMenuItem key={`${item}-${index}`}>
           <Link
             className="w-full"
-            color={
-                item === "Log Out"
-                  ? "danger"
-                  : "foreground"
-            }
+            color={item === "Log Out" ? "danger" : "foreground"}
             href={mapLink[item]}
             onPress={() => handleClick(item)}
             size="lg"
@@ -336,7 +342,7 @@ function BurgerItem() {
 
 function DropdownAvatar() {
   const navigate = useNavigate();
-  const { user, organizeData, useLogout } = useAuth();
+  const { user, useLogout } = useAuth();
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -350,7 +356,7 @@ function DropdownAvatar() {
           src={user?.image || "https://i.pravatar.cc/150?u=a042581f4e29026704d"}
         />
       </DropdownTrigger>
-      {!!organizeData ? (
+      {!!user?.organization ? (
         <DropdownMenu
           aria-label="Profile Actions"
           variant="flat"
@@ -360,7 +366,7 @@ function DropdownAvatar() {
               navigate("/");
             }
             if (key === "dashboard") {
-              navigate("/dashboard");
+              navigate("/organization");
             }
             if (key === "settings") {
               navigate("/setting");

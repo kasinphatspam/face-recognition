@@ -29,21 +29,21 @@ export default function Loginpage() {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )
     ) {
-      const id = toast.loading("Please wait ..", { containerId: "main", autoClose: 8000, hideProgressBar: true });
+      const id = toast.loading("Please wait ..", {
+        containerId: "main",
+        autoClose: 8000,
+        hideProgressBar: true,
+      });
       loginToast.current = id;
       try {
-        await useLogin.mutateAsync({ email, password }, 
-          { onSuccess: async (data) => {
-            await fetchUser();
-            toast.update(id, config(`welcome back ${data.email}`, "success"))
-            loginToast.current == null
-            if (data.organization != null) {
-              navigate("/dashboard")
-          } else {
-              navigate("/new")
+        await useLogin.mutateAsync(
+          { email, password },
+          {
+            onSuccess: async () => {
+              await fetchUser();
+            },
           }
-        }});
-        
+        );
       } catch (err) {
         toast.update(
           id,
@@ -60,6 +60,22 @@ export default function Loginpage() {
       return;
     }
   };
+
+  if (user) {
+    toast.update(
+      loginToast.current,
+      config(`welcome back ${user.email}`, "success")
+    );
+    loginToast.current == null;
+    if (user.role.name === "god") {
+      navigate("/admin");
+    } else if (user.organization != null) {
+      navigate("/organization");
+    } else {
+      navigate("/new");
+    }
+  }
+
   const ForgetPassword = async (event) => {
     event.preventDefault();
     {
@@ -139,12 +155,12 @@ export default function Loginpage() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Nextlink
-              herf=""
+              herf="/forgot"
               underline="always"
               className="flex justify-end mr-4 -mt-2"
             >
-              {" "}
-              <p className="text-[12px]"> forgot password? </p>{" "}
+            
+              <p className="text-[12px]"> forgot password? </p>
             </Nextlink>
           </div>
 

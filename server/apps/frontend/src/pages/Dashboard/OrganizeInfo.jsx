@@ -17,9 +17,12 @@ import {
   ModalFooter,
   useDisclosure,
   Switch,
+  Chip,
+  Avatar,
 } from "@nextui-org/react";
+import { Check, X } from "react-feather";
 import Employeecomponent from "@/components/Employeelist";
-import { getAllEmployees, getContacts } from "@/api/get";
+import { getAllEmployees, getContacts, getRequests } from "@/api/get";
 import { ColumnText } from "@/components/Section/ColumnText";
 import { updateOrg } from "@/api/put";
 import { toast } from "react-toastify";
@@ -32,13 +35,15 @@ export default function OrganizationInfo() {
   const form = useRef(null);
   const toastapi = useRef(null);
   const [name, setName] = useState(null);
-  const { fetchOrg } = useAuth()
-  const navigate = useNavigate()
+  const { user, userStat, fetchUser } = useAuth();
+  const navigate = useNavigate();
+  const [isPublic, setIsPubilc] = useState(
+    user?.organization?.isPublic ?? false
+  );
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // ------------------------------------ API ------------------------------------------
-  const { user, userStat } = useAuth()
-  
+
   const { data: employees, status: empStatus } = useQuery({
     enabled: !!user,
     queryKey: ["getEmployees"],
@@ -53,6 +58,13 @@ export default function OrganizationInfo() {
       return getContacts(user.organization);
     },
   });
+  const { data: requests, status: reqStatus } = useQuery({
+    enabled: !!user,
+    queryKey: ["getRequests"],
+    queryFn: async () => {
+      return getRequests();
+    },
+  });
 
   const updateOrganization = useMutation({
     mutationKey: ["updateOrganization"],
@@ -63,25 +75,6 @@ export default function OrganizationInfo() {
       const toastput = toast.loading("please wait...", { containerId: "main" });
       toastapi.current = toastput;
     },
-    onSuccess: async () => {
-      await fetchOrg()
-      toast.update(
-        toastapi.current,
-        config("update organization information successfully", "success")
-      );
-      toastapi.current = null
-    },
-    onError: async (error) => {
-      toast.update(
-        toastapi.current,
-        config(
-          `${messageCode(error.response?.data?.message ?? error.message)}`,
-          "error"
-        )
-      );  
-      toastapi.current = null
-      updateOrganization.reset();
-    },
   });
 
   const DeleteOrganization = useMutation({
@@ -89,16 +82,12 @@ export default function OrganizationInfo() {
     mutationFn: async () => {
       return deleteOrganization();
     },
-    onMutate: () => {
-      const toastput = toast.loading("please wait...", { containerId: "main" });
-      toastapi.current = toastput;
-    },
     onSuccess: () => {
       toast.update(
         toastapi.current,
         config("delete organization information successfully", "success")
       );
-      navigate("/")
+      navigate("/");
       toastapi.current = null;
     },
     onError: (error) => {
@@ -122,9 +111,79 @@ export default function OrganizationInfo() {
       description: event.target[1].value,
     };
     if (data) {
-      updateOrganization.mutate(data);
+      updateOrganization.mutate(data, {
+        onMutate: () => {
+          const toastput = toast.loading("please wait...", {
+            containerId: "main",
+          });
+          toastapi.current = toastput;
+        },
+        onSuccess: async () => {
+          await fetchUser()
+          toast.update(
+            toastapi.current,
+            config("update organization information successfully", "success")
+          );
+          toastapi.current = null;
+        },
+        onError: async (error) => {
+          toast.update(
+            toastapi.current,
+            config(
+              `${messageCode(error.response?.data?.message ?? error.message)}`,
+              "error"
+            )
+          );
+          toastapi.current = null;
+          updateOrganization.reset();
+        },
+      });
     }
     event.target.reset();
+  };
+
+  const handleApprove = (event, action) => {
+    event.preventDefault();
+    if (action === "approve") {
+
+    } else if (action === "decline") {
+
+    }
+  }
+
+  const handleAccess = (value) => {
+    const data = {
+      isPublic: value,
+    };
+    if (data) {
+      updateOrganization.mutate(data, {
+        onSuccess: () => {
+          setIsPubilc(value);
+          toast.update(
+            toastapi.current,
+            config(
+              `Organization accessibility set to ${
+                value ? "Public" : "Private"
+              }`,
+              "success"
+            )
+          );
+          toastapi.current = null;
+        },
+        onError: (error) => {
+          toast.update(
+            toastapi.current,
+            config(
+              `Failed to set organization accessibility (code: ${
+                error.code || error.response?.data?.code || "303"
+              })`,
+              "error"
+            )
+          );
+          toastapi.current = null;
+        },
+      });
+    }
   };
 
   const columns = [
@@ -149,8 +208,10 @@ export default function OrganizationInfo() {
                 <Archive className="mx-auto w-12 h-12 mt-8" strokeWidth={1.2} />
                 <p className="text-sm text-gray-500">
                   to delete this organization type{" "}
-                  <span className="font-semibold">{user.organization.name}</span> and
-                  continue
+                  <span className="font-semibold">
+                    {user.organization.name}
+                  </span>{" "}
+                  and continue
                 </p>
                 <Input
                   autoFocus
@@ -202,7 +263,9 @@ export default function OrganizationInfo() {
                   /
                 </p>
                 <p className="text-blue-500 font-medium text-md align-bottom ml-2 hover:underline">
-                  {userStat === "pending" ? "loading.." : user.organization.name}
+                  {userStat === "pending"
+                    ? "loading.."
+                    : user.organization.name}
                 </p>
               </div>
 
@@ -248,7 +311,9 @@ export default function OrganizationInfo() {
                   <Tab key="teams" title="Teams">
                     <div className="relative">
                       <div className="absolute top-1 right-14 flex flex-col">
-                        <p className="font-medium ml-[68px] text-right">passcode</p>
+                        <p className="font-medium ml-[68px] text-right">
+                          passcode
+                        </p>
                         <p className="font-semibold text-4xl text-right">
                           {userStat === "pending"
                             ? "loading.."
@@ -293,14 +358,87 @@ export default function OrganizationInfo() {
                               data={employees}
                               columns={columns}
                               visible_columns={visible}
-                              handleDelete={(id) => (console.log(id))}
+                              handleDelete={(id) => console.log(id)}
                             />
                           )}
                         </div>
                       </div>
                     </div>
                   </Tab>
-                  <Tab key="activity" title="Activity"></Tab>
+                  <Tab key="activity" title="Activity">
+                    <div className="mt-8 mx-8">
+                      {reqStatus === "pending" ? (
+                        <div>Loading..</div>
+                      ) : requests?.requests?.length === 0 ? (
+                        <div className="mx-auto w-64 text-black/50 dark:text-white/40 my-8">
+                          No activity log at the moment
+                        </div>
+                      ) : (
+                        <div className="mx-auto w-64 text-black/50 dark:text-white/40 my-8">
+                          No activity log at the moment
+                        </div>
+                      )}
+                    </div>
+                  </Tab>
+                  <Tab
+                    key="joinreq"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <span>Join Requests</span>
+                        <Chip size="sm" variant="flat">
+                          {requests?.requests?.length ?? "0"}
+                        </Chip>
+                      </div>
+                    }
+                  >
+                    <div className="mt-8 mx-8">
+                      {reqStatus === "pending" ? (
+                        <div>Loading..</div>
+                      ) : requests?.requests?.length === 0 ? (
+                        <div className="mx-auto w-64 text-black/50 dark:text-white/40 my-8">
+                          {" "}
+                          No user request at the moment
+                        </div>
+                      ) : (
+                        requests?.requests.map((contact) => (
+                          <div className="flex w-full px-10 py-4 hover:bg-gray-50 rounded-md gap-y-4">
+                            <div className="flex flex-row w-5/6">
+                              <Avatar
+                                src={contact.user?.image}
+                                className="mr-4"
+                              />
+                              <div className="flex flex-col -mt-0.5">
+                                <p className="font-semibold">{`${contact.user?.firstname} ${contact.user?.lastname}`}</p>
+                                <p className="text-tiny text-gray-400">
+                                  {contact.user?.email}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex flex-row gap-x-4">
+                              <Button
+                                isIconOnly
+                                color="success"
+                                aria-label="approve"
+                                radius="full"
+                                onClick={(e) => handleApprove(e, "approve")}
+                              >
+                                <Check color="white" />
+                              </Button>
+                              <Button
+                                isIconOnly
+                                color="danger"
+                                aria-label="approve"
+                                radius="full"
+                                onClick={(e) => handleDecline(e, "decline")}
+                              >
+                                <X color="white" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </Tab>
                   <Tab key="settings" title="Settings">
                     <div className="mt-8 mx-8">
                       <ColumnText index="name" title="Organization details">
@@ -360,11 +498,13 @@ export default function OrganizationInfo() {
                       <ColumnText index="permission" title="Accessibility">
                         <div className="flex flex-row">
                           <p className="text-gray-500 text-sm w-2/3">
-                            everyone can access this organization, if not user need to grant permission from administrator
+                            everyone can access this organization, if not user
+                            need to grant permission from administrator
                           </p>
                           <Switch
                             className="mx-auto"
-                            defaultSelected={user?.organization?.isPublic ?? false}
+                            isSelected={isPublic}
+                            onValueChange={(v) => handleAccess(v)}
                           />
                         </div>
                       </ColumnText>

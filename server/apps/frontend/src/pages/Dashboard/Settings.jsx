@@ -7,17 +7,25 @@ import { config } from "@/utils/toastConfig";
 import Resizer from "react-image-file-resizer";
 import { Input, Button, Select, SelectItem } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import { updateUser, updateImage } from "@/api/put";
+import { updateUser, updateImage, changePassword } from "@/api/put";
 import { messageCode } from "@/utils/errMessage";
 
 export default function Settings() {
   // -----------------------   VARIABLES   -------------------------------
   const { user, fetchUser } = useAuth();
-  const { firstname = '', lastname = '', email = '', gender = '', dob = '' } = user;
+  const {
+    firstname = "",
+    lastname = "",
+    email = "",
+    gender = "",
+    dob = "",
+  } = user;
   const toastid = useRef(null);
   const [date, setDate] = useState("");
   const [imagefile, setImagefile] = useState(null);
   const [imageURL, setImageURL] = useState(null);
+  const [password, setPassword] = useState(["", "", ""]);
+  const [errPassword, setErrPassword] = useState(0)
   const [editData, setEditData] = useState({
     firstname: firstname,
     lastname: lastname,
@@ -25,8 +33,6 @@ export default function Settings() {
     gender: [gender],
     dob: dob,
   });
-  
-
 
   // -----------------------   API   -------------------------------
   /** update image api */
@@ -44,6 +50,7 @@ export default function Settings() {
         toastid.current,
         config("update image successfully", "success")
       );
+      toastid.current = null;
       fetchUser();
     },
     onError: (err) => {
@@ -51,9 +58,35 @@ export default function Settings() {
         toastCreate.current,
         config(`${messageCode(err.message)}`, "error")
       );
+      toastid.current = null;
       updateData.reset();
     },
   });
+  
+  const wcPassword = useMutation({
+    mutationKey: ["password"],
+    mutationFn: async (oldPassword, newPassword) => {
+      return changePassword(oldPassword, newPassword);  
+    },
+    onMutate: () => {
+      const id = toast.loading("Please wait ...", { containerId: "main" });
+      toastid.current = id;
+    },
+    onSuccess: () => {
+      toast.update(
+        toastid.current,
+        config("change password successfully", "success")
+      );
+      toastid.current = null;
+    },
+    onError: (err) => {
+      toast.update(
+        toastCreate.current,
+        config(`${messageCode(err.message)}`, "error")
+      );
+      toastid.current = null;
+    },
+  })
 
   /** update user api */
   const updateData = useMutation({
@@ -110,7 +143,8 @@ export default function Settings() {
       const maxWH = 300;
       const image = Resizer.imageFileResizer(
         file,
-        maxWH, maxWH, // width x height
+        maxWH,
+        maxWH, // width x height
         "JPEG", // Specify the format
         80, // Quality
         0, // Rotation
@@ -159,6 +193,16 @@ export default function Settings() {
     updateData.mutate(data);
   };
 
+  const handleChangePassword = (e) => {
+    setErrPassword(0)
+    e.preventDefault();
+    if (password[1] !== password[2]) {
+      setErrPassword(1)
+      return
+    }
+    wcPassword.mutate(password[0], password[1]);
+  }
+
   return (
     <>
       {/* Pages offset setup */}
@@ -194,7 +238,13 @@ export default function Settings() {
                 <div className="flex flex-row mt-6">
                   <div className="flex flex-col w-1/3">
                     <img
-                      src={imageURL === null ? user ? user.image : "/default.jpg" : imageURL}
+                      src={
+                        imageURL === null
+                          ? user
+                            ? user.image
+                            : "/default.jpg"
+                          : imageURL
+                      }
                       className="w-3/4 ,x-auto rounded-lg"
                     />
                     {!!!imageURL && (
@@ -241,7 +291,9 @@ export default function Settings() {
                         type="text"
                         label="firstname"
                         name="firstname"
-                        placeholder={firstname ?? "please enter your first name"}
+                        placeholder={
+                          firstname ?? "please enter your first name"
+                        }
                         onChange={handleChange}
                       />
                       <Input
@@ -288,7 +340,7 @@ export default function Settings() {
                         type="text"
                         label="Birth date (D/M/Y)"
                         size="sm"
-                        placeholder="DD/MM/YYYY"
+                        placeholder={dob || "DD/MM/YYYY"}
                         value={date}
                         onChange={(e) => handleInputChange(e)}
                       />
@@ -302,6 +354,58 @@ export default function Settings() {
                     >
                       save profile
                     </Button>
+                  </div>
+                </div>
+                <div className="py-20">
+                  <p className="w-full ml-4 text-2xl font-semibold border-l-4 pl-3">
+                    Account settings
+                  </p>
+                  <div className="mt-8 flex flex-row w-full max-md:flex-col">
+                    <p className="w-1/3 font-medium ">Change password</p>
+                    <div className="flex flex-col w-2/3 px-12 max-md:px-2 gap-y-4">
+                      <Input
+                        isRequired
+                        isClearable
+                        type="password"
+                        label="Old Password"
+                        variant="bordered"
+                        onChange={(e) =>
+                          setPassword((curr) => (curr[0] = e.target.value))
+                        }
+                      />
+                      <Input
+                        isRequired
+                        isClearable
+                        type="password"
+                        label="New Password"
+                        variant="bordered"
+                        onChange={(e) =>
+                          setPassword((curr) => (curr[1] = e.target.value))
+                        }
+                      />
+                      <Input
+                        isRequired
+                        isClearable
+                        isInvalid={errPassword === 1}
+                        errorMessage={errPassword === 1 && "Password did not match"}
+                        type="password"
+                        label="Confirm New Password"
+                        variant="bordered"
+                        onChange={(e) =>
+                          setPassword((curr) => (curr[2] = e.target.value))
+                        }
+                      />
+                      <Button
+                      className="mt-4 w-28 px-8"
+                      size="md"
+                      color="primary"
+                      disabled={updateData.status === "pending"}
+                      onClick={(e) => handleChangePassword(e)}
+                    >
+                      Change
+                    </Button>
+                    </div>
+                    
                   </div>
                 </div>
               </div>
