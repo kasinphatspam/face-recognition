@@ -172,7 +172,7 @@ export default function CreateTeam() {
           </div>
 
           {userStat === "success" ? (
-            user.role.name === "god" ? (
+            user.role?.name === "god" ? (
               <>
                 <div className="flex flex-row w-full text-black/20 text-xs mt-5 mb-8">
                   <Divider

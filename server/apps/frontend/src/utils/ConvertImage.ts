@@ -1,12 +1,18 @@
 import Resizer from "react-image-file-resizer";
 
 function hasBase64Prefix(base64String: string): boolean {
-  return base64String.startsWith('data:image/') || base64String.startsWith('data:video/') || base64String.startsWith('data:audio/');
+  return (
+    base64String.startsWith("data:image/") ||
+    base64String.startsWith("data:video/") ||
+    base64String.startsWith("data:audio/")
+  );
 }
 
 /** convert base64 to image files type image/jpeg */
 export function base64toFile(base64String: string, fileName: string): File {
-  const image = hasBase64Prefix(base64String) ? base64String.split(",")[1] : base64String;
+  const image = hasBase64Prefix(base64String)
+    ? base64String.split(",")[1]
+    : base64String;
   const byteCharacters = atob(image);
   const byteNumbers = new Array(byteCharacters.length);
 
@@ -32,15 +38,19 @@ export async function getBase64(file: File): Promise<string> {
 }
 
 /** image optimizer */
-export const convertImage = async (file: File, max_res: number = 1000, quality_res: number = 80): Promise<File> => {
-  return new Promise((resolve, reject) => {
+export const convertImage = async (
+  file: File,
+  max_res: number = 1000,
+  quality_res: number = 80
+): Promise<File> => {
+  return new Promise((resolve, _) => {
     Resizer.imageFileResizer(
       file,
       max_res,
-      max_res, 
-      "JPEG", 
+      max_res,
+      "JPEG",
       quality_res,
-      0, 
+      0,
       (uri) => {
         resolve(uri as File);
       },

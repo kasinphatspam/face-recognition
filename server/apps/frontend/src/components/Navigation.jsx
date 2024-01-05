@@ -110,10 +110,10 @@ export default function Navigation(props) {
             </NavbarItem>
           </>
         )}
-        {Active === "Contactus" && (
+        {(Active === "Contactus" || Active === "Subscription") && (
           <>
             <NavbarItem>
-              <Link color="foreground" href="/subscription">
+              <Link color={Active === "Subscription" ? "secondary" : "foreground"} href="/subscription">
                 Subscription
               </Link>
             </NavbarItem>
@@ -125,7 +125,7 @@ export default function Navigation(props) {
           </>
         )}
         <NavbarItem>
-          <Link color="foreground" href="/contactus">
+          <Link color={Active === "Contactus" ? "secondary" : "foreground"} href="/contactus">
             Support Center
           </Link>
         </NavbarItem>
@@ -296,7 +296,7 @@ export function AnalyticsNavigation(props) {
 function BurgerItem() {
   const { user, useLogout } = useAuth();
   const arr = user
-    ? user.role.name !== "god"
+    ? user.role?.name !== "god"
       ? user.organization
         ? menuItems
         : noOrgMenuItems

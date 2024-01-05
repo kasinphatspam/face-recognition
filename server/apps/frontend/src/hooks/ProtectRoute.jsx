@@ -28,5 +28,5 @@ export const ProtectedAdmin = () => {
       <FallBackPage />
     )
   }
-  return (user.role.name === 'god') ? <Outlet /> : <Navigate to="/" replace />;
+  return (user.role?.name === 'god') ? <Outlet /> : <Navigate to="/" replace />;
 };

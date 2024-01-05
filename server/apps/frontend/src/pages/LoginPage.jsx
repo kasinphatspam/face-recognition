@@ -67,7 +67,7 @@ export default function Loginpage() {
       config(`welcome back ${user.email}`, "success")
     );
     loginToast.current == null;
-    if (user.role.name === "god") {
+    if (user.role?.name === "god") {
       navigate("/admin");
     } else if (user.organization != null) {
       navigate("/organization");

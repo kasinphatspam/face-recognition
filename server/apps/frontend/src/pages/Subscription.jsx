@@ -23,7 +23,7 @@ const Subscription = () => {
 
   return (
     <>
-      <Navigation Active="Contactus" />
+      <Navigation Active="Subscription" />
       <div className="w-full min-h-full bg-gradient-to-r from-[#F1F0E8] to-blue-50 dark:from-zinc-900 dark:to-neutral-800 from-45% to-120% duration-150 ease-in dark:ease-out">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

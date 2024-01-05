@@ -49,8 +49,6 @@ const FooterBar = () => {
       <div className="flex flex-col max-sm:w-[200px]">
         <div className="font-bold text-xl text-inherit">Resources</div>
         <FooterText title="Support Center" path="/contactus" />
-        <FooterText title="FAQ" path="/" />
-        <FooterText title="About us" path="/" />
       </div>
     </motion.div>
   );
