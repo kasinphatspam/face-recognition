@@ -54,3 +54,11 @@ export async function postAdminOrg(
   };
   return fetch.post(`/admin/organizations`, data);
 }
+
+export async function postReply(
+  requestId: number,
+  reply: "accept" | "reject"
+): Promise<AxiosResponse> {
+  console.log(requestId, reply);
+  return fetch.post(`/organizations/info/requests/${requestId}/${reply}`);
+}

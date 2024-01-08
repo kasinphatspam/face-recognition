@@ -30,6 +30,7 @@ import { config } from "@/utils/toastConfig";
 import { deleteOrganization, leaveOrganization } from "@/api/delete";
 import { useAuth } from "@/contexts/AuthContext";
 import { messageCode } from "@/utils/errMessage";
+import { postReply } from "@/api/post";
 
 export default function OrganizationInfo() {
   const form = useRef(null);
@@ -58,7 +59,7 @@ export default function OrganizationInfo() {
       return getContacts(user.organization);
     },
   });
-  const { data: requests, status: reqStatus } = useQuery({
+  const { data: requests, status: reqStatus, refetch: fetchReq } = useQuery({
     enabled: !!user,
     queryKey: ["getRequests"],
     queryFn: async () => {
@@ -130,6 +131,13 @@ export default function OrganizationInfo() {
       DeleteOrganization.reset();
     },
   });
+
+  const ReplyRequest = useMutation({
+    mutationKey: ["reply"],
+    mutationFn: async ({requestId, message}) => {
+      return postReply(requestId, message);
+    },
+  });
   // ----------------------------------- GENERAL ----------------------------------------
 
   const handleSubmit = (event) => {
@@ -170,11 +178,17 @@ export default function OrganizationInfo() {
     event.target.reset();
   };
 
-  const handleApprove = (event, action) => {
+  const handleReply = (event, requestId, message) => {
     event.preventDefault();
-    if (action === "approve") {
-    } else if (action === "decline") {
-    }
+    ReplyRequest.mutate({requestId, message}, {
+      onSuccess: async () => {
+        await fetchReq();
+        toast.success(`${message} user from ${user.organization?.name ?? "this organization"}`)
+      },
+      onError: (error) => {
+        toast.error(`${messageCode(error.response?.data?.message ?? error.message)}`);
+      },
+    });
   };
 
   const handleAccess = (value) => {
@@ -447,20 +461,26 @@ export default function OrganizationInfo() {
                             </div>
                             <div className="flex flex-row gap-x-4">
                               <Button
+                              disabled={ReplyRequest.status === 'pending'}
                                 isIconOnly
                                 color="success"
                                 aria-label="approve"
                                 radius="full"
-                                onClick={(e) => handleApprove(e, "approve")}
+                                onClick={(e) =>
+                                  handleReply(e, contact.id, "accept")
+                                }
                               >
                                 <Check color="white" />
                               </Button>
                               <Button
+                                disabled={ReplyRequest.status === 'pending'}
                                 isIconOnly
                                 color="danger"
                                 aria-label="approve"
                                 radius="full"
-                                onClick={(e) => handleDecline(e, "decline")}
+                                onClick={(e) =>
+                                  handleReply(e, contact.id, "reject")
+                                }
                               >
                                 <X color="white" />
                               </Button>
