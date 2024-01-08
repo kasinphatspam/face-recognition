@@ -13,12 +13,12 @@ export const ProtectedUser = () => {
 };
 
 export const ProtectedOrganization = () => {
-  const { organizeData, orgStat } = useAuth();
-  if (orgStat !== "success") {
+  const { user, userStat } = useAuth();
+  if (userStat !== "success") {
     return (
       <FallBackPage />
     );
-  } else return !!organizeData ? <Outlet /> : <Navigate to="/new" replace />;
+  } else return !!user?.organization ? <Outlet /> : <Navigate to="/new" replace />;
 };
 
 export const ProtectedAdmin = () => {

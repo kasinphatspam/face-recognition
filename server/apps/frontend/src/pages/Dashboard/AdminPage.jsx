@@ -5,6 +5,7 @@ import { Input, Button, Divider, Select, SelectItem } from "@nextui-org/react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { config } from "@/utils/toastConfig";
+import { postAdminOrg } from "@/api/post";
 
 export default function AdminPage() {
   const adminid = useRef(null);
@@ -16,16 +17,12 @@ export default function AdminPage() {
   });
 
   const createOrganization = useMutation({
-    mutationKey: ["createOrg"],
-    mutationFn: async (data) => {
-      return await postCreateOrg(data);
+    mutationKey: ["createAdminOrg"],
+    mutationFn: async (organization, planId) => {
+      return await postAdminOrg(organization, planId);
     },
     onMutate: () => {
-      const adminid = toast.loading("Please wait...", {
-        containerId: "main",
-        autoClose: 8000,
-        hideProgressBar: true,
-      });
+      const adminid = toast.loading("Please wait...", { containerId: "main" })
       adminid.current = adminid;
     },
     onSuccess: () => {
@@ -35,7 +32,7 @@ export default function AdminPage() {
       );
       adminid.current = null;
     },
-    onError: () => {
+    onError: (err) => {
       toast.update(
         adminid,
         config(
@@ -56,6 +53,16 @@ export default function AdminPage() {
       [event.target.name]: event.target.value,
     }));
   };
+
+  const handleCreateClick = (event) => {
+    event.preventDefault();
+    const planId = value.values().next().value
+    if (planId && organizations) {
+      createOrganization.mutate(organizations.name, planId);
+    } else {
+      toast.error("Please insert data in a blank form");
+    }
+  }
 
   return (
     <>
@@ -99,8 +106,8 @@ export default function AdminPage() {
                     className="max-w-xs"
                     onSelectionChange={setValue}
                   >
-                    {plans?.map((plan, index) => (
-                      <SelectItem key={index} value={plan.title}>
+                    {plans?.map((plan) => (
+                      <SelectItem key={plan.id} value={plan.title}>
                         {plan.title}
                       </SelectItem>
                     ))}

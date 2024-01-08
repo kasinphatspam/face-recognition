@@ -33,12 +33,12 @@ export default function Realtime() {
   const [image, setImage] = useState([""]);
   const [recognitionData, setRecognitionData] = useState([]);
   const [open, setOpen] = useState(true);
-  const { organizeData } = useAuth();
+  const { user } = useAuth();
 
   const sendImg = useMutation({
     mutationKey: ["recimage"],
     mutationFn: async (image) => {
-      return postImageRecognition(organizeData.id, image);
+      return postImageRecognition(user?.organization.id, image);
     },
     onSuccess: (data) => {
       const rdata = data.data;

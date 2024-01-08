@@ -28,6 +28,7 @@ const menuItems = [
   "Recognition",
   "Organization",
   "Customer",
+  "Admin",
   "Help & Feedback",
   "My Settings",
   "Log Out",
@@ -113,7 +114,10 @@ export default function Navigation(props) {
         {(Active === "Contactus" || Active === "Subscription") && (
           <>
             <NavbarItem>
-              <Link color={Active === "Subscription" ? "secondary" : "foreground"} href="/subscription">
+              <Link
+                color={Active === "Subscription" ? "secondary" : "foreground"}
+                href="/subscription"
+              >
                 Subscription
               </Link>
             </NavbarItem>
@@ -125,7 +129,10 @@ export default function Navigation(props) {
           </>
         )}
         <NavbarItem>
-          <Link color={Active === "Contactus" ? "secondary" : "foreground"} href="/contactus">
+          <Link
+            color={Active === "Contactus" ? "secondary" : "foreground"}
+            href="/contactus"
+          >
             Support Center
           </Link>
         </NavbarItem>
@@ -295,12 +302,13 @@ export function AnalyticsNavigation(props) {
 
 function BurgerItem() {
   const { user, useLogout } = useAuth();
+  console.log(user);
   const arr = user
-    ? user.role?.name !== "god"
-      ? user.organization
-        ? menuItems
-        : noOrgMenuItems
-      : unKnownGodMenuItems
+    ? user.organization
+      ? user.role?.name == "god"
+        ? unKnownGodMenuItems
+        : menuItems
+      : noOrgMenuItems
     : guestMenuItems;
 
   const handleClick = () => {
@@ -357,58 +365,104 @@ function DropdownAvatar() {
         />
       </DropdownTrigger>
       {!!user?.organization ? (
-        <DropdownMenu
-          aria-label="Profile Actions"
-          variant="flat"
-          onAction={async (key) => {
-            if (key === "logout") {
-              await useLogout();
-              navigate("/");
-            }
-            if (key === "dashboard") {
-              navigate("/organization");
-            }
-            if (key === "settings") {
-              navigate("/setting");
-            }
-          }}
-        >
-          <DropdownItem key="profile" className="h-14 gap-2">
-            <p className="font-semibold">Signed in as</p>
-            <p className="font-semibold">{user?.email ?? ""}</p>
-          </DropdownItem>
-          <DropdownItem key="settings">My Settings</DropdownItem>
-          <DropdownItem key="dashboard">Dashboard</DropdownItem>
-          <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-          <DropdownItem key="logout" color="danger">
-            Log Out
-          </DropdownItem>
-        </DropdownMenu>
+        <DropdownWithOrg
+          user={user}
+          useLogout={useLogout}
+          navigate={navigate}
+        />
+      ) : user?.role?.name === "god" ? (
+        <DropdownAdmin user={user} useLogout={useLogout} navigate={navigate} />
       ) : (
-        <DropdownMenu
-          aria-label="Profile Actions"
-          variant="flat"
-          onAction={async (key) => {
-            if (key === "logout") {
-              await useLogout();
-              navigate("/");
-            }
-            if (key === "create") {
-              navigate("/new");
-            }
-          }}
-        >
-          <DropdownItem key="profile" className="h-14 gap-2">
-            <p className="font-semibold">Signed in as</p>
-            <p className="font-semibold">{user?.email ?? ""}</p>
-          </DropdownItem>
-          <DropdownItem key="create">Create / Join</DropdownItem>
-          <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-          <DropdownItem key="logout" color="danger">
-            Log Out
-          </DropdownItem>
-        </DropdownMenu>
+        <DropdownNoOrg user={user} useLogout={useLogout} navigate={navigate} />
       )}
     </Dropdown>
+  );
+}
+
+function DropdownAdmin({ user, useLogout, navigate }) {
+  return (
+    <DropdownMenu
+      aria-label="Profile Actions"
+      variant="flat"
+      onAction={async (key) => {
+        if (key === "logout") {
+          await useLogout();
+          navigate("/");
+        }
+        if (key === "admin") {
+          navigate("/admin");
+        }
+      }}
+    >
+      <DropdownItem key="profile" className="h-14 gap-2">
+        <p className="font-semibold">Signed in as</p>
+        <p className="font-semibold">{user?.email ?? ""}</p>
+      </DropdownItem>
+      <DropdownItem key="admin">Admin</DropdownItem>
+      <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+      <DropdownItem key="logout" color="danger">
+        Log Out
+      </DropdownItem>
+    </DropdownMenu>
+  );
+}
+
+function DropdownWithOrg({ user, useLogout, navigate }) {
+  return (
+    <DropdownMenu
+      aria-label="Profile Actions"
+      variant="flat"
+      onAction={async (key) => {
+        if (key === "logout") {
+          await useLogout();
+          navigate("/");
+        }
+        if (key === "dashboard") {
+          navigate("/organization");
+        }
+        if (key === "settings") {
+          navigate("/setting");
+        }
+      }}
+    >
+      <DropdownItem key="profile" className="h-14 gap-2">
+        <p className="font-semibold">Signed in as</p>
+        <p className="font-semibold">{user?.email ?? ""}</p>
+      </DropdownItem>
+      <DropdownItem key="settings">My Settings</DropdownItem>
+      <DropdownItem key="dashboard">Dashboard</DropdownItem>
+      <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+      <DropdownItem key="logout" color="danger">
+        Log Out
+      </DropdownItem>
+    </DropdownMenu>
+  );
+}
+
+function DropdownNoOrg({ user, useLogout, navigate }) {
+  return (
+    <DropdownMenu
+      aria-label="Profile Actions"
+      variant="flat"
+      onAction={async (key) => {
+        if (key === "logout") {
+          await useLogout();
+          navigate("/");
+        }
+        if (key === "create") {
+          navigate("/new");
+        }
+      }}
+    >
+      <DropdownItem key="profile" className="h-14 gap-2">
+        <p className="font-semibold">Signed in as</p>
+        <p className="font-semibold">{user?.email ?? ""}</p>
+      </DropdownItem>
+      <DropdownItem key="create">Create / Join</DropdownItem>
+      <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+      <DropdownItem key="logout" color="danger">
+        Log Out
+      </DropdownItem>
+    </DropdownMenu>
   );
 }

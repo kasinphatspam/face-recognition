@@ -44,3 +44,13 @@ export async function postContactCSV(file: FormData): Promise<AxiosResponse> {
   const data = { file };
   return fetch.post(`/organizations/info/contact/csv`, data);
 }
+
+export async function postAdminOrg(
+  name: string,
+  planId: number
+): Promise<AxiosResponse> {
+  const data = {
+    name,
+  };
+  return fetch.post(`/admin/organizations`, data);
+}

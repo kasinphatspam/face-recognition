@@ -14,14 +14,6 @@ export const AuthProvider = ({ children }) => {
         },
     })
 
-    const { data: organizeData, refetch: fetchOrg, status: orgStat } = useQuery({
-        enabled: !!user, 
-        queryKey: ["organize", user?.id],
-        queryFn: async () => {
-            return organizeFn()
-        },
-    }) 
-
     const useLogin = useMutation({
         mutationKey: ["login"],
         mutationFn: async ({ email, password }) => {
@@ -57,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, organizeData, fetchOrg, fetchUser, orgStat, userStat, useLogin, useSignup, useLogout }}
+            value={{ user, fetchUser, userStat, useLogin, useSignup, useLogout }}
         >
             {children}
         </AuthContext.Provider>

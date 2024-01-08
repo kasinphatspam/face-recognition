@@ -69,8 +69,9 @@ export default function CreateTeam() {
       return await passCode(data);
     },
     onSuccess: async (data) => {
+      await fetchUser()
       console.log(data);
-      if (data.status === 200) {
+      if (data.statusText === 'ACCEPT') {
         toast.update(
           idCode.current,
           config("Organize was found. Waiting response from admin.", "success")

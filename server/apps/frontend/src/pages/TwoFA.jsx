@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function TwoFA() {
-  const { useLogin, fetchOrg, fetchUser, user } = useAuth();
+  const { useLogin, fetchUser, user } = useAuth();
   const loginToast = useRef(null);
   const navigate = useNavigate();
   {
@@ -26,7 +26,6 @@ export default function TwoFA() {
       try {
         await useLogin.mutateAsync({ email, password });
         await fetchUser();
-        await fetchOrg();
       } catch (err) {
         toast.update(
           id,

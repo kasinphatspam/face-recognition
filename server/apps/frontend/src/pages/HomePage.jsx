@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@nextui-org/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   textVariant,
@@ -24,7 +25,9 @@ import Pricing from "@/components/Pricing";
 import FooterBar from "@/components/Footersection";
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [month, setMonth] = useState(1);
+  const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(true);
 
   const handleMonth = (value, base) => {
@@ -93,7 +96,7 @@ const HomePage = () => {
 
               {/* Get Started Button */}
               <div className="mb-16">
-                <Link>
+                <Link to={!!user ? !!user?.organization ? "/organization" : "/new" : "/login" }>
                   <Button
                     variants={textVariant(0.3)}
                     className="font-semibold mt-6 bg-[#132043] text-white shadow-lg z-10"
