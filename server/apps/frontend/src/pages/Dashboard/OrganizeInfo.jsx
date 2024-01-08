@@ -27,7 +27,7 @@ import { ColumnText } from "@/components/Section/ColumnText";
 import { updateOrg } from "@/api/put";
 import { toast } from "react-toastify";
 import { config } from "@/utils/toastConfig";
-import { deleteOrganization } from "@/api/delete";
+import { deleteOrganization, leaveOrganization } from "@/api/delete";
 import { useAuth } from "@/contexts/AuthContext";
 import { messageCode } from "@/utils/errMessage";
 
@@ -77,12 +77,40 @@ export default function OrganizationInfo() {
     },
   });
 
+  const LeaveOrganization = useMutation({
+    mutationKey: ["leaveorganization"],
+    mutationFn: async () => {
+      return leaveOrganization();
+    },
+    onSuccess: async () => {
+      await fetchUser();
+      toast.update(
+        toastapi.current,
+        config("leave organization successfully", "success")
+      );
+      navigate("/");
+      toastapi.current = null;
+    },
+    onError: (error) => {
+      toast.update(
+        toastapi.current,
+        config(
+          `${messageCode(error.response?.data?.message ?? error.message)}`,
+          "error"
+        )
+      );
+      toastapi.current = null;
+      DeleteOrganization.reset();
+    },
+  });
+
   const DeleteOrganization = useMutation({
     mutationKey: ["deleteorganization"],
     mutationFn: async () => {
       return deleteOrganization();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await fetchUser();
       toast.update(
         toastapi.current,
         config("delete organization information successfully", "success")
@@ -119,7 +147,7 @@ export default function OrganizationInfo() {
           toastapi.current = toastput;
         },
         onSuccess: async () => {
-          await fetchUser()
+          await fetchUser();
           toast.update(
             toastapi.current,
             config("update organization information successfully", "success")
@@ -145,11 +173,9 @@ export default function OrganizationInfo() {
   const handleApprove = (event, action) => {
     event.preventDefault();
     if (action === "approve") {
-
     } else if (action === "decline") {
-
     }
-  }
+  };
 
   const handleAccess = (value) => {
     const data = {
@@ -194,6 +220,10 @@ export default function OrganizationInfo() {
     { name: "ACTIONS", uid: "actions" },
   ];
   const visible = ["name", "email", "status", "actions"];
+
+  const handleLeaveClick = () => {
+    LeaveOrganization.mutate();
+  };
 
   return (
     <>
@@ -277,6 +307,7 @@ export default function OrganizationInfo() {
                     color="danger"
                     size="sm"
                     className=" drop-shadow-sm dark:drop-shadow-none w-26 mb-2 text-md px-4"
+                    onPress={() => handleLeaveClick()}
                   >
                     leave
                   </Button>

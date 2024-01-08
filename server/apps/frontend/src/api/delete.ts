@@ -18,3 +18,7 @@ export function deleteEmployee(
 ): Promise<AxiosResponse> {
   return fetch.delete(`organizations/info/employees/${userId}`);
 }
+
+export function leaveOrganization(): Promise<AxiosResponse> {
+  return fetch.delete(`users/organization/exit`);
+}

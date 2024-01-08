@@ -7,10 +7,10 @@ import OrganizeCard from "@/components/Card/OrganizeCard"
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function OrganizationService() {
-  const { organizeData } = useAuth()
+  const { user } = useAuth()
   const Request = []
   let mapOrganize = []
-  mapOrganize[0] = organizeData
+  mapOrganize[0] = user?.organization
 
   const handleAction = (user, action) => {
     if (action === 'approve') console.log('approve :' + user)
@@ -80,9 +80,9 @@ export default function OrganizationService() {
                 </div>
                 <div className="flex flex-col">
                   <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 gap-y-7 mt-8 ml-8">
-                    { (organizeData == null || organizeData?.length == 0) ? <div className="mx-auto mt-12 dark:text-zinc-100">There is no participate organization.</div> : <></> }
+                    { (user?.organization == null || user?.organization?.length == 0) ? <div className="mx-auto mt-12 dark:text-zinc-100">There is no participate organization.</div> : <></> }
                     {
-                      organizeData != null ?
+                      user?.organization != null ?
                       mapOrganize?.map((item, index) => (
                         <OrganizeCard
                           key={index}
